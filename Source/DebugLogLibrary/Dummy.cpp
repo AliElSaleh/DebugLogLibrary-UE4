@@ -14,7 +14,9 @@ void ADummy::BeginPlay()
 {
 	Super::BeginPlay();
 
-	ULog::Number(324.0f, LO_Both);
+#if !UE_BUILD_SHIPPING
+	ULog::Error(CUR_CLASS_FUNC_WITH_LINE, LO_Both);
+#endif
 }
 
 void ADummy::Tick(float DeltaTime)
