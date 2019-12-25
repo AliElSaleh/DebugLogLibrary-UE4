@@ -54,45 +54,45 @@ enum ELoggingOptions
 /**
  * A library of log utility functions
  */
-UCLASS()
+UCLASS(Abstract)
 class DEBUG_API ULog final : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 	
 public:
 	// Log whether the object is valid or not
-	UFUNCTION(BlueprintCallable, Category = "Debug")
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
 		static void ObjectValidity(UObject* ObjectRef, ELoggingOptions LoggingOption = LO_Console);
 
 	// Log a debug message to the console or viewport (FString version)
-	UFUNCTION(BlueprintCallable, Category = "Debug")
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
 		static void DebugMessage(EDebugLogType LogSeverity, const FString& Message, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
 	// Log a debug message to the console or viewport (FName version)
 	static void DebugMessage(EDebugLogType LogSeverity, const FName& Message, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);	
 
 	// Log a fatal error message to the console and crash
-	UFUNCTION(BlueprintCallable, Category = "Debug")
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
 		static void Fatal(const FString& Message);
 
 	// Log an error message to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug")
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
 		static void Error(const FString& Message, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
 	// Log a success message to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug")
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
 		static void Success(const FString& Message, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
 	// Log a warning message to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug")
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
 		static void Warning(const FString& Message, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
 	// Log an information message to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug")
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
 		static void Info(const FString& Message, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
 	// Log a hello message to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug")
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
 		static void Hello(ELoggingOptions LoggingOption = LO_Console);
 	
 	// Log a yes message to the console or viewport
@@ -102,19 +102,19 @@ public:
 	static void No(ELoggingOptions LoggingOption = LO_Console);
 
 	// Log a 'valid' message to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug")
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
 		static void Valid(const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console);
 
 	// Log an 'invalid' message to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug")
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
 		static void Invalid(const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console);
 
-	// Log a yes message to the console or viewport (with an optional prefix string)
-	UFUNCTION(BlueprintCallable, Category = "Debug")
+	// Log a yes message to the console or viewport (with an optional prefix and suffix string)
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
 		static void Yes(const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console);
 
-	// Log a no message to the console or viewport (with an optional prefix string)
-	UFUNCTION(BlueprintCallable, Category = "Debug")
+	// Log a no message to the console or viewport (with an optional prefix and suffix string)
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
 		static void No(const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console);
 
 	// Log a number to the console or viewport (int8 version)
@@ -151,40 +151,40 @@ public:
 	static void Number(long Number, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
 	// Log the a percentage value to the console or viewport (Just appends a % symbol)
-	UFUNCTION(BlueprintCallable, Category = "Debug")
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
 		static void Percent(float Number, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
 	// Log the given bool value to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug")
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
 		static void Bool(bool bBoolToTest, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
 	// Log a FVector value to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug")
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
 		static void Vector(const FVector& Vector, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
 	// Log a FRotator value to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug")
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
 		static void Rotator(const FRotator& Rotator, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
 	// Log a FTransform value to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug")
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
 		static void Transform(const FTransform& Transform, const FString& Prefix = "", bool bFormat = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
 	// Log a Quaternion value to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug")
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
 		static void Quat(const FQuat& Quaternion, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
 	// Log a matrix value to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug")
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
 		static void Matrix(const FMatrix& Matrix, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
 	// Log a color value to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug")
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
 		static void Color(const FLinearColor& Color, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
 protected:
 	// Log a number to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug", DisplayName = "Number (int)")
+	UFUNCTION(BlueprintCallable, Category = "Debug", DisplayName = "Number (int)", meta = (DevelopmentOnly))
 		static void Number_Int_Blueprint(int32 Number, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
 	// Log a number to the console or viewport (float version)
