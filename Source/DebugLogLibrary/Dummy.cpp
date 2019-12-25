@@ -2,7 +2,6 @@
 
 #include "Dummy.h"
 #include "Log.h"
-#include "Debug.h"
 #include "Engine/Engine.h"
 
 ADummy::ADummy()
@@ -15,7 +14,7 @@ void ADummy::BeginPlay()
 {
 	Super::BeginPlay();
 
-	ULog::Number(324.0f, "Hello: ", " boi", LO_Both);
+	ULog::Number(324.0f, LO_Both);
 }
 
 void ADummy::Tick(float DeltaTime)

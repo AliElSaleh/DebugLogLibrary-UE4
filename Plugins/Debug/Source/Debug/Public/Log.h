@@ -150,6 +150,39 @@ public:
 	// Log a number to the console or viewport (long version)
 	static void Number(long Number, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
+	// Log a number to the console or viewport (int8 version, no prefix and suffix)
+	static void Number(int8 Number, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+
+	// Log a number to the console or viewport (int16 version, no prefix and suffix)
+	static void Number(int16 Number, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+
+	// Log a number to the console or viewport (int32 version, no prefix and suffix)
+	static void Number(int32 Number, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+
+	// Log a number to the console or viewport (int64 version, no prefix and suffix)
+	static void Number(int64 Number, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+
+	// Log a number to the console or viewport (uint8 version, no prefix and suffix)
+	static void Number(uint8 Number, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+
+	// Log a number to the console or viewport (uint16 version, no prefix and suffix)
+	static void Number(uint16 Number, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+
+	// Log a number to the console or viewport (uint32 version, no prefix and suffix)
+	static void Number(uint32 Number, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+
+	// Log a number to the console or viewport (uint64 version, no prefix and suffix)
+	static void Number(uint64 Number, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+
+	// Log a number to the console or viewport (float version, no prefix and suffix)
+	static void Number(float Number, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+
+	// Log a number to the console or viewport (double version, no prefix and suffix)
+	static void Number(double Number, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+
+	// Log a number to the console or viewport (long version, no prefix and suffix)
+	static void Number(long Number, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+	
 	// Log the a percentage value to the console or viewport (Just appends a % symbol)
 	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
 		static void Percent(float Number, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
@@ -194,5 +227,6 @@ protected:
 private:
 	static void LogInt(int64 Number, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 	static void LogUInt(uint64 Number, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+	static void LogLongInt(long Number, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, float TimeToDisplay);
 	static void LogFloat(float Number, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 };

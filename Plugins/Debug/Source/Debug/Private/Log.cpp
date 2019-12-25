@@ -1,8 +1,8 @@
 // Copyright Ali El Saleh 2019
 
 #include "Log.h"
-#include "Engine/Engine.h"
 #include "Debug.h"
+#include "Engine/Engine.h"
 #include "Math/Vector.h"
 
 void ULog::ObjectValidity(UObject* ObjectRef, const ELoggingOptions LoggingOption)
@@ -433,36 +433,67 @@ void ULog::Number(const float Number, const FString& Prefix, const FString& Suff
 
 void ULog::Number(const double Number, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
-	if (LoggingOption == LO_Viewport)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, FColor::Cyan, Prefix + FString::SanitizeFloat(Number) + Suffix);
-	}
-	else if (LoggingOption == LO_Console)
-	{
-		UE_LOG(LogNumber, Warning, TEXT("%s%f%s"), *Prefix, Number, *Suffix)
-	}
-	else if (LoggingOption == LO_Both)
-	{
-		UE_LOG(LogNumber, Warning, TEXT("%s%f%s"), *Prefix, Number, *Suffix)
-		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, FColor::Cyan, Prefix + FString::SanitizeFloat(Number) + Suffix);
-	}
+	LogFloat(Number, Prefix, Suffix, LoggingOption, TimeToDisplay);
 }
 
 void ULog::Number(const long Number, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
-	if (LoggingOption == LO_Viewport)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, FColor::Cyan, Prefix + FString::FromInt(Number) + Suffix);
-	}
-	else if (LoggingOption == LO_Console)
-	{
-		UE_LOG(LogNumber, Warning, TEXT("%s%d%s"), *Prefix, Number, *Suffix)
-	}
-	else if (LoggingOption == LO_Both)
-	{
-		UE_LOG(LogNumber, Warning, TEXT("%s%d%s"), *Prefix, Number, *Suffix)
-		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, FColor::Cyan, Prefix + FString::FromInt(Number) + Suffix);
-	}
+	LogLongInt(Number, Prefix, Suffix, LoggingOption, TimeToDisplay);
+}
+
+void ULog::Number(const int8 Number, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+{
+	LogInt(Number, "", "", LoggingOption, TimeToDisplay);
+}
+
+void ULog::Number(const int16 Number, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+{
+	LogInt(Number, "", "", LoggingOption, TimeToDisplay);
+}
+
+void ULog::Number(const int32 Number, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+{
+	LogInt(Number, "", "", LoggingOption, TimeToDisplay);
+}
+
+void ULog::Number(const int64 Number, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+{
+	LogInt(Number, "", "", LoggingOption, TimeToDisplay);
+}
+
+void ULog::Number(const uint8 Number, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+{
+	LogUInt(Number, "", "", LoggingOption, TimeToDisplay);
+}
+
+void ULog::Number(const uint16 Number, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+{
+	LogUInt(Number, "", "", LoggingOption, TimeToDisplay);
+}
+
+void ULog::Number(const uint32 Number, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+{
+	LogUInt(Number, "", "", LoggingOption, TimeToDisplay);
+}
+
+void ULog::Number(const uint64 Number, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+{
+	LogUInt(Number, "", "", LoggingOption, TimeToDisplay);
+}
+
+void ULog::Number(const float Number, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+{
+	LogFloat(Number, "", "", LoggingOption, TimeToDisplay);
+}
+
+void ULog::Number(const double Number, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+{
+	LogFloat(Number, "", "", LoggingOption, TimeToDisplay);
+}
+
+void ULog::Number(const long Number, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+{
+	LogLongInt(Number, "", "", LoggingOption, TimeToDisplay);
 }
 
 void ULog::Percent(const float Number, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
@@ -656,12 +687,12 @@ void ULog::Color(const FLinearColor& Color, const FString& Prefix, const FString
 	}
 }
 
-void ULog::Number_Int_Blueprint(const int32 Number, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, float TimeToDisplay)
+void ULog::Number_Int_Blueprint(const int32 Number, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 	LogInt(Number, Prefix, Suffix, LoggingOption, TimeToDisplay);
 }
 
-void ULog::Number_Float_Blueprint(const float Number, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, float TimeToDisplay)
+void ULog::Number_Float_Blueprint(const float Number, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 	LogFloat(Number, Prefix, Suffix, LoggingOption, TimeToDisplay);
 }
@@ -714,5 +745,22 @@ void ULog::LogFloat(const float Number, const FString& Prefix, const FString& Su
 	{
 		UE_LOG(LogNumber, Warning, TEXT("%s%f%s"), *Prefix, Number, *Suffix)
 		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, FColor::Cyan, Prefix + FString::SanitizeFloat(Number) + Suffix);
+	}
+}
+
+void ULog::LogLongInt(const long Number, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+{
+	if (LoggingOption == LO_Viewport)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, FColor::Cyan, Prefix + FString::FromInt(Number) + Suffix);
+	}
+	else if (LoggingOption == LO_Console)
+	{
+		UE_LOG(LogNumber, Warning, TEXT("%s%d%s"), *Prefix, Number, *Suffix)
+	}
+	else if (LoggingOption == LO_Both)
+	{
+		UE_LOG(LogNumber, Warning, TEXT("%s%d%s"), *Prefix, Number, *Suffix)
+		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, FColor::Cyan, Prefix + FString::FromInt(Number) + Suffix);
 	}
 }
