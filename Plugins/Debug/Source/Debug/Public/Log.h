@@ -47,6 +47,7 @@ enum ELoggingOptions
 {
 	LO_Viewport UMETA(DisplayName = "Viewport"),
 	LO_Console	UMETA(DisplayName = "Console"),
+	LO_Both		UMETA(DisplayName = "Viewport and Console"),
 	LO_NoLog	UMETA(DisplayName = "Disabled")
 };
 
@@ -123,8 +124,7 @@ public:
 	static void Number(int16 Number, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
 	// Log a number to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug")
-		static void Number(int32 Number, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+	static void Number(int32 Number, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
 	// Log a number to the console or viewport (int64 version)
 	static void Number(int64 Number, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
@@ -182,7 +182,17 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Debug")
 		static void Color(const FLinearColor& Color, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
+protected:
+	// Log a number to the console or viewport
+	UFUNCTION(BlueprintCallable, Category = "Debug", DisplayName = "Number (int)")
+		static void Number_Int_Blueprint(int32 Number, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+
+	// Log a number to the console or viewport (float version)
+	UFUNCTION(BlueprintCallable, Category = "Debug", DisplayName = "Number (float)")
+		static void Number_Float_Blueprint(float Number, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+
 private:
 	static void LogInt(int64 Number, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 	static void LogUInt(uint64 Number, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+	static void LogFloat(float Number, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 };
