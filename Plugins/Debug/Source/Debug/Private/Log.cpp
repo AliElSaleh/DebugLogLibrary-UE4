@@ -324,11 +324,11 @@ void ULog::No(const ELoggingOptions LoggingOption)
 	}
 	else if (LoggingOption == LO_Console)
 	{
-		UE_LOG(LogMessage, Warning, TEXT("No"))
+		UE_LOG(LogWarning, Warning, TEXT("No"))
 	}
 	else if (LoggingOption == LO_Both)
 	{
-		UE_LOG(LogMessage, Warning, TEXT("No"))
+		UE_LOG(LogWarning, Warning, TEXT("No"))
 		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, FString("No"));
 	}
 }
@@ -343,11 +343,11 @@ void ULog::No(const FString& Prefix, const FString& Suffix, const ELoggingOption
 	}
 	else if (LoggingOption == LO_Console)
 	{
-		UE_LOG(LogMessage, Warning, TEXT("%s"), *Message)
+		UE_LOG(LogWarning, Warning, TEXT("%s"), *Message)
 	}
 	else if (LoggingOption == LO_Both)
 	{
-		UE_LOG(LogMessage, Warning, TEXT("%s"), *Message)
+		UE_LOG(LogWarning, Warning, TEXT("%s"), *Message)
 		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, Message);
 	}
 }
@@ -360,11 +360,11 @@ void ULog::Valid(const FString& Prefix, const FString& Suffix, const ELoggingOpt
 	}
 	else if (LoggingOption == LO_Console)
 	{
-		UE_LOG(LogMessage, Warning, TEXT("%sValid%s"), *Prefix, *Suffix)
+		UE_LOG(LogSuccess, Warning, TEXT("%sValid%s"), *Prefix, *Suffix)
 	}
 	else if (LoggingOption == LO_Both)
 	{
-		UE_LOG(LogMessage, Warning, TEXT("%sValid%s"), *Prefix, *Suffix)
+		UE_LOG(LogSuccess, Warning, TEXT("%sValid%s"), *Prefix, *Suffix)
 		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, Prefix + FString("Valid") + Suffix);
 	}
 }
@@ -377,11 +377,11 @@ void ULog::Invalid(const FString& Prefix, const FString& Suffix, const ELoggingO
 	}
 	else if (LoggingOption == LO_Console)
 	{
-		UE_LOG(LogMessage, Warning, TEXT("%sInvalid%s"), *Prefix, *Suffix)
+		UE_LOG(LogError, Error, TEXT("%sInvalid%s"), *Prefix, *Suffix)
 	}
 	else if (LoggingOption == LO_Both)
 	{
-		UE_LOG(LogMessage, Warning, TEXT("%sInvalid%s"), *Prefix, *Suffix)
+		UE_LOG(LogError, Error, TEXT("%sInvalid%s"), *Prefix, *Suffix)
 		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, Prefix + FString("Invalid") + Suffix);
 	}
 }
