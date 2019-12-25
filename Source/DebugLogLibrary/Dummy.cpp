@@ -1,0 +1,28 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#include "Dummy.h"
+#include "Log.h"
+#include "Debug.h"
+#include "Engine/Engine.h"
+
+ADummy::ADummy()
+{
+	PrimaryActorTick.bCanEverTick = true;
+
+}
+
+void ADummy::BeginPlay()
+{
+	Super::BeginPlay();
+
+	ULog::Number(324.0f, "Hello: ", " boi", LO_Both);
+	FString Ms = "Hello";
+	TRACEWARN("Hello");
+}
+
+void ADummy::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+}
+
