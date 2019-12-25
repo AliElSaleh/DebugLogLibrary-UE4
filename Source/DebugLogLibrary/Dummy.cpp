@@ -16,8 +16,6 @@ void ADummy::BeginPlay()
 	Super::BeginPlay();
 
 	ULog::Number(324.0f, "Hello: ", " boi", LO_Both);
-	FString Ms = "Hello";
-	TRACEWARN("Hello");
 }
 
 void ADummy::Tick(float DeltaTime)
