@@ -5,33 +5,40 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Log.generated.h"
 
-#if !UE_BUILD_SHIPPING
-// Get the current class name and function name where this is called
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
+// Development build only. Get the current class name and function name where this is called
 #define CUR_CLASS_FUNC (FString(__FUNCTION__))
 
-// Get the current class name, function name and line number where this is called
+// Development build only. Get the current class name, function name and line number where this is called
 #define CUR_CLASS_FUNC_WITH_LINE (CUR_CLASS_FUNC + ": " + CUR_LINE)
 
-// Get the current class where this is called
+// Development build only. Get the current class where this is called
 #define CUR_CLASS (FString(__FUNCTION__).Left(FString(__FUNCTION__).Find(TEXT(":"))) )
 
-// Get the current function name where this is called
+// Development build only. Get the current function name where this is called
 #define CUR_FUNC (FString(__FUNCTION__).Right(FString(__FUNCTION__).Len() - FString(__FUNCTION__).Find(TEXT("::")) - 2 ))
   
-// Get the current line number in the code where this is called
+// Development build only. Get the current line number in the code where this is called
 #define CUR_LINE ("Line " + FString::FromInt(__LINE__))
 
-// Get the current function name and the line number in the code where this is called
+// Development build only. Get the current function name and the line number in the code where this is called
 #define CUR_FUNC_WITH_LINE  (CUR_FUNC + ": " + CUR_LINE)
 
-// Get the current class and line number where this is called
+// Development build only. Get the current class and line number where this is called
 #define CUR_CLASS_WITH_LINE (CUR_CLASS + "(" + CUR_LINE + ")")
   
-// Get the current function signature where this is called
+// Development build only. Get the current function signature where this is called
 #define CUR_FUNC_SIG (FString(__FUNCSIG__))
 
-// Get the current function signature with the number where this is called
+// Development build only. Get the current function signature with the number where this is called
 #define CUR_FUNC_SIG_WITH_LINE (FString(__FUNCSIG__) + ": " + CUR_LINE)
+
+// Development build only. Returns the net mode as a string, possible outputs are, Empty String, [Client], [Server] or [Dedicated Server]
+#define NET_MODE *(!GWorld ? FString("") \
+	: GWorld->GetNetMode() == NM_Client ? FString("[Client] ") + FString::FromInt(GPlayInEditorID - 1) + FString(": ") \
+	: GWorld->GetNetMode() == NM_ListenServer ? FString("[Server]: ") \
+	: GWorld->GetNetMode() == NM_DedicatedServer ? FString("[Dedicated Server]: ") \
+	: FString(""))
 #endif
 
 UENUM(BlueprintType)
