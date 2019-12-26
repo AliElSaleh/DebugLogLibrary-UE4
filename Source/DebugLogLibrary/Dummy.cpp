@@ -15,7 +15,7 @@ void ADummy::BeginPlay()
 	Super::BeginPlay();
 
 #if !UE_BUILD_SHIPPING
-	ULog::Error(CUR_CLASS_FUNC_WITH_LINE, LO_Both);
+	//ULog::Error(CUR_CLASS_FUNC_WITH_LINE, LO_Both);
 #endif
 }
 
