@@ -731,6 +731,104 @@ void ULog::Color(const FLinearColor& InColor, const ELoggingOptions LoggingOptio
 	Color(InColor, "", "", LoggingOption, TimeToDisplay);	
 }
 
+void ULog::Sphere(const FSphere& Sphere, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+{
+	if (LoggingOption == LO_Viewport)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, FColor::Cyan, NET_MODE_PREFIX + Suffix);
+		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, FColor::Cyan, NET_MODE_PREFIX + FString("Radius: ") + FString::SanitizeFloat(Sphere.W));
+		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, FColor::Cyan, NET_MODE_PREFIX + FString("Location: ") + Sphere.Center.ToString());
+		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, FColor::Cyan, NET_MODE_PREFIX + Prefix);
+	}
+	else if (LoggingOption == LO_Console)
+	{
+		UE_LOG(LogColor, Warning, TEXT("%s%s"), NET_MODE_PREFIX, *Prefix)
+		UE_LOG(LogColor, Warning, TEXT("%sLocation: %s"), NET_MODE_PREFIX, *Sphere.Center.ToString())
+		UE_LOG(LogColor, Warning, TEXT("%sRadius: %s"), NET_MODE_PREFIX, *FString::SanitizeFloat(Sphere.W))
+		UE_LOG(LogColor, Warning, TEXT("%s%s"), NET_MODE_PREFIX, *Suffix)
+	}
+	else if (LoggingOption == LO_Both)
+	{
+		UE_LOG(LogColor, Warning, TEXT("%s%s"), NET_MODE_PREFIX, *Prefix)
+		UE_LOG(LogColor, Warning, TEXT("%sLocation: %s"), NET_MODE_PREFIX, *Sphere.Center.ToString())
+		UE_LOG(LogColor, Warning, TEXT("%sRadius: %s"), NET_MODE_PREFIX, *FString::SanitizeFloat(Sphere.W))
+		UE_LOG(LogColor, Warning, TEXT("%s%s"), NET_MODE_PREFIX, *Suffix)
+		
+		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, FColor::Cyan, NET_MODE_PREFIX + Suffix);
+		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, FColor::Cyan, NET_MODE_PREFIX + FString("Radius: ") + FString::SanitizeFloat(Sphere.W));
+		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, FColor::Cyan, NET_MODE_PREFIX + FString("Location: ") + Sphere.Center.ToString());
+		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, FColor::Cyan, NET_MODE_PREFIX + Prefix);
+	}
+}
+
+void ULog::Box(const FBox& Box, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+{
+	if (LoggingOption == LO_Viewport)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, FColor::Cyan, NET_MODE_PREFIX + Suffix);
+		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, FColor::Cyan, NET_MODE_PREFIX + FString("Max: ") + Box.Max.ToString());
+		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, FColor::Cyan, NET_MODE_PREFIX + FString("Min: ") + Box.Min.ToString());
+		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, FColor::Cyan, NET_MODE_PREFIX + Prefix);
+	}
+	else if (LoggingOption == LO_Console)
+	{
+		UE_LOG(LogColor, Warning, TEXT("%s%s"), NET_MODE_PREFIX, *Prefix)
+		UE_LOG(LogColor, Warning, TEXT("%sMin: %s"), NET_MODE_PREFIX, *Box.Min.ToString())
+		UE_LOG(LogColor, Warning, TEXT("%sMax: %s"), NET_MODE_PREFIX, *Box.Max.ToString())
+		UE_LOG(LogColor, Warning, TEXT("%s%s"), NET_MODE_PREFIX, *Suffix)
+	}
+	else if (LoggingOption == LO_Both)
+	{
+		UE_LOG(LogColor, Warning, TEXT("%s%s"), NET_MODE_PREFIX, *Prefix)
+		UE_LOG(LogColor, Warning, TEXT("%sMin: %s"), NET_MODE_PREFIX, *Box.Min.ToString())
+		UE_LOG(LogColor, Warning, TEXT("%sMax: %s"), NET_MODE_PREFIX, *Box.Max.ToString())
+		UE_LOG(LogColor, Warning, TEXT("%s%s"), NET_MODE_PREFIX, *Suffix)
+		
+		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, FColor::Cyan, NET_MODE_PREFIX + Suffix);
+		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, FColor::Cyan, NET_MODE_PREFIX + FString("Max: ") + Box.Max.ToString());
+		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, FColor::Cyan, NET_MODE_PREFIX + FString("Min: ") + Box.Min.ToString());
+		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, FColor::Cyan, NET_MODE_PREFIX + Prefix);
+	}
+}
+
+void ULog::Capsule(const FCapsuleShape& Capsule, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+{
+	if (LoggingOption == LO_Viewport)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, FColor::Cyan, NET_MODE_PREFIX + Suffix);
+		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, FColor::Cyan, NET_MODE_PREFIX + FString("Orientation: ") + Capsule.Orientation.ToString());
+		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, FColor::Cyan, NET_MODE_PREFIX + FString("Length: ") + FString::SanitizeFloat(Capsule.Length));
+		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, FColor::Cyan, NET_MODE_PREFIX + FString("Radius: ") + FString::SanitizeFloat(Capsule.Radius));
+		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, FColor::Cyan, NET_MODE_PREFIX + FString("Location: ") + Capsule.Center.ToString());
+		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, FColor::Cyan, NET_MODE_PREFIX + Prefix);
+	}
+	else if (LoggingOption == LO_Console)
+	{
+		UE_LOG(LogColor, Warning, TEXT("%s%s"), NET_MODE_PREFIX, *Prefix)
+		UE_LOG(LogColor, Warning, TEXT("%sLocation: %s"), NET_MODE_PREFIX, *Capsule.Center.ToString())
+		UE_LOG(LogColor, Warning, TEXT("%sRadius: %s"), NET_MODE_PREFIX, *FString::SanitizeFloat(Capsule.Radius))
+		UE_LOG(LogColor, Warning, TEXT("%sLength: %s"), NET_MODE_PREFIX, *FString::SanitizeFloat(Capsule.Length))
+		UE_LOG(LogColor, Warning, TEXT("%sOrientation: %s"), NET_MODE_PREFIX, *Capsule.Orientation.ToString())
+		UE_LOG(LogColor, Warning, TEXT("%s%s"), NET_MODE_PREFIX, *Suffix)
+	}
+	else if (LoggingOption == LO_Both)
+	{
+		UE_LOG(LogColor, Warning, TEXT("%s%s"), NET_MODE_PREFIX, *Prefix)
+		UE_LOG(LogColor, Warning, TEXT("%sLocation: %s"), NET_MODE_PREFIX, *Capsule.Center.ToString())
+		UE_LOG(LogColor, Warning, TEXT("%sRadius: %s"), NET_MODE_PREFIX, *FString::SanitizeFloat(Capsule.Radius))
+		UE_LOG(LogColor, Warning, TEXT("%sLength: %s"), NET_MODE_PREFIX, *FString::SanitizeFloat(Capsule.Length))
+		UE_LOG(LogColor, Warning, TEXT("%sOrientation: %s"), NET_MODE_PREFIX, *Capsule.Orientation.ToString())
+		UE_LOG(LogColor, Warning, TEXT("%s%s"), NET_MODE_PREFIX, *Suffix)
+		
+		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, FColor::Cyan, NET_MODE_PREFIX + Suffix);
+		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, FColor::Cyan, NET_MODE_PREFIX + FString("Orientation: ") + Capsule.Orientation.ToString());
+		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, FColor::Cyan, NET_MODE_PREFIX + FString("Length: ") + FString::SanitizeFloat(Capsule.Length));
+		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, FColor::Cyan, NET_MODE_PREFIX + FString("Radius: ") + FString::SanitizeFloat(Capsule.Radius));
+		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, FColor::Cyan, NET_MODE_PREFIX + FString("Location: ") + Capsule.Center.ToString());
+		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, FColor::Cyan, NET_MODE_PREFIX + Prefix);
+	}
+}
+
 void ULog::Number_Int_Blueprint(const int32 Number, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 	LogInt(Number, Prefix, Suffix, LoggingOption, TimeToDisplay);
