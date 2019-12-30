@@ -39,6 +39,9 @@
 	: GWorld->GetNetMode() == NM_ListenServer ? FString("[Server]: ") \
 	: GWorld->GetNetMode() == NM_DedicatedServer ? FString("[Dedicated Server]: ") \
 	: FString(""))
+
+// Development build only. Logs an assert message and crashes the program
+#define ASSERT(expr, message) FDebug::AssertFailed(#expr, UE_LOG_SOURCE_FILE(__FILE__), __LINE__, TEXT("%s"), *message);
 #endif
 
 UENUM(BlueprintType)
@@ -64,7 +67,7 @@ enum ELoggingOptions
  * A library of log utility functions
  */
 UCLASS(Abstract)
-class DEBUG_API ULog final : public UBlueprintFunctionLibrary
+class DEBUG_API ULog : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 	
@@ -73,16 +76,18 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
 		static void ObjectValidity(UObject* ObjectRef, ELoggingOptions LoggingOption = LO_Console);
 
-	// Log a debug message to the console or viewport (FString version)
+	// Log a debug message to the console or viewport
 	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
 		static void DebugMessage(EDebugLogType LogSeverity, const FString& Message, ELoggingOptions LoggingOption = LO_Console, bool bAddPrefix = false, float TimeToDisplay = 5.0f);
-
-	// Log a debug message to the console or viewport (FName version)
-	static void DebugMessage(EDebugLogType LogSeverity, const FName& Message, ELoggingOptions LoggingOption = LO_Console, bool bAddPrefix = false, float TimeToDisplay = 5.0f);	
+		static void DebugMessage(EDebugLogType LogSeverity, const FName& Message, ELoggingOptions LoggingOption = LO_Console, bool bAddPrefix = false, float TimeToDisplay = 5.0f);	
 
 	// Log a fatal error message to the console and crash
 	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
 		static void Fatal(const FString& Message);
+
+	// Log a fatal error message to the console and crash, if the condition is met
+	UFUNCTION(BlueprintCallable, Category = "Debug", DisplayName = "Fatal (Condition)", meta = (DevelopmentOnly))
+		static void Fatal_WithCondition(const FString& Message, bool bCondition);
 
 	// Log an error message to the console or viewport
 	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
@@ -103,35 +108,31 @@ public:
 	// Log a hello message to the console or viewport
 	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
 		static void Hello(ELoggingOptions LoggingOption = LO_Console);
-	
-	// Log a yes message to the console or viewport
-	static void Yes(ELoggingOptions LoggingOption = LO_Console);
-
-	// Log a no message to the console or viewport
-	static void No(ELoggingOptions LoggingOption = LO_Console);
-
-	// Log a 'valid' message to the console or viewport
-	static void Valid(ELoggingOptions LoggingOption = LO_Console);
-
-	// Log an 'invalid' message to the console or viewport
-	static void Invalid(ELoggingOptions LoggingOption = LO_Console);
 
 	// Log a 'valid' message to the console or viewport
 	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
 		static void Valid(const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console);
+	// Log a 'valid' message to the console or viewport
+		static void Valid(ELoggingOptions LoggingOption = LO_Console);
 
 	// Log an 'invalid' message to the console or viewport
 	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
 		static void Invalid(const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console);
+	// Log an 'invalid' message to the console or viewport
+		static void Invalid(ELoggingOptions LoggingOption = LO_Console);
 
 	// Log a yes message to the console or viewport (with an optional prefix and suffix string)
 	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
 		static void Yes(const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console);
+	// Log a yes message to the console or viewport
+		static void Yes(ELoggingOptions LoggingOption = LO_Console);
 
 	// Log a no message to the console or viewport (with an optional prefix and suffix string)
 	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
 		static void No(const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console);
-
+	// Log a no message to the console or viewport
+		static void No(ELoggingOptions LoggingOption = LO_Console);
+	
 	// Log a number to the console or viewport (int8 version)
 	static void Number(int8 Number, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
@@ -246,6 +247,38 @@ protected:
 	// Log a number to the console or viewport (float version)
 	UFUNCTION(BlueprintCallable, Category = "Debug", DisplayName = "Number (float)", meta = (DevelopmentOnly))
 		static void Number_Float_Blueprint(float Number, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+
+	// Verifies the object and if it fails generates a callstack leading to that point to the Output Log window. (With an optional message parameter)
+	UFUNCTION(BlueprintCallable, Category = "Debug", DisplayName = "Ensure (Object)", meta = (DevelopmentOnly))
+		static void EnsureObject(UObject* Object, bool bAlwaysEnsure = false, const FString& Message = "");
+
+	// Verifies the expression and if it fails generates a callstack leading to that point to the Output Log window. (With an optional message parameter)
+	UFUNCTION(BlueprintCallable, Category = "Debug", DisplayName = "Ensure (Condition)", meta = (DevelopmentOnly))
+		static void EnsureCondition(bool bCondition, bool bAlwaysEnsure = false, const FString& Message = "");
+
+	// This function executes the expression and, if it results in a false assertion, halts execution. 
+	UFUNCTION(BlueprintCallable, Category = "Debug", DisplayName = "Check (Object)", meta = (DevelopmentOnly))
+		static void CheckObject(UObject* Object, const FString& Message);
+
+	// This function executes the expression and, if it results in a false assertion, halts execution. 
+	UFUNCTION(BlueprintCallable, Category = "Debug", DisplayName = "Check (Condition)", meta = (DevelopmentOnly))
+		static void CheckCondition(bool bCondition, const FString& Message);
+
+	// This function doesn't take an expression and is used to mark code paths that should never execute.
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
+		static void CheckNoEntry();
+
+	// This function is used to prevent calls from being reentrant to a given function. Use it for functions that should only be called once and must be completed before being called again.
+	UFUNCTION(BlueprintCallable, Category = "Debug", DisplayName = "Check No Re-Entry", meta = (DevelopmentOnly))
+		static void CheckNoReEntry();
+
+	// This function is used to prevent code that should never be called recursively.
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
+		static void CheckNoRecursion();
+
+	// This function is used to mark a function that should be overridden because the base function contains no implementation. Alternatively, this can be used anywhere where a function has not been implemented yet.
+	UFUNCTION(BlueprintCallable, Category = "Debug", DisplayName = "Un-Implemented", meta = (DevelopmentOnly))
+		static void UnImplemented();
 
 private:
 	static void LogInt(int64 Number, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);

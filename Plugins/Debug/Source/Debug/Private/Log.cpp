@@ -101,6 +101,12 @@ void ULog::Fatal(const FString& Message)
 	UE_LOG(LogFatal, Fatal, TEXT("%s%s"), NET_MODE_PREFIX, *Message)
 }
 
+void ULog::Fatal_WithCondition(const FString& Message, const bool bCondition)
+{
+	if (bCondition)
+		Fatal(Message);
+}
+
 void ULog::Error(const FString& Message, const ELoggingOptions LoggingOption, const bool bAddPrefix, const float TimeToDisplay)
 {
 	FString NewMessage;
@@ -703,6 +709,90 @@ void ULog::Number_Int_Blueprint(const int32 Number, const FString& Prefix, const
 void ULog::Number_Float_Blueprint(const float Number, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 	LogFloat(Number, Prefix, Suffix, LoggingOption, TimeToDisplay);
+}
+
+void ULog::CheckObject(UObject* Object, const FString& Message)
+{
+	if (!Object)
+		ASSERT(Object, Message);
+}
+
+void ULog::CheckCondition(const bool bCondition, const FString& Message)
+{
+	if (!bCondition)
+		ASSERT(bCondition, Message);
+}
+
+void ULog::CheckNoEntry()
+{
+	checkNoEntry();
+}
+
+void ULog::CheckNoReEntry()
+{
+	checkNoReentry();
+}
+
+void ULog::CheckNoRecursion()
+{
+	checkNoRecursion();
+}
+
+void ULog::UnImplemented()
+{
+	unimplemented();
+}
+
+void ULog::EnsureObject(UObject* Object, const bool bAlwaysEnsure, const FString& Message)
+{
+	if (Message.IsEmpty())
+	{
+		if (bAlwaysEnsure)
+		{
+			ensureAlways(Object != nullptr);
+		}
+		else
+		{
+			ensure(Object != nullptr);
+		}
+	}
+	else
+	{
+		if (bAlwaysEnsure)
+		{
+			ensureAlwaysMsgf(Object != nullptr, TEXT("Ensure (Object): %s"), *Message);
+		}
+		else
+		{
+			ensureMsgf(Object != nullptr, TEXT("Ensure (Object): %s"), *Message);
+		}
+	}
+}
+
+void ULog::EnsureCondition(const bool bCondition, const bool bAlwaysEnsure, const FString& Message)
+{
+	if (Message.IsEmpty())
+	{
+		if (bAlwaysEnsure)
+		{
+			ensureAlways(bCondition);
+		}
+		else
+		{
+			ensure(bCondition);
+		}
+	}
+	else
+	{
+		if (bAlwaysEnsure)
+		{
+			ensureAlwaysMsgf(bCondition, TEXT("Ensure (Bool): %s"), *Message);
+		}
+		else
+		{
+			ensureMsgf(bCondition, TEXT("Ensure (Bool): %s"), *Message);
+		}
+	}
 }
 
 void ULog::LogInt(const int64 Number, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
