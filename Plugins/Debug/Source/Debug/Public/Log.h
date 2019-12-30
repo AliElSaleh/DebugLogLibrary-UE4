@@ -34,7 +34,7 @@
 #define CUR_FUNC_SIG_WITH_LINE (FString(__FUNCSIG__) + ": " + CUR_LINE)
 
 // Development build only. Returns the net mode as a string, possible outputs are, Empty String, [Client], [Server] or [Dedicated Server]
-#define NET_MODE *(!GWorld ? FString("") \
+#define NET_MODE_PREFIX *(!GWorld ? FString("") \
 	: GWorld->GetNetMode() == NM_Client ? FString("[Client] ") + FString::FromInt(GPlayInEditorID - 1) + FString(": ") \
 	: GWorld->GetNetMode() == NM_ListenServer ? FString("[Server]: ") \
 	: GWorld->GetNetMode() == NM_DedicatedServer ? FString("[Dedicated Server]: ") \
@@ -244,7 +244,7 @@ protected:
 		static void Number_Int_Blueprint(int32 Number, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
 	// Log a number to the console or viewport (float version)
-	UFUNCTION(BlueprintCallable, Category = "Debug", DisplayName = "Number (float)")
+	UFUNCTION(BlueprintCallable, Category = "Debug", DisplayName = "Number (float)", meta = (DevelopmentOnly))
 		static void Number_Float_Blueprint(float Number, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
 private:
