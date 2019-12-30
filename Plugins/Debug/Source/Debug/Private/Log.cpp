@@ -96,6 +96,12 @@ void ULog::DebugMessage(const EDebugLogType LogSeverity, const FName& Message, c
 	}
 }
 
+void ULog::DebugMessage_WithCondition(const EDebugLogType LogSeverity, const bool bCondition, const FString& Message, const ELoggingOptions LoggingOption, const bool bAddPrefix, const float TimeToDisplay)
+{
+	if (bCondition)
+		DebugMessage(LogSeverity, Message, LoggingOption, bAddPrefix, TimeToDisplay);
+}
+
 void ULog::Fatal(const FString& Message)
 {
 	UE_LOG(LogFatal, Fatal, TEXT("%s%s"), NET_MODE_PREFIX, *Message)
@@ -130,6 +136,12 @@ void ULog::Error(const FString& Message, const ELoggingOptions LoggingOption, co
 	}
 }
 
+void ULog::Error_WithCondition(const FString& Message, const bool bCondition, const ELoggingOptions LoggingOption, const bool bAddPrefix, const float TimeToDisplay)
+{
+	if (bCondition)
+		Error(Message, LoggingOption, bAddPrefix, TimeToDisplay);
+}
+
 void ULog::Success(const FString& Message, const ELoggingOptions LoggingOption, const bool bAddPrefix, const float TimeToDisplay)
 {
 	FString NewMessage;
@@ -151,6 +163,12 @@ void ULog::Success(const FString& Message, const ELoggingOptions LoggingOption, 
 		UE_LOG(LogSuccess, Warning, TEXT("%s"), *NewMessage)
 		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, FColor::Green, NewMessage);
 	}
+}
+
+void ULog::Success_WithCondition(const FString& Message, const bool bCondition, const ELoggingOptions LoggingOption, const bool bAddPrefix, const float TimeToDisplay)
+{
+	if (bCondition)
+		Success(Message, LoggingOption, bAddPrefix, TimeToDisplay);
 }
 
 void ULog::Warning(const FString& Message, const ELoggingOptions LoggingOption, const bool bAddPrefix, const float TimeToDisplay)
@@ -176,6 +194,12 @@ void ULog::Warning(const FString& Message, const ELoggingOptions LoggingOption, 
 	}
 }
 
+void ULog::Warning_WithCondition(const FString& Message, const bool bCondition, const ELoggingOptions LoggingOption, const bool bAddPrefix, const float TimeToDisplay)
+{
+	if (bCondition)
+		Warning(Message, LoggingOption, bAddPrefix, TimeToDisplay);
+}
+
 void ULog::Info(const FString& Message, const ELoggingOptions LoggingOption, const bool bAddPrefix, const float TimeToDisplay)
 {
 	FString NewMessage;
@@ -197,6 +221,12 @@ void ULog::Info(const FString& Message, const ELoggingOptions LoggingOption, con
 		UE_LOG(LogMessage, Display, TEXT("%s"), *NewMessage)
 		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, FColor::Cyan, NewMessage);
 	}
+}
+
+void ULog::Info_WithCondition(const FString& Message, const bool bCondition, const ELoggingOptions LoggingOption, const bool bAddPrefix, const float TimeToDisplay)
+{
+	if (bCondition)
+		Info(Message, LoggingOption, bAddPrefix, TimeToDisplay);
 }
 
 void ULog::Hello(const ELoggingOptions LoggingOption)
