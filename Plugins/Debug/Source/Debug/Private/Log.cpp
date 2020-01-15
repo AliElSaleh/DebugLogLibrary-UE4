@@ -4,6 +4,10 @@
 #include "Debug.h"
 #include "Engine/Engine.h"
 #include "Math/Vector.h"
+#include <ios>
+#include <sstream>
+
+#define ROMAN_NUMERALS TEXT("NIVXLCDM");
 
 void ULog::ObjectValidity(UObject* ObjectRef, const ELoggingOptions LoggingOption)
 {
@@ -390,114 +394,114 @@ void ULog::Invalid(const FString& Prefix, const FString& Suffix, const ELoggingO
 	}
 }
 
-void ULog::Number(const int8 Number, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Number(const int8 Number, const FString& Prefix, const FString& Suffix, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
-	LogInt(Number, Prefix, Suffix, LoggingOption, TimeToDisplay);
+	LogInt(Number, Prefix, Suffix, NumberSystem, LoggingOption, TimeToDisplay);
 }
 
-void ULog::Number(const int16 Number, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Number(const int16 Number, const FString& Prefix, const FString& Suffix, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
-	LogInt(Number, Prefix, Suffix, LoggingOption, TimeToDisplay);
+	LogInt(Number, Prefix, Suffix, NumberSystem, LoggingOption, TimeToDisplay);
 }
 
-void ULog::Number(const int32 Number, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Number(const int32 Number, const FString& Prefix, const FString& Suffix, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
-	LogInt(Number, Prefix, Suffix, LoggingOption, TimeToDisplay);
+	LogInt(Number, Prefix, Suffix, NumberSystem, LoggingOption, TimeToDisplay);
 }
 
-void ULog::Number(const int64 Number, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Number(const int64 Number, const FString& Prefix, const FString& Suffix, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
-	LogInt(Number, Prefix, Suffix, LoggingOption, TimeToDisplay);
+	LogInt(Number, Prefix, Suffix, NumberSystem, LoggingOption, TimeToDisplay);
 }
 
-void ULog::Number(const uint8 Number, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Number(const uint8 Number, const FString& Prefix, const FString& Suffix, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
-	LogUInt(Number, Prefix, Suffix, LoggingOption, TimeToDisplay);
+	LogUInt(Number, Prefix, Suffix, NumberSystem, LoggingOption, TimeToDisplay);
 }
 
-void ULog::Number(const uint16 Number, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Number(const uint16 Number, const FString& Prefix, const FString& Suffix, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
-	LogUInt(Number, Prefix, Suffix, LoggingOption, TimeToDisplay);
+	LogUInt(Number, Prefix, Suffix, NumberSystem, LoggingOption, TimeToDisplay);
 }
 
-void ULog::Number(const uint32 Number, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Number(const uint32 Number, const FString& Prefix, const FString& Suffix, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
-	LogUInt(Number, Prefix, Suffix, LoggingOption, TimeToDisplay);
+	LogUInt(Number, Prefix, Suffix, NumberSystem, LoggingOption, TimeToDisplay);
 }
 
-void ULog::Number(const uint64 Number, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Number(const uint64 Number, const FString& Prefix, const FString& Suffix, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
-	LogUInt(Number, Prefix, Suffix, LoggingOption, TimeToDisplay);
+	LogUInt(Number, Prefix, Suffix, NumberSystem, LoggingOption, TimeToDisplay);
 }
 
-void ULog::Number(const float Number, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Number(const float Number, const FString& Prefix, const FString& Suffix, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
-	LogFloat(Number, Prefix, Suffix, LoggingOption, TimeToDisplay);
+	LogFloat(Number, Prefix, Suffix, NumberSystem, LoggingOption, TimeToDisplay);
 }
 
-void ULog::Number(const double Number, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Number(const double Number, const FString& Prefix, const FString& Suffix, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
-	LogFloat(Number, Prefix, Suffix, LoggingOption, TimeToDisplay);
+	LogFloat(Number, Prefix, Suffix, NumberSystem, LoggingOption, TimeToDisplay);
 }
 
-void ULog::Number(const long Number, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Number(const long Number, const FString& Prefix, const FString& Suffix, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
-	LogLongInt(Number, Prefix, Suffix, LoggingOption, TimeToDisplay);
+	LogLongInt(Number, Prefix, Suffix, NumberSystem, LoggingOption, TimeToDisplay);
 }
 
-void ULog::Number(const int8 Number, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Number(const int8 Number, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
-	LogInt(Number, "", "", LoggingOption, TimeToDisplay);
+	LogInt(Number, "", "", NumberSystem, LoggingOption, TimeToDisplay);
 }
 
-void ULog::Number(const int16 Number, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Number(const int16 Number, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
-	LogInt(Number, "", "", LoggingOption, TimeToDisplay);
+	LogInt(Number, "", "", NumberSystem, LoggingOption, TimeToDisplay);
 }
 
-void ULog::Number(const int32 Number, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Number(const int32 Number, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
-	LogInt(Number, "", "", LoggingOption, TimeToDisplay);
+	LogInt(Number, "", "", NumberSystem, LoggingOption, TimeToDisplay);
 }
 
-void ULog::Number(const int64 Number, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Number(const int64 Number, EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
-	LogInt(Number, "", "", LoggingOption, TimeToDisplay);
+	LogInt(Number, "", "", NumberSystem, LoggingOption, TimeToDisplay);
 }
 
-void ULog::Number(const uint8 Number, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Number(const uint8 Number, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
-	LogUInt(Number, "", "", LoggingOption, TimeToDisplay);
+	LogUInt(Number, "", "", NumberSystem, LoggingOption, TimeToDisplay);
 }
 
-void ULog::Number(const uint16 Number, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Number(const uint16 Number, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
-	LogUInt(Number, "", "", LoggingOption, TimeToDisplay);
+	LogUInt(Number, "", "", NumberSystem, LoggingOption, TimeToDisplay);
 }
 
-void ULog::Number(const uint32 Number, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Number(const uint32 Number, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
-	LogUInt(Number, "", "", LoggingOption, TimeToDisplay);
+	LogUInt(Number, "", "", NumberSystem, LoggingOption, TimeToDisplay);
 }
 
-void ULog::Number(const uint64 Number, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Number(const uint64 Number, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
-	LogUInt(Number, "", "", LoggingOption, TimeToDisplay);
+	LogUInt(Number, "", "", NumberSystem, LoggingOption, TimeToDisplay);
 }
 
-void ULog::Number(const float Number, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Number(const float Number, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
-	LogFloat(Number, "", "", LoggingOption, TimeToDisplay);
+	LogFloat(Number, "", "", NumberSystem, LoggingOption, TimeToDisplay);
 }
 
-void ULog::Number(const double Number, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Number(const double Number, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
-	LogFloat(Number, "", "", LoggingOption, TimeToDisplay);
+	LogFloat(Number, "", "", NumberSystem, LoggingOption, TimeToDisplay);
 }
 
-void ULog::Number(const long Number, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Number(const long Number, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
-	LogLongInt(Number, "", "", LoggingOption, TimeToDisplay);
+	LogLongInt(Number, "", "", NumberSystem, LoggingOption, TimeToDisplay);
 }
 
 void ULog::Percent(const float Number, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
@@ -829,14 +833,14 @@ void ULog::Capsule(const FCapsuleShape& Capsule, const FString& Prefix, const FS
 	}
 }
 
-void ULog::Number_Int_Blueprint(const int32 Number, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Number_Int_Blueprint(const int32 Number, const FString& Prefix, const FString& Suffix, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
-	LogInt(Number, Prefix, Suffix, LoggingOption, TimeToDisplay);
+	LogInt(Number, Prefix, Suffix, NumberSystem, LoggingOption, TimeToDisplay);
 }
 
-void ULog::Number_Float_Blueprint(const float Number, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Number_Float_Blueprint(const float Number, const FString& Prefix, const FString& Suffix, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
-	LogFloat(Number, Prefix, Suffix, LoggingOption, TimeToDisplay);
+	LogFloat(Number, Prefix, Suffix, NumberSystem, LoggingOption, TimeToDisplay);
 }
 
 void ULog::CheckObject(UObject* Object, const FString& Message)
@@ -923,7 +927,50 @@ void ULog::EnsureCondition(const bool bCondition, const bool bAlwaysEnsure, cons
 	}
 }
 
-void ULog::LogInt(const int64 Number, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::LogInt(const int64 Number, const FString& Prefix, const FString& Suffix, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+{
+	FString FinalNumber;
+	switch (NumberSystem)
+	{
+		case DLNS_Decimal:
+			FinalNumber = FString::FromInt(Number);
+		break;
+
+		case DLNS_Hex:
+			FinalNumber = DecimalToHex(Number);
+		break;
+
+		case DLNS_Binary:
+			FinalNumber = DecimalToBinary(Number);
+		break;
+
+		case DLNS_Octal:
+			FinalNumber = DecimalToOctal(Number);
+		break;
+
+		case DLNS_Roman:
+			FinalNumber = DecimalToRomanNumeral(Number);
+		break;
+	}
+	
+	//GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, FColor::Cyan, NET_MODE_PREFIX + FString("Hex: ") + DecimalToHex(Number) + Suffix);
+
+	if (LoggingOption == LO_Viewport)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, FColor::Cyan, NET_MODE_PREFIX + Prefix + FinalNumber + Suffix);
+	}
+	else if (LoggingOption == LO_Console)
+	{
+		UE_LOG(LogNumber, Warning, TEXT("%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *FinalNumber, *Suffix)
+	}
+	else if (LoggingOption == LO_Both)
+	{
+		UE_LOG(LogNumber, Warning, TEXT("%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *FinalNumber, *Suffix)
+		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, FColor::Cyan, NET_MODE_PREFIX + FinalNumber + Suffix);
+	}
+}
+
+void ULog::LogUInt(const uint64 Number, const FString& Prefix, const FString& Suffix, EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 	if (LoggingOption == LO_Viewport)
 	{
@@ -940,24 +987,7 @@ void ULog::LogInt(const int64 Number, const FString& Prefix, const FString& Suff
 	}
 }
 
-void ULog::LogUInt(const uint64 Number, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
-{
-	if (LoggingOption == LO_Viewport)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, FColor::Cyan, NET_MODE_PREFIX + Prefix + FString::FromInt(Number) + Suffix);
-	}
-	else if (LoggingOption == LO_Console)
-	{
-		UE_LOG(LogNumber, Warning, TEXT("%s%s%lld%s"), NET_MODE_PREFIX, *Prefix, Number, *Suffix)
-	}
-	else if (LoggingOption == LO_Both)
-	{
-		UE_LOG(LogNumber, Warning, TEXT("%s%s%lld%s"), NET_MODE_PREFIX, *Prefix, Number, *Suffix)
-		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, FColor::Cyan, NET_MODE_PREFIX + Prefix + FString::FromInt(Number) + Suffix);
-	}
-}
-
-void ULog::LogFloat(const float Number, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::LogFloat(const float Number, const FString& Prefix, const FString& Suffix, EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 	if (LoggingOption == LO_Viewport)
 	{
@@ -974,7 +1004,7 @@ void ULog::LogFloat(const float Number, const FString& Prefix, const FString& Su
 	}
 }
 
-void ULog::LogLongInt(const long Number, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::LogLongInt(const long Number, const FString& Prefix, const FString& Suffix, EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 	if (LoggingOption == LO_Viewport)
 	{
@@ -989,4 +1019,245 @@ void ULog::LogLongInt(const long Number, const FString& Prefix, const FString& S
 		UE_LOG(LogNumber, Warning, TEXT("%s%s%d%s"), NET_MODE_PREFIX, *Prefix, Number, *Suffix)
 		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, FColor::Cyan, NET_MODE_PREFIX + Prefix + FString::FromInt(Number) + Suffix);
 	}
+}
+
+FString ULog::DecimalToHex(const int64 DecimalNumber)
+{
+	if (DecimalNumber < 10 && DecimalNumber >= 0)
+		return FString::FromInt(DecimalNumber);
+
+#if PLATFORM_64BITS
+	int64 Number = DecimalNumber;
+#else
+	int32 Number = DecimalNumber;
+#endif
+
+	//FString BinaryNumber = DecimalToBinary(DecimalNumber);
+	//TArray<int32> Zeros;
+	//TArray<int32> Ones;
+
+	//for (int32 i = 0; i < BinaryNumber.GetCharArray().Num(); i++)
+	//	Zeros.Add(BinaryNumber.Find("0"));
+
+	//for (int32 i = 0; i < BinaryNumber.GetCharArray().Num(); i++)
+	//	Ones.Add(BinaryNumber.Find("1"));
+
+	//for (int32 i = 0; i < Zeros.Num(); i++)
+	//{
+	//	BinaryNumber.RemoveAt(i);
+	//	BinaryNumber.InsertAt(i, '1');
+	//}
+
+	//for (int32 i = 0; i < Ones.Num(); i++)
+	//{
+	//	BinaryNumber.RemoveAt(i);
+	//	BinaryNumber.InsertAt(i, '0');
+	//}
+
+	//BinaryNumber.AppendChar('1');
+
+	//FString BetterResult = BinaryToHex(BinaryNumber);
+
+	bool bIsNegative = false;
+
+	if (DecimalNumber < 0)
+	{
+		bIsNegative = true;
+		Number = -Number;
+	}
+
+	std::stringstream SS;
+	SS << std::hex << Number;
+	FString Result = FString(SS.str().c_str());
+	
+	if (bIsNegative)
+		Result.InsertAt(0, '-');
+
+	//if (bIsNegative)
+	//	return BinaryToHex(BinaryNumber);
+
+	return Result.ToUpper();
+
+	//const auto CalculateDigits = [&](int64 Number)
+	//{
+	//	int64 Digits = 0;
+	//	while (Number)
+	//	{
+	//		Number /= 10;
+	//		Digits++;
+	//	}
+
+	//	return Digits;
+	//};
+
+	//// Char array to store hexadecimal number
+	//TCHAR HexadecimalValues[100] = {0};
+	//
+	//// Counter for hexadecimal number array
+	//int32 i = 0;
+	//
+	//while (DecimalNumber != 0)
+	//{
+	//	const int32 Remainder = DecimalNumber % 16;
+	//
+	//	if (Remainder < 10)
+	//	{
+	//		HexadecimalValues[i++] = Remainder + 48;
+	//	}
+	//	else
+	//	{
+	//		HexadecimalValues[i++] = Remainder + 55;
+	//	}
+	//
+	//	//i++;
+	//
+	//	DecimalNumber /= 16;
+	//}
+	//
+	//FString Result;
+	//
+	//// Adding hexadecimal values to Result, in reverse order 
+	//for (int32 j = i-1; j >= 0 ; j--)
+	//	Result.AppendChar(HexadecimalValues[j]);
+	//
+	//return Result;
+}
+
+FString ULog::DecimalToBinary(const int64 DecimalNumber)
+{
+	if (DecimalNumber == 0)
+		return "0";
+
+	if (DecimalNumber == 1)
+		return "1";
+	
+	// Array to store binary numbers
+#if PLATFORM_64BITS
+	int64 BinaryArray[64];
+#else
+	int32 BinaryArray[64];
+#endif
+
+#if PLATFORM_64BITS
+	int64 Number = DecimalNumber;
+#else
+	int32 Number = DecimalNumber;
+#endif
+
+#if PLATFORM_64BITS
+	int64 i, j;
+#else
+	int32 i, j;
+#endif
+	
+	bool bIsNegative = false;
+
+	if (DecimalNumber < 0)
+	{
+		bIsNegative = true;
+		Number = -Number;
+	}
+
+	for (i = 0; Number != 0; i++)
+	{
+		// Store the remainder in binary array
+		BinaryArray[i] = Number % 2;
+		Number /= 2;
+	}
+
+	FString Result;
+
+	// Adding each digit into Result, in reverse order
+	for (j = i - 1; j >= 0; j--)
+		Result.AppendInt(BinaryArray[j]);
+
+	if (bIsNegative)
+		Result.InsertAt(0, '-');
+
+	return Result;
+}
+
+FString ULog::DecimalToOctal(const int64 DecimalNumber)
+{
+	if (DecimalNumber == 0)
+		return "0";
+
+#if PLATFORM_64BITS
+	int64 OctalArray[64];
+#else
+	int32 OctalArray[64];
+#endif
+
+#if PLATFORM_64BITS
+	int64 Number = DecimalNumber;
+#else
+	int32 Number = DecimalNumber;
+#endif
+
+#if PLATFORM_64BITS
+	int64 i, j;
+#else
+	int32 i, j;
+#endif
+
+	bool bIsNegative = false;
+
+	if (DecimalNumber < 0)
+	{
+		bIsNegative = true;
+		Number = -Number;
+	}
+	
+	for (i = 0; Number != 0; i++)
+	{
+		OctalArray[i] = Number % 8;
+		Number /= 8;
+	}
+
+	FString Result;
+
+	// Adding each digit into Result, in reverse order
+	for (j = i - 1; j >= 0; j--)
+		Result.AppendInt(OctalArray[j]);
+
+	if (bIsNegative)
+		Result.InsertAt(0, '-');
+
+	return Result;
+}
+
+FString ULog::DecimalToRomanNumeral(int64 DecimalNumber)
+{
+	if (DecimalNumber == 0)
+		return "N";
+
+	bool bIsNegative = false;
+	if (DecimalNumber < 0)
+	{
+		bIsNegative = true;
+		DecimalNumber = -DecimalNumber;
+	}
+
+	TArray<int64> RomanNumeral_Integers = {1, 4, 5, 9, 10, 40, 50, 90, 100, 400, 500, 900, 1000};
+	TArray<FString> RomanNumeral_Symbols = {"I", "IV", "V", "IX", "X", "XL", "L", "XC", "C", "CD", "D", "CM", "M"};
+
+	int32 i = RomanNumeral_Symbols.Num() - 1;
+	FString Result;
+	while (DecimalNumber > 0)
+	{	
+		int64 Quotient = DecimalNumber/RomanNumeral_Integers[i];
+		DecimalNumber %= RomanNumeral_Integers[i];
+
+		while (Quotient--)
+		{
+			Result.Append(RomanNumeral_Symbols[i]);
+		}
+
+		i--;
+	}
+
+	if (bIsNegative)
+		Result.InsertAt(0, '-');
+	
+	return Result;
 }
