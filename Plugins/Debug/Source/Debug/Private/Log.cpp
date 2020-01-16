@@ -2,12 +2,23 @@
 
 #include "Log.h"
 #include "Debug.h"
+
 #include "Engine/Engine.h"
+
 #include "Math/Vector.h"
-#include <ios>
+
+#include "DebugLogLibrarySettings.h"
+
 #include <sstream>
 
-#define ROMAN_NUMERALS TEXT("NIVXLCDM");
+const UDebugLogLibrarySettings* ULog::Settings;
+
+void ULog::PostInitProperties()
+{
+	Super::PostInitProperties();
+
+	Settings = GetDefault<UDebugLogLibrarySettings>();
+}
 
 void ULog::ObjectValidity(UObject* ObjectRef, const ELoggingOptions LoggingOption)
 {
@@ -104,6 +115,11 @@ void ULog::DebugMessage_WithCondition(const EDebugLogType LogSeverity, const boo
 {
 	if (bCondition)
 		DebugMessage(LogSeverity, Message, LoggingOption, bAddPrefix, TimeToDisplay);
+}
+
+void ULog::Crash(const FString& Message)
+{
+	UE_LOG(LogCrash, Fatal, TEXT("%s%s"), NET_MODE_PREFIX, *Message)
 }
 
 void ULog::Fatal(const FString& Message)

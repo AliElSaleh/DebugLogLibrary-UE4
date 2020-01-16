@@ -7,6 +7,7 @@
 
 DECLARE_LOG_CATEGORY_EXTERN(LogSuccess, Display, All)
 DECLARE_LOG_CATEGORY_EXTERN(LogFatal, Fatal, All)
+DECLARE_LOG_CATEGORY_EXTERN(LogCrash, Fatal, All)
 DECLARE_LOG_CATEGORY_EXTERN(LogError, Error, All)
 DECLARE_LOG_CATEGORY_EXTERN(LogWarning, Warning, All)
 DECLARE_LOG_CATEGORY_EXTERN(LogNumber, Display, All)
@@ -25,6 +26,12 @@ class FDebugModule : public IModuleInterface
 public:
 
 	/** IModuleInterface implementation */
-	virtual void StartupModule() override;
-	virtual void ShutdownModule() override;
+	void StartupModule() override;
+	void ShutdownModule() override;
+	bool SupportsDynamicReloading() override;
+
+	bool HandleSettingsSaved();
+
+	void RegisterSettings();
+	void UnRegisterSettings();
 };

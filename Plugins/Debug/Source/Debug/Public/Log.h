@@ -95,6 +95,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Debug", DisplayName = "Debug Message (Condition)", meta = (DevelopmentOnly))
 		static void DebugMessage_WithCondition(EDebugLogType LogSeverity, bool bCondition, const FString& Message, ELoggingOptions LoggingOption = LO_Console, bool bAddPrefix = false, float TimeToDisplay = 5.0f);
 
+	// Crash the game, and log the message to the console and log file
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
+		static void Crash(const FString& Message = "");
+		
 	// Log a fatal error message to the console and crash
 	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
 		static void Fatal(const FString& Message);
@@ -279,6 +283,8 @@ public:
 	static void Capsule(const FCapsuleShape& Capsule, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
 protected:
+	void PostInitProperties() override;
+
 	// Log a number to the console or viewport
 	UFUNCTION(BlueprintCallable, Category = "Debug", DisplayName = "Number (int)", meta = (DevelopmentOnly))
 		static void Number_Int_Blueprint(int32 Number, const FString& Prefix = "", const FString& Suffix = "", EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
@@ -329,4 +335,6 @@ private:
 	static FString DecimalToBinary(int64 DecimalNumber);
 	static FString DecimalToOctal(int64 DecimalNumber);
 	static FString DecimalToRomanNumeral(int64 DecimalNumber);
+
+	static const class UDebugLogLibrarySettings* Settings;
 };
