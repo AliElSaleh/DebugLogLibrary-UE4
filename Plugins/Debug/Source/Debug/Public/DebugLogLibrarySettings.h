@@ -18,16 +18,16 @@ public:
 	UDebugLogLibrarySettings(const FObjectInitializer& ObjectInitializer);
 
 	UPROPERTY(EditAnywhere, config, Category = "Viewport Log Colors")
-		FLinearColor InfoColor = FColor::Cyan;
+		FColor InfoColor = FColor::Cyan;
 	
 	UPROPERTY(EditAnywhere, config, Category = "Viewport Log Colors")
-		FLinearColor ErrorColor = FColor::Red;
+		FColor ErrorColor = FColor::Red;
 	
 	UPROPERTY(EditAnywhere, config, Category = "Viewport Log Colors")
-		FLinearColor WarningColor = FColor::Yellow;
+		FColor WarningColor = FColor::Yellow;
 	
 	UPROPERTY(EditAnywhere, config, Category = "Viewport Log Colors")
-		FLinearColor SuccessColor = FColor::Green;
+		FColor SuccessColor = FColor::Green;
 
 	UPROPERTY(EditAnywhere, config, Category = "Settings")
 		uint8 bUseTwosComplimentForDecimalToHexConversion : 1;
