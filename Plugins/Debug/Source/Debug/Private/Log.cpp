@@ -1254,14 +1254,26 @@ FString ULog::DecimalToRomanNumeral(int64 DecimalNumber)
 		DecimalNumber = -DecimalNumber;
 	}
 
+#if PLATFORM_64BITS
 	TArray<int64> RomanNumeral_Integers = {1, 4, 5, 9, 10, 40, 50, 90, 100, 400, 500, 900, 1000};
+#else
+	TArray<int32> RomanNumeral_Integers = {1, 4, 5, 9, 10, 40, 50, 90, 100, 400, 500, 900, 1000};
+#endif
+
 	TArray<FString> RomanNumeral_Symbols = {"I", "IV", "V", "IX", "X", "XL", "L", "XC", "C", "CD", "D", "CM", "M"};
 
+#if PLATFORM_64BITS
+	int64 i = RomanNumeral_Symbols.Num() - 1;
+	int64 Quotient = 0;
+#else
 	int32 i = RomanNumeral_Symbols.Num() - 1;
+	int32 Quotient = 0;
+#endif
+	
 	FString Result;
 	while (DecimalNumber > 0)
 	{	
-		int64 Quotient = DecimalNumber/RomanNumeral_Integers[i];
+		Quotient = DecimalNumber/RomanNumeral_Integers[i];
 		DecimalNumber %= RomanNumeral_Integers[i];
 
 		while (Quotient--)
