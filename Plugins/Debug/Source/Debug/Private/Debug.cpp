@@ -4,8 +4,6 @@
 
 #include "DebugLogLibrarySettings.h"
 #include "ISettingsModule.h"
-#include "ISettingsSection.h"
-#include "ISettingsContainer.h"
 #include "Log.h"
 
 #define LOCTEXT_NAMESPACE "FDebugModule"
@@ -45,43 +43,20 @@ bool FDebugModule::HandleSettingsSaved()
 
 void FDebugModule::RegisterSettings()
 {
-	// Registering some settings is just a matter of exposing the default UObject of
-	// your desired class, feel free to add here all those settings you want to expose
-	// to your LDs or artists.
-
 	if (ISettingsModule* SettingsModule = FModuleManager::GetModulePtr<ISettingsModule>("Settings"))
 	{
-		// Create the new category
-		ISettingsContainerPtr SettingsContainer = SettingsModule->GetContainer("Project");
-
-		SettingsContainer->DescribeCategory("Debug Log Library",
-			LOCTEXT("RuntimeWDCategoryName", "Debug Log Library"),
-			LOCTEXT("RuntimeWDCategoryDescription", "Configure the Debug Log Library plugin"));
-
-		// Register the settings
-		ISettingsSectionPtr SettingsSection = SettingsModule->RegisterSettings("Project", "Debug Log Library", "General",
-			LOCTEXT("RuntimeGeneralSettingsName", "General"),
-			LOCTEXT("RuntimeGeneralSettingsDescription", "Configure the Debug Log Library plugin"),
-			GetMutableDefault<UDebugLogLibrarySettings>()
-			);
-
-		// Register the save handler to your settings, you might want to use it to
-		// validate those or just act to settings changes.
-		if (SettingsSection.IsValid())
-		{
-			SettingsSection->OnModified().BindRaw(this, &FDebugModule::HandleSettingsSaved);
-		}
+		SettingsModule->RegisterSettings("Project", "Plugins", "Debug Log Library",
+			LOCTEXT("RuntimeSettingsName", "Debug Log Library"),
+			LOCTEXT("RuntimeSettingsDescription", "Configure the Debug Log Library plugin"),
+			GetMutableDefault<UDebugLogLibrarySettings>());
 	}
 }
 
 void FDebugModule::UnRegisterSettings()
 {
-	// Ensure to unregister all of your registered settings here, hot-reload would
-	// otherwise yield unexpected results.
-
 	if (ISettingsModule* SettingsModule = FModuleManager::GetModulePtr<ISettingsModule>("Settings"))
 	{
-		SettingsModule->UnregisterSettings("Project", "Debug Log Library", "General");
+		SettingsModule->UnregisterSettings("Project", "Plugins", "Debug Log Library");
 	}
 }
 
