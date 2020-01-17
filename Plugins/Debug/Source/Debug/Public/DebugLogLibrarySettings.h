@@ -17,7 +17,7 @@ class DEBUG_API UDebugLogLibrarySettings final : public UObject
 public:
 	UDebugLogLibrarySettings(const FObjectInitializer& ObjectInitializer);
 
-	UPROPERTY(EditAnywhere, config, Category = "Viewport Log Colors")
+	UPROPERTY(EditAnywhere, config, Category = "Viewport Log Colors", DisplayName = "Default Color")
 		FColor InfoColor = FColor::Cyan;
 	
 	UPROPERTY(EditAnywhere, config, Category = "Viewport Log Colors")
@@ -30,5 +30,5 @@ public:
 		FColor SuccessColor = FColor::Green;
 
 	UPROPERTY(EditAnywhere, config, Category = "Settings")
-		uint8 bUseTwosComplimentForDecimalToHexConversion : 1;
+		uint8 bUseTwosComplimentForDecimalToHexConversionOnNegativeNumbers : 1;
 };

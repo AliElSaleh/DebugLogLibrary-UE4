@@ -44,6 +44,14 @@
 #define ASSERT(expr, message) FDebug::AssertFailed(#expr, UE_LOG_SOURCE_FILE(__FILE__), __LINE__, TEXT("%s"), *message);
 #endif
 
+#if PLATFORM_64BITS
+	typedef int64 platform_int;
+	typedef uint64 platform_uint;
+#else
+	typedef int32 platform_int;
+	typedef uint32 platform_uint;
+#endif
+
 UENUM(BlueprintType)
 enum EDebugLogType
 {
@@ -192,10 +200,10 @@ public:
 	static void Number(uint64 Number, const FString& Prefix = "", const FString& Suffix = "", EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
 	// Log a number to the console or viewport (float version)
-	static void Number(float Number, const FString& Prefix = "", const FString& Suffix = "", EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+	static void Number(float Number, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
 	// Log a number to the console or viewport (double version)
-	static void Number(double Number, const FString& Prefix = "", const FString& Suffix = "", EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+	static void Number(double Number, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
 	// Log a number to the console or viewport (long version)
 	static void Number(long Number, const FString& Prefix = "", const FString& Suffix = "", EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
@@ -291,7 +299,7 @@ protected:
 
 	// Log a number to the console or viewport (float version)
 	UFUNCTION(BlueprintCallable, Category = "Debug", DisplayName = "Number (float)", meta = (DevelopmentOnly))
-		static void Number_Float_Blueprint(float Number, const FString& Prefix = "", const FString& Suffix = "", EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+		static void Number_Float_Blueprint(float Number, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
 	// Verifies the object and if it fails generates a callstack leading to that point to the Output Log window. (With an optional message parameter)
 	UFUNCTION(BlueprintCallable, Category = "Debug", DisplayName = "Ensure (Object)", meta = (DevelopmentOnly))
@@ -326,15 +334,18 @@ protected:
 		static void UnImplemented();
 
 private:
-	static void LogInt(int64 Number, const FString& Prefix = "", const FString& Suffix = "", EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
-	static void LogUInt(uint64 Number, const FString& Prefix = "", const FString& Suffix = "", EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+	static void LogInt(platform_int Number, const FString& Prefix = "", const FString& Suffix = "", EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+	static void LogUInt(platform_uint Number, const FString& Prefix = "", const FString& Suffix = "", EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 	static void LogLongInt(long Number, const FString& Prefix = "", const FString& Suffix = "", EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
-	static void LogFloat(float Number, const FString& Prefix = "", const FString& Suffix = "", EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+	static void LogFloat(float Number, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
-	static FString DecimalToHex(int64 DecimalNumber);
-	static FString DecimalToBinary(int64 DecimalNumber);
-	static FString DecimalToOctal(int64 DecimalNumber);
-	static FString DecimalToRomanNumeral(int64 DecimalNumber);
+	static FString DecimalToHex(platform_int DecimalNumber);
+	static FString DecimalToBinary(platform_int DecimalNumber);
+	static FString DecimalToOctal(platform_int DecimalNumber);
+	static FString DecimalToRomanNumeral(platform_int DecimalNumber);
+
+	static platform_int HexDigitToDecimal(FString HexDigit);
+	static FString DecimalToHexDigit(platform_int DecimalNumber);
 
 	static const class UDebugLogLibrarySettings* Settings;
 };

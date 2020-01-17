@@ -11,6 +11,8 @@
 
 #include <sstream>
 
+#define MAX_HEX_VALUES 16
+
 const UDebugLogLibrarySettings* ULog::Settings;
 
 void ULog::PostInitProperties()
@@ -450,14 +452,14 @@ void ULog::Number(const uint64 Number, const FString& Prefix, const FString& Suf
 	LogUInt(Number, Prefix, Suffix, NumberSystem, LoggingOption, TimeToDisplay);
 }
 
-void ULog::Number(const float Number, const FString& Prefix, const FString& Suffix, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Number(const float Number, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
-	LogFloat(Number, Prefix, Suffix, NumberSystem, LoggingOption, TimeToDisplay);
+	LogFloat(Number, Prefix, Suffix, LoggingOption, TimeToDisplay);
 }
 
-void ULog::Number(const double Number, const FString& Prefix, const FString& Suffix, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Number(const double Number, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
-	LogFloat(Number, Prefix, Suffix, NumberSystem, LoggingOption, TimeToDisplay);
+	LogFloat(Number, Prefix, Suffix, LoggingOption, TimeToDisplay);
 }
 
 void ULog::Number(const long Number, const FString& Prefix, const FString& Suffix, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay)
@@ -507,12 +509,12 @@ void ULog::Number(const uint64 Number, const EDebugLogNumberSystems NumberSystem
 
 void ULog::Number(const float Number, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
-	LogFloat(Number, "", "", NumberSystem, LoggingOption, TimeToDisplay);
+	LogFloat(Number, "", "", LoggingOption, TimeToDisplay);
 }
 
 void ULog::Number(const double Number, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
-	LogFloat(Number, "", "", NumberSystem, LoggingOption, TimeToDisplay);
+	LogFloat(Number, "", "", LoggingOption, TimeToDisplay);
 }
 
 void ULog::Number(const long Number, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay)
@@ -854,9 +856,9 @@ void ULog::Number_Int_Blueprint(const int32 Number, const FString& Prefix, const
 	LogInt(Number, Prefix, Suffix, NumberSystem, LoggingOption, TimeToDisplay);
 }
 
-void ULog::Number_Float_Blueprint(const float Number, const FString& Prefix, const FString& Suffix, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Number_Float_Blueprint(const float Number, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
-	LogFloat(Number, Prefix, Suffix, NumberSystem, LoggingOption, TimeToDisplay);
+	LogFloat(Number, Prefix, Suffix, LoggingOption, TimeToDisplay);
 }
 
 void ULog::CheckObject(UObject* Object, const FString& Message)
@@ -943,7 +945,7 @@ void ULog::EnsureCondition(const bool bCondition, const bool bAlwaysEnsure, cons
 	}
 }
 
-void ULog::LogInt(const int64 Number, const FString& Prefix, const FString& Suffix, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::LogInt(const platform_int Number, const FString& Prefix, const FString& Suffix, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 	FString FinalNumber;
 	switch (NumberSystem)
@@ -969,8 +971,6 @@ void ULog::LogInt(const int64 Number, const FString& Prefix, const FString& Suff
 		break;
 	}
 	
-	//GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + FString("Hex: ") + DecimalToHex(Number) + Suffix);
-
 	if (LoggingOption == LO_Viewport)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + FinalNumber + Suffix);
@@ -986,24 +986,48 @@ void ULog::LogInt(const int64 Number, const FString& Prefix, const FString& Suff
 	}
 }
 
-void ULog::LogUInt(const uint64 Number, const FString& Prefix, const FString& Suffix, EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::LogUInt(const platform_uint Number, const FString& Prefix, const FString& Suffix, EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
+	FString FinalNumber;
+	switch (NumberSystem)
+	{
+		case DLNS_Decimal:
+			FinalNumber = FString::FromInt(Number);
+		break;
+
+		case DLNS_Hex:
+			FinalNumber = DecimalToHex(Number);
+		break;
+
+		case DLNS_Binary:
+			FinalNumber = DecimalToBinary(Number);
+		break;
+
+		case DLNS_Octal:
+			FinalNumber = DecimalToOctal(Number);
+		break;
+
+		case DLNS_Roman:
+			FinalNumber = DecimalToRomanNumeral(Number);
+		break;
+	}
+
 	if (LoggingOption == LO_Viewport)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + FString::FromInt(Number) + Suffix);
+		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + FinalNumber + Suffix);
 	}
 	else if (LoggingOption == LO_Console)
 	{
-		UE_LOG(LogNumber, Warning, TEXT("%s%s%lld%s"), NET_MODE_PREFIX, *Prefix, Number, *Suffix)
+		UE_LOG(LogNumber, Warning, TEXT("%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *FinalNumber, *Suffix)
 	}
 	else if (LoggingOption == LO_Both)
 	{
-		UE_LOG(LogNumber, Warning, TEXT("%s%s%lld%s"), NET_MODE_PREFIX, *Prefix, Number, *Suffix)
-		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + FString::FromInt(Number) + Suffix);
+		UE_LOG(LogNumber, Warning, TEXT("%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *FinalNumber, *Suffix)
+		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + FinalNumber + Suffix);
 	}
 }
 
-void ULog::LogFloat(const float Number, const FString& Prefix, const FString& Suffix, EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::LogFloat(const float Number, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 	if (LoggingOption == LO_Viewport)
 	{
@@ -1022,124 +1046,112 @@ void ULog::LogFloat(const float Number, const FString& Prefix, const FString& Su
 
 void ULog::LogLongInt(const long Number, const FString& Prefix, const FString& Suffix, EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
+	FString FinalNumber;
+	switch (NumberSystem)
+	{
+		case DLNS_Decimal:
+			FinalNumber = FString::FromInt(Number);
+		break;
+
+		case DLNS_Hex:
+			FinalNumber = DecimalToHex(Number);
+		break;
+
+		case DLNS_Binary:
+			FinalNumber = DecimalToBinary(Number);
+		break;
+
+		case DLNS_Octal:
+			FinalNumber = DecimalToOctal(Number);
+		break;
+
+		case DLNS_Roman:
+			FinalNumber = DecimalToRomanNumeral(Number);
+		break;
+	}
+
 	if (LoggingOption == LO_Viewport)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + FString::FromInt(Number) + Suffix);
+		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + FinalNumber + Suffix);
 	}
 	else if (LoggingOption == LO_Console)
 	{
-		UE_LOG(LogNumber, Warning, TEXT("%s%s%d%s"), NET_MODE_PREFIX, *Prefix, Number, *Suffix)
+		UE_LOG(LogNumber, Warning, TEXT("%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *FinalNumber, *Suffix)
 	}
 	else if (LoggingOption == LO_Both)
 	{
-		UE_LOG(LogNumber, Warning, TEXT("%s%s%d%s"), NET_MODE_PREFIX, *Prefix, Number, *Suffix)
-		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + FString::FromInt(Number) + Suffix);
+		UE_LOG(LogNumber, Warning, TEXT("%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *FinalNumber, *Suffix)
+		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + FinalNumber + Suffix);
 	}
 }
 
-FString ULog::DecimalToHex(const int64 DecimalNumber)
+FString ULog::DecimalToHex(const platform_int DecimalNumber)
 {
 	if (DecimalNumber < 10 && DecimalNumber >= 0)
 		return FString::FromInt(DecimalNumber);
 
-#if PLATFORM_64BITS
-	int64 Number = DecimalNumber;
-#else
-	int32 Number = DecimalNumber;
-#endif
+	platform_int Number = DecimalNumber;
 
-	//FString BinaryNumber = DecimalToBinary(DecimalNumber);
-	//TArray<int32> Zeros;
-	//TArray<int32> Ones;
-
-	//for (int32 i = 0; i < BinaryNumber.GetCharArray().Num(); i++)
-	//	Zeros.Add(BinaryNumber.Find("0"));
-
-	//for (int32 i = 0; i < BinaryNumber.GetCharArray().Num(); i++)
-	//	Ones.Add(BinaryNumber.Find("1"));
-
-	//for (int32 i = 0; i < Zeros.Num(); i++)
-	//{
-	//	BinaryNumber.RemoveAt(i);
-	//	BinaryNumber.InsertAt(i, '1');
-	//}
-
-	//for (int32 i = 0; i < Ones.Num(); i++)
-	//{
-	//	BinaryNumber.RemoveAt(i);
-	//	BinaryNumber.InsertAt(i, '0');
-	//}
-
-	//BinaryNumber.AppendChar('1');
-
-	//FString BetterResult = BinaryToHex(BinaryNumber);
+	FString HexValues[MAX_HEX_VALUES] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F"};
+	FString HexadecimalAsString = "";
 
 	bool bIsNegative = false;
-
+	
 	if (DecimalNumber < 0)
 	{
 		bIsNegative = true;
 		Number = -Number;
 	}
 
-	std::stringstream SS;
-	SS << std::hex << Number;
-	FString Result = FString(SS.str().c_str());
-	
+	while (Number > 0)
+	{
+		const platform_int Remainder = Number % 16;
+		HexadecimalAsString = HexValues[Remainder] + HexadecimalAsString;
+		Number /= 16;
+	}
+
 	if (bIsNegative)
-		Result.InsertAt(0, '-');
+	{
+		if (Settings->bUseTwosComplimentForDecimalToHexConversionOnNegativeNumbers)
+		{
+			// This means the decimal number is -16. So exit early, since it will return 'E0' which is incorrect
+			if (HexadecimalAsString == "10")
+				return FString("0");
 
-	//if (bIsNegative)
-	//	return BinaryToHex(BinaryNumber);
+			FString HexadecimalTwosComplimentAsString = "";
 
-	return Result.ToUpper();
+			TArray<platform_int> ConvertedHexValues;
+			for (platform_int i = 0; i < HexadecimalAsString.GetCharArray().Num()-1; i++)
+			{
+				ConvertedHexValues.Add(HexDigitToDecimal(FString::Chr(HexadecimalAsString[i])));
+			}
 
-	//const auto CalculateDigits = [&](int64 Number)
-	//{
-	//	int64 Digits = 0;
-	//	while (Number)
-	//	{
-	//		Number /= 10;
-	//		Digits++;
-	//	}
+			TArray<platform_int> HexTwosComplimentResult;
+			for (platform_int i = 0; i < ConvertedHexValues.Num(); i++)
+			{
+				HexTwosComplimentResult.Add((MAX_HEX_VALUES-1) - ConvertedHexValues[i]);
+			}
 
-	//	return Digits;
-	//};
+			HexTwosComplimentResult[HexTwosComplimentResult.Num()-1] = HexTwosComplimentResult.Last() + 1;
+			
+			for (platform_int i = 0; i < HexTwosComplimentResult.Num(); i++)
+			{
+				if (HexTwosComplimentResult[i] > 9)
+					HexadecimalTwosComplimentAsString.Append(DecimalToHexDigit(HexTwosComplimentResult[i]));
+				else
+					HexadecimalTwosComplimentAsString.AppendInt(HexTwosComplimentResult[i]);
+			}
+			
+			return HexadecimalTwosComplimentAsString;
+		}
 
-	//// Char array to store hexadecimal number
-	//TCHAR HexadecimalValues[100] = {0};
-	//
-	//// Counter for hexadecimal number array
-	//int32 i = 0;
-	//
-	//while (DecimalNumber != 0)
-	//{
-	//	const int32 Remainder = DecimalNumber % 16;
-	//
-	//	if (Remainder < 10)
-	//	{
-	//		HexadecimalValues[i++] = Remainder + 48;
-	//	}
-	//	else
-	//	{
-	//		HexadecimalValues[i++] = Remainder + 55;
-	//	}
-	//
-	//	//i++;
-	//
-	//	DecimalNumber /= 16;
-	//}
-	//
-	//FString Result;
-	//
-	//// Adding hexadecimal values to Result, in reverse order 
-	//for (int32 j = i-1; j >= 0 ; j--)
-	//	Result.AppendChar(HexadecimalValues[j]);
-	//
-	//return Result;
+		HexadecimalAsString.InsertAt(0, '-');
+	}
+
+	return HexadecimalAsString;
 }
 
-FString ULog::DecimalToBinary(const int64 DecimalNumber)
+FString ULog::DecimalToBinary(const platform_int DecimalNumber)
 {
 	if (DecimalNumber == 0)
 		return "0";
@@ -1148,23 +1160,9 @@ FString ULog::DecimalToBinary(const int64 DecimalNumber)
 		return "1";
 	
 	// Array to store binary numbers
-#if PLATFORM_64BITS
-	int64 BinaryArray[64];
-#else
-	int32 BinaryArray[64];
-#endif
-
-#if PLATFORM_64BITS
-	int64 Number = DecimalNumber;
-#else
-	int32 Number = DecimalNumber;
-#endif
-
-#if PLATFORM_64BITS
-	int64 i, j;
-#else
-	int32 i, j;
-#endif
+	platform_int BinaryArray[64];
+	platform_int Number = DecimalNumber;
+	platform_int i;
 	
 	bool bIsNegative = false;
 
@@ -1184,7 +1182,7 @@ FString ULog::DecimalToBinary(const int64 DecimalNumber)
 	FString Result;
 
 	// Adding each digit into Result, in reverse order
-	for (j = i - 1; j >= 0; j--)
+	for (platform_int j = i - 1; j >= 0; j--)
 		Result.AppendInt(BinaryArray[j]);
 
 	if (bIsNegative)
@@ -1193,28 +1191,14 @@ FString ULog::DecimalToBinary(const int64 DecimalNumber)
 	return Result;
 }
 
-FString ULog::DecimalToOctal(const int64 DecimalNumber)
+FString ULog::DecimalToOctal(const platform_int DecimalNumber)
 {
 	if (DecimalNumber == 0)
 		return "0";
 
-#if PLATFORM_64BITS
-	int64 OctalArray[64];
-#else
-	int32 OctalArray[64];
-#endif
-
-#if PLATFORM_64BITS
-	int64 Number = DecimalNumber;
-#else
-	int32 Number = DecimalNumber;
-#endif
-
-#if PLATFORM_64BITS
-	int64 i, j;
-#else
-	int32 i, j;
-#endif
+	platform_int OctalArray[64];
+	platform_int Number = DecimalNumber;
+	platform_int i;
 
 	bool bIsNegative = false;
 
@@ -1233,7 +1217,7 @@ FString ULog::DecimalToOctal(const int64 DecimalNumber)
 	FString Result;
 
 	// Adding each digit into Result, in reverse order
-	for (j = i - 1; j >= 0; j--)
+	for (platform_int j = i - 1; j >= 0; j--)
 		Result.AppendInt(OctalArray[j]);
 
 	if (bIsNegative)
@@ -1242,7 +1226,7 @@ FString ULog::DecimalToOctal(const int64 DecimalNumber)
 	return Result;
 }
 
-FString ULog::DecimalToRomanNumeral(int64 DecimalNumber)
+FString ULog::DecimalToRomanNumeral(platform_int DecimalNumber)
 {
 	if (DecimalNumber == 0)
 		return "N";
@@ -1254,26 +1238,15 @@ FString ULog::DecimalToRomanNumeral(int64 DecimalNumber)
 		DecimalNumber = -DecimalNumber;
 	}
 
-#if PLATFORM_64BITS
-	TArray<int64> RomanNumeral_Integers = {1, 4, 5, 9, 10, 40, 50, 90, 100, 400, 500, 900, 1000};
-#else
 	TArray<int32> RomanNumeral_Integers = {1, 4, 5, 9, 10, 40, 50, 90, 100, 400, 500, 900, 1000};
-#endif
-
 	TArray<FString> RomanNumeral_Symbols = {"I", "IV", "V", "IX", "X", "XL", "L", "XC", "C", "CD", "D", "CM", "M"};
 
-#if PLATFORM_64BITS
-	int64 i = RomanNumeral_Symbols.Num() - 1;
-	int64 Quotient = 0;
-#else
 	int32 i = RomanNumeral_Symbols.Num() - 1;
-	int32 Quotient = 0;
-#endif
-	
+
 	FString Result;
 	while (DecimalNumber > 0)
 	{	
-		Quotient = DecimalNumber/RomanNumeral_Integers[i];
+		platform_int Quotient = DecimalNumber / RomanNumeral_Integers[i];
 		DecimalNumber %= RomanNumeral_Integers[i];
 
 		while (Quotient--)
@@ -1288,4 +1261,49 @@ FString ULog::DecimalToRomanNumeral(int64 DecimalNumber)
 		Result.InsertAt(0, '-');
 	
 	return Result;
+}
+
+platform_int ULog::HexDigitToDecimal(FString HexDigit)
+{
+	if (HexDigit.GetCharArray().Num()-1 > 1)
+		return platform_int(0);
+
+	FString HexValues[MAX_HEX_VALUES] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F"};
+	FString HexValues_Integers[MAX_HEX_VALUES] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15"};
+
+	for (int32 i = 0; i < MAX_HEX_VALUES; i++)
+	{
+		if (HexDigit == HexValues[i])
+		{
+		#if PLATFORM_64BITS
+			return FCString::Atoi64(*HexValues_Integers[i]);
+		#else
+			return FCString::Atoi(*HexValues_Integers[i]);
+		#endif
+		}
+	}
+
+	return platform_int(0);
+}
+
+FString ULog::DecimalToHexDigit(platform_int DecimalNumber)
+{
+	if (DecimalNumber < 10)
+		return FString::FromInt(DecimalNumber);
+
+	FString HexValues[MAX_HEX_VALUES] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F"};
+	FString HexValues_Integers[MAX_HEX_VALUES] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15"};
+
+	for (int32 i = 0; i < MAX_HEX_VALUES; i++)
+	{
+		#if PLATFORM_64BITS
+		if (DecimalNumber == FCString::Atoi64(*HexValues_Integers[i]))
+			return HexValues[i];
+		#else
+		if (DecimalNumber == FCString::Atoi(*HexValues_Integers[i]))
+			return HexValues[i];
+		#endif
+	}
+
+	return FString("0");
 }
