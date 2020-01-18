@@ -81,6 +81,17 @@ enum EDebugLogNumberSystems
 	DLNS_Roman		UMETA(DisplayName = "Roman Numerals (Base 10)")
 };
 
+UENUM(BlueprintType)
+enum EDebugLogComparisonMethod
+{
+	CM_Equal_To					UMETA(DisplayName = "Equal To (==)"),
+	CM_Not_Equal_To				UMETA(DisplayName = "Not Equal To (!=)"),
+	CM_Greater_Than_Or_Equal_To	UMETA(DisplayName = "Greater Than or Equal To (>=)"),
+	CM_Less_Than_Or_Equal_To		UMETA(DisplayName = "Less Than or Equal To (<=)"),
+	CM_Greater_Than				UMETA(DisplayName = "Greater Than (>)"),
+	CM_Less_Than					UMETA(DisplayName = "Less Than (<)")
+};
+
 /**
  * A library of log utility functions
  */
@@ -290,6 +301,84 @@ public:
 	// Log capsule information to the console or viewport
 	static void Capsule(const FCapsuleShape& Capsule, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Equal", DisplayName = "Assert Equal (Bool)", meta = (DevelopmentOnly))
+		static bool AssertEqual_Bool(bool bActual, bool bExpected, FString Message, bool bCrashOnFailure = false);
+
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Equal", DisplayName = "Assert Equal (Integer)", meta = (DevelopmentOnly))
+		static bool AssertEqual_Integer(int32 Actual, int32 Expected, FString Message, bool bCrashOnFailure = false);
+
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Value", DisplayName = "Assert Value (Integer)", meta = (DevelopmentOnly))
+		static bool AssertValue_Integer(int32 Actual, int32 Expected, EDebugLogComparisonMethod ShouldBe, FString Message, bool bCrashOnFailure = false);
+
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Equal", DisplayName = "Assert Equal (Float)", meta = (DevelopmentOnly))
+		static bool AssertEqual_Float(float Actual, float Expected, FString Message, bool bCrashOnFailure = false);
+
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Value", DisplayName = "Assert Value (Float)", meta = (DevelopmentOnly))
+		static bool AssertValue_Float(float Actual, float Expected, EDebugLogComparisonMethod ShouldBe, FString Message, bool bCrashOnFailure = false);
+
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Equal", DisplayName = "Assert Equal (String)", meta = (DevelopmentOnly))
+		static bool AssertEqual_String(FString Actual, FString Expected, FString Message, bool bCrashOnFailure = false);
+
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Not Equal", DisplayName = "Assert Not Equal (String)", meta = (DevelopmentOnly))
+		static bool AssertNotEqual_String(FString Actual, FString Expected, FString Message, bool bCrashOnFailure = false);
+
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Equal", DisplayName = "Assert Equal (Name)", meta = (DevelopmentOnly))
+		static bool AssertEqual_Name(FName Actual, FName Expected, FString Message, bool bCrashOnFailure = false);
+
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Not Equal", DisplayName = "Assert Not Equal (Name)", meta = (DevelopmentOnly))
+		static bool AssertNotEqual_Name(FName Actual, FName Expected, FString Message, bool bCrashOnFailure = false);
+
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Equal", DisplayName = "Assert Equal (Object)", meta = (DevelopmentOnly))
+		static bool AssertEqual_Object(UObject* Actual, UObject* Expected, FString Message, bool bCrashOnFailure = false);
+
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Not Equal", DisplayName = "Assert Not Equal (Object)", meta = (DevelopmentOnly))
+		static bool AssertNotEqual_Object(UObject* Actual, UObject* Expected, FString Message, bool bCrashOnFailure = false);
+
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Equal", DisplayName = "Assert Equal (Vector)", meta = (DevelopmentOnly))
+		static bool AssertEqual_Vector(FVector Actual, FVector Expected, FString Message, bool bCrashOnFailure = false);
+
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Not Equal", DisplayName = "Assert Not Equal (Vector)", meta = (DevelopmentOnly))
+		static bool AssertNotEqual_Vector(FVector Actual, FVector Expected, FString Message, bool bCrashOnFailure = false);
+
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Equal", DisplayName = "Assert Equal (Rotator)", meta = (DevelopmentOnly))
+		static bool AssertEqual_Rotator(FRotator Actual, FRotator Expected, FString Message, bool bCrashOnFailure = false);
+
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Not Equal", DisplayName = "Assert Not Equal (Rotator)", meta = (DevelopmentOnly))
+		static bool AssertNotEqual_Rotator(FRotator Actual, FRotator Expected, FString Message, bool bCrashOnFailure = false);
+
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Equal", DisplayName = "Assert Equal (Quaternion)", meta = (DevelopmentOnly))
+		static bool AssertEqual_Quat(FQuat Actual, FQuat Expected, FString Message, bool bCrashOnFailure = false);
+
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Not Equal", DisplayName = "Assert Not Equal (Quaternion)", meta = (DevelopmentOnly))
+		static bool AssertNotEqual_Quat(FQuat Actual, FQuat Expected, FString Message, bool bCrashOnFailure = false);
+
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Equal", DisplayName = "Assert Equal (Transform)", meta = (DevelopmentOnly))
+		static bool AssertEqual_Transform(FTransform Actual, FTransform Expected, FString Message, bool bNoScale = false, bool bCrashOnFailure = false);
+
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Not Equal", DisplayName = "Assert Not Equal (Transform)", meta = (DevelopmentOnly))
+		static bool AssertNotEqual_Transform(FTransform Actual, FTransform Expected, FString Message, bool bNoScale = false, bool bCrashOnFailure = false);
+
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Equal", DisplayName = "Assert Equal (Color)", meta = (DevelopmentOnly))
+		static bool AssertEqual_Color(FColor Actual, FColor Expected, FString Message, bool bCrashOnFailure = false);
+
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Not Equal", DisplayName = "Assert Not Equal (Color)", meta = (DevelopmentOnly))
+		static bool AssertNotEqual_Color(FColor Actual, FColor Expected, FString Message, bool bCrashOnFailure = false);
+
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Equal", DisplayName = "Assert Equal (DateTime)", meta = (DevelopmentOnly))
+		static bool AssertEqual_DateTime(FDateTime Actual, FDateTime Expected, FString Message, bool bCrashOnFailure = false);
+
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Value", DisplayName = "Assert Value (DateTime)", meta = (DevelopmentOnly))
+		static bool AssertValue_DateTime(FDateTime Actual, FDateTime Expected, EDebugLogComparisonMethod ShouldBe, FString Message, bool bCrashOnFailure = false);
+
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert", DisplayName = "Assert True", meta = (DevelopmentOnly))
+		static bool Assert_True(bool bCondition, FString Message, bool bCrashOnFailure = false);
+
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert", DisplayName = "Assert False", meta = (DevelopmentOnly))
+		static bool Assert_False(bool bCondition, FString Message, bool bCrashOnFailure = false);
+	
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert", DisplayName = "Assert Is Valid", meta = (DevelopmentOnly))
+		static bool Assert_IsValid(UObject* Object, FString Message, bool bCrashOnFailure = false);
+
 protected:
 	void PostInitProperties() override;
 
@@ -347,5 +436,133 @@ private:
 	static platform_int HexDigitToDecimal(FString HexDigit);
 	static FString DecimalToHexDigit(platform_int DecimalNumber);
 
+	static void AssertFailed(const FString& Message, bool bCrashOnFailure);
+
+	template<typename T>
+	static bool AssertEqual(T Actual, T Expected, FString AssertType, FString Message, bool bCrashOnFailure);
+
+	template<typename T>
+	static bool AssertNotEqual(T Actual, T Expected, FString AssertType, FString Message, bool bCrashOnFailure);
+
+	template<typename T>
+	static bool AssertEqual(T* Actual, T* Expected, FString AssertType, FString Message, bool bCrashOnFailure);
+
+	template<typename T>
+	static bool AssertNotEqual(T* Actual, T* Expected, FString AssertType, FString Message, bool bCrashOnFailure);
+
+	template<typename T>
+	static bool AssertValue(T Actual, T Expected, EDebugLogComparisonMethod ComparisonMethod, FString AssertType, FString Message, bool bCrashOnFailure);
+
+	template<typename T>
+	static bool PerformComparison(T LHS, T RHS, EDebugLogComparisonMethod ComparisonMethod);
+	
 	static const class UDebugLogLibrarySettings* Settings;
 };
+
+template <typename T>
+bool ULog::AssertEqual(T Actual, T Expected, FString AssertType, FString Message, bool bCrashOnFailure)
+{
+	if (Actual != Expected)
+	{
+		if (bCrashOnFailure)
+			Crash(AssertType + " | Assert Failed: " + Message);
+		else
+			Error(AssertType + " | Assert Failed: " + Message, LO_Both, false);
+	
+		return false;
+	}
+
+	return true;
+}
+
+template <typename T>
+bool ULog::AssertNotEqual(T Actual, T Expected, FString AssertType, FString Message, bool bCrashOnFailure)
+{
+	if (Actual == Expected)
+	{
+		if (bCrashOnFailure)
+			Crash(AssertType + " | Assert Failed: " + Message);
+		else
+			Error(AssertType + " | Assert Failed: " + Message, LO_Both, false);
+	
+		return false;
+	}
+
+	return true;
+}
+
+template <typename T>
+bool ULog::AssertEqual(T* Actual, T* Expected, FString AssertType, const FString Message, const bool bCrashOnFailure)
+{
+	if (Actual != Expected)
+	{
+		if (bCrashOnFailure)
+			Crash(AssertType + " | Assert Failed: " + Message);
+		else
+			Error(AssertType + " | Assert Failed: " + Message, LO_Both, false);
+
+		return false;
+	}
+
+	return true;	
+}
+
+template <typename T>
+bool ULog::AssertNotEqual(T* Actual, T* Expected, FString AssertType, const FString Message, const bool bCrashOnFailure)
+{
+	if (Actual == Expected)
+	{
+		if (bCrashOnFailure)
+			Crash(AssertType + " | Assert Failed: " + Message);
+		else
+			Error(AssertType + " | Assert Failed: " + Message, LO_Both, false);
+
+		return false;
+	}
+
+	return true;	
+}
+
+template <typename T>
+bool ULog::AssertValue(T Actual, T Expected, const EDebugLogComparisonMethod ComparisonMethod, FString AssertType, const FString Message, const bool bCrashOnFailure)
+{
+	if (!PerformComparison<T>(Actual, Expected, ComparisonMethod))
+	{
+		if (bCrashOnFailure)
+			Crash(AssertType + " | Assert Failed: " + Message);
+		else
+			Error(AssertType + " | Assert Failed: " + Message, LO_Both, false);
+
+		return false;	
+	}
+	
+	return true;	
+}
+
+template <typename T>
+bool ULog::PerformComparison(T LHS, T RHS, const EDebugLogComparisonMethod ComparisonMethod)
+{
+	switch (ComparisonMethod)
+	{
+	case CM_Equal_To:
+		return LHS == RHS;
+
+	case CM_Not_Equal_To:
+		return LHS != RHS;
+
+	case CM_Greater_Than_Or_Equal_To:
+		return LHS >= RHS;
+
+	case CM_Less_Than_Or_Equal_To:
+		return LHS <= RHS;
+
+	case CM_Greater_Than:
+		return LHS > RHS;
+
+	case CM_Less_Than:
+		return LHS < RHS;
+	}
+
+	Error("Invalid comparison method", LO_Both, true);
+	return false;
+}

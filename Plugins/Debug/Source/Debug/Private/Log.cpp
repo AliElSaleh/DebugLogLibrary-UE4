@@ -851,6 +851,194 @@ void ULog::Capsule(const FCapsuleShape& Capsule, const FString& Prefix, const FS
 	}
 }
 
+bool ULog::AssertEqual_Bool(const bool bActual, const bool bExpected, const FString Message, const bool bCrashOnFailure)
+{
+	return AssertEqual<bool>(bActual, bExpected, "AssertEqual (Bool)", Message, bCrashOnFailure);
+}
+
+bool ULog::AssertEqual_Integer(const int32 Actual, const int32 Expected, const FString Message, const bool bCrashOnFailure)
+{
+	return AssertEqual<int32>(Actual, Expected, "AssertEqual (Integer)", Message, bCrashOnFailure);
+}
+
+bool ULog::AssertValue_Integer(const int32 Actual, const int32 Expected, const EDebugLogComparisonMethod ShouldBe, const FString Message, const bool bCrashOnFailure)
+{
+	return AssertValue<int32>(Actual, Expected, ShouldBe, "AssertValue (Integer)", Message, bCrashOnFailure);
+}
+
+bool ULog::AssertEqual_Float(const float Actual, const float Expected, const FString Message, const bool bCrashOnFailure)
+{
+	return AssertEqual<float>(Actual, Expected, "AssertEqual (Float)", Message, bCrashOnFailure);
+}
+
+bool ULog::AssertValue_Float(const float Actual, const float Expected, const EDebugLogComparisonMethod ShouldBe, const FString Message, const bool bCrashOnFailure)
+{
+	return AssertValue<float>(Actual, Expected, ShouldBe, "AssertValue (Float)", Message, bCrashOnFailure);
+}
+
+bool ULog::AssertEqual_String(const FString Actual, const FString Expected, const FString Message, const bool bCrashOnFailure)
+{
+	return AssertEqual<FString>(Actual, Expected, "AssertEqual (String)", Message, bCrashOnFailure);
+}
+
+bool ULog::AssertNotEqual_String(const FString Actual, const FString Expected, const FString Message, const bool bCrashOnFailure)
+{
+	return AssertNotEqual<FString>(Actual, Expected, "AssertNotEqual (String)", Message, bCrashOnFailure);
+}
+
+bool ULog::AssertEqual_Name(const FName Actual, const FName Expected, const FString Message, const bool bCrashOnFailure)
+{
+	return AssertEqual<FName>(Actual, Expected, "AssertEqual (Name)", Message, bCrashOnFailure);
+}
+
+bool ULog::AssertNotEqual_Name(const FName Actual, const FName Expected, const FString Message, const bool bCrashOnFailure)
+{
+	return AssertNotEqual<FName>(Actual, Expected, "AssertNotEqual (Name)", Message, bCrashOnFailure);
+}
+
+bool ULog::AssertEqual_Object(UObject* Actual, UObject* Expected, const FString Message, const bool bCrashOnFailure)
+{
+	return AssertEqual<UObject>(Actual, Expected, "AssertEqual (Object)", Message, bCrashOnFailure);
+}
+
+bool ULog::AssertNotEqual_Object(UObject* Actual, UObject* Expected, const FString Message, const bool bCrashOnFailure)
+{
+	return AssertNotEqual<UObject>(Actual, Expected, "AssertNotEqual (Object)", Message, bCrashOnFailure);
+}
+
+bool ULog::AssertEqual_Vector(const FVector Actual, const FVector Expected, const FString Message, const bool bCrashOnFailure)
+{
+	return AssertEqual<FVector>(Actual, Expected, "AssertEqual (Vector)", Message, bCrashOnFailure);
+}
+
+bool ULog::AssertNotEqual_Vector(const FVector Actual, const FVector Expected, const FString Message, const bool bCrashOnFailure)
+{
+	return AssertNotEqual<FVector>(Actual, Expected, "AssertNotEqual (Vector)", Message, bCrashOnFailure);
+}
+
+bool ULog::AssertEqual_Rotator(const FRotator Actual, const FRotator Expected, const FString Message, const bool bCrashOnFailure)
+{
+	return AssertEqual<FRotator>(Actual, Expected, "AssertEqual (Rotator)", Message, bCrashOnFailure);
+}
+
+bool ULog::AssertNotEqual_Rotator(const FRotator Actual, const FRotator Expected, const FString Message, const bool bCrashOnFailure)
+{
+	return AssertNotEqual<FRotator>(Actual, Expected, "AssertNotEqual (Rotator)", Message, bCrashOnFailure);
+}
+
+bool ULog::AssertEqual_Quat(const FQuat Actual, const FQuat Expected, const FString Message, const bool bCrashOnFailure)
+{
+	return AssertEqual<FQuat>(Actual, Expected, "AssertEqual (Quat)", Message, bCrashOnFailure);
+}
+
+bool ULog::AssertNotEqual_Quat(const FQuat Actual, const FQuat Expected, const FString Message, const bool bCrashOnFailure)
+{
+	return AssertNotEqual<FQuat>(Actual, Expected, "AssertNotEqual (Quat)", Message, bCrashOnFailure);
+}
+
+bool ULog::AssertEqual_Transform(const FTransform Actual, const FTransform Expected, const FString Message, const bool bNoScale, const bool bCrashOnFailure)
+{
+	if (bNoScale && !Actual.EqualsNoScale(Expected))
+	{
+		AssertFailed(Message, bCrashOnFailure);
+
+		return false;
+	}
+
+	if (!Actual.Equals(Expected))
+	{
+		AssertFailed(Message, bCrashOnFailure);
+
+		return false;
+	}
+
+	return true;
+}
+
+bool ULog::AssertNotEqual_Transform(const FTransform Actual, const FTransform Expected, const FString Message, const bool bNoScale, const bool bCrashOnFailure)
+{
+	if (bNoScale && Actual.EqualsNoScale(Expected))
+	{
+		AssertFailed(Message, bCrashOnFailure);
+
+		return false;
+	}
+
+	if (Actual.Equals(Expected))
+	{
+		AssertFailed(Message, bCrashOnFailure);
+
+		return false;
+	}
+
+	return true;
+}
+
+bool ULog::AssertEqual_Color(const FColor Actual, const FColor Expected, const FString Message, const bool bCrashOnFailure)
+{
+	return AssertEqual<FColor>(Actual, Expected, "AssertEqual (Color)", Message, bCrashOnFailure);
+}
+
+bool ULog::AssertNotEqual_Color(const FColor Actual, const FColor Expected, const FString Message, const bool bCrashOnFailure)
+{
+	return AssertNotEqual<FColor>(Actual, Expected, "AssertNotEqual (Color)", Message, bCrashOnFailure);
+}
+
+bool ULog::AssertEqual_DateTime(const FDateTime Actual, const FDateTime Expected, const FString Message, const bool bCrashOnFailure)
+{
+	return AssertEqual<FDateTime>(Actual, Expected, "AssertEqual (DateTime)", Message, bCrashOnFailure);
+}
+
+bool ULog::AssertValue_DateTime(const FDateTime Actual, const FDateTime Expected, const EDebugLogComparisonMethod ShouldBe, const FString Message, const bool bCrashOnFailure)
+{
+	return AssertValue<FDateTime>(Actual, Expected, ShouldBe, "AssertValue (DateTime)", Message, bCrashOnFailure);
+}
+
+bool ULog::Assert_True(const bool bCondition, const FString Message, const bool bCrashOnFailure)
+{
+	if (!bCondition)
+	{
+		if (bCrashOnFailure)
+			Crash("AssertTrue | Assert Failed: " + Message);
+		else
+			Error("AssertTrue | Assert Failed: " + Message, LO_Both, false);
+
+		return false;
+	}
+
+	return true;
+}
+
+bool ULog::Assert_False(const bool bCondition, const FString Message, const bool bCrashOnFailure)
+{
+	if (bCondition)
+	{
+		if (bCrashOnFailure)
+			Crash("AssertFalse | Assert Failed: " + Message);
+		else
+			Error("AssertFalse | Assert Failed: " + Message, LO_Both, false);
+
+		return false;
+	}
+
+	return true;
+}
+
+bool ULog::Assert_IsValid(UObject* Object, const FString Message, const bool bCrashOnFailure)
+{
+	if (!IsValid(Object))
+	{
+		if (bCrashOnFailure)
+			Crash("AssertIsValid | Assert Failed: " + Message);
+		else
+			Error("AssertIsValid | Assert Failed: " + Message, LO_Both, false);
+
+		return false;		
+	}
+
+	return true;
+}
+
 void ULog::Number_Int_Blueprint(const int32 Number, const FString& Prefix, const FString& Suffix, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 	LogInt(Number, Prefix, Suffix, NumberSystem, LoggingOption, TimeToDisplay);
@@ -1306,4 +1494,12 @@ FString ULog::DecimalToHexDigit(platform_int DecimalNumber)
 	}
 
 	return FString("0");
+}
+
+void ULog::AssertFailed(const FString& Message, const bool bCrashOnFailure)
+{
+	if (bCrashOnFailure)
+		Crash("Assert Failed: " + Message);
+	else
+		Error("Assert Failed: " + Message, LO_Both, false);
 }
