@@ -462,6 +462,7 @@ private:
 template <typename T>
 bool ULog::AssertEqual(T Actual, T Expected, FString AssertType, FString Message, bool bCrashOnFailure)
 {
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	if (Actual != Expected)
 	{
 		if (bCrashOnFailure)
@@ -473,11 +474,13 @@ bool ULog::AssertEqual(T Actual, T Expected, FString AssertType, FString Message
 	}
 
 	return true;
+#endif
 }
 
 template <typename T>
 bool ULog::AssertNotEqual(T Actual, T Expected, FString AssertType, FString Message, bool bCrashOnFailure)
 {
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	if (Actual == Expected)
 	{
 		if (bCrashOnFailure)
@@ -489,11 +492,13 @@ bool ULog::AssertNotEqual(T Actual, T Expected, FString AssertType, FString Mess
 	}
 
 	return true;
+#endif
 }
 
 template <typename T>
 bool ULog::AssertEqual(T* Actual, T* Expected, FString AssertType, const FString Message, const bool bCrashOnFailure)
 {
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	if (Actual != Expected)
 	{
 		if (bCrashOnFailure)
@@ -505,11 +510,13 @@ bool ULog::AssertEqual(T* Actual, T* Expected, FString AssertType, const FString
 	}
 
 	return true;	
+#endif
 }
 
 template <typename T>
 bool ULog::AssertNotEqual(T* Actual, T* Expected, FString AssertType, const FString Message, const bool bCrashOnFailure)
 {
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	if (Actual == Expected)
 	{
 		if (bCrashOnFailure)
@@ -521,11 +528,13 @@ bool ULog::AssertNotEqual(T* Actual, T* Expected, FString AssertType, const FStr
 	}
 
 	return true;	
+#endif
 }
 
 template <typename T>
 bool ULog::AssertValue(T Actual, T Expected, const EDebugLogComparisonMethod ComparisonMethod, FString AssertType, const FString Message, const bool bCrashOnFailure)
 {
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	if (!PerformComparison<T>(Actual, Expected, ComparisonMethod))
 	{
 		if (bCrashOnFailure)
@@ -537,11 +546,13 @@ bool ULog::AssertValue(T Actual, T Expected, const EDebugLogComparisonMethod Com
 	}
 	
 	return true;	
+#endif
 }
 
 template <typename T>
 bool ULog::PerformComparison(T LHS, T RHS, const EDebugLogComparisonMethod ComparisonMethod)
 {
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	switch (ComparisonMethod)
 	{
 	case CM_Equal_To:
@@ -565,4 +576,5 @@ bool ULog::PerformComparison(T LHS, T RHS, const EDebugLogComparisonMethod Compa
 
 	Error("Invalid comparison method", LO_Both, true);
 	return false;
+#endif
 }
