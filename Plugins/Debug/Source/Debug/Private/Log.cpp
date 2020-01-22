@@ -458,6 +458,7 @@ void ULog::Invalid(const FString& Prefix, const FString& Suffix, const ELoggingO
 #endif
 }
 
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 void ULog::Number(const int8 Number, const FString& Prefix, const FString& Suffix, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 	LogInt(Number, Prefix, Suffix, NumberSystem, LoggingOption, TimeToDisplay);
@@ -567,6 +568,7 @@ void ULog::Number(const long Number, const EDebugLogNumberSystems NumberSystem, 
 {
 	LogLongInt(Number, "", "", NumberSystem, LoggingOption, TimeToDisplay);
 }
+#endif
 
 void ULog::Percent(const float Number, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
@@ -1023,6 +1025,8 @@ bool ULog::AssertEqual_Transform(const FTransform Actual, const FTransform Expec
 
 	return true;
 #endif
+
+	return false;
 }
 
 bool ULog::AssertNotEqual_Transform(const FTransform Actual, const FTransform Expected, const FString Message, const bool bNoScale, const bool bCrashOnFailure)
@@ -1044,6 +1048,8 @@ bool ULog::AssertNotEqual_Transform(const FTransform Actual, const FTransform Ex
 
 	return true;
 #endif
+
+	return false;
 }
 
 bool ULog::AssertEqual_Color(const FColor Actual, const FColor Expected, const FString Message, const bool bCrashOnFailure)
@@ -1081,6 +1087,8 @@ bool ULog::Assert_True(const bool bCondition, const FString Message, const bool 
 
 	return true;
 #endif
+
+	return false;
 }
 
 bool ULog::Assert_False(const bool bCondition, const FString Message, const bool bCrashOnFailure)
@@ -1098,6 +1106,8 @@ bool ULog::Assert_False(const bool bCondition, const FString Message, const bool
 
 	return true;
 #endif
+
+	return false;
 }
 
 bool ULog::Assert_IsValid(UObject* Object, const FString Message, const bool bCrashOnFailure)
@@ -1115,16 +1125,22 @@ bool ULog::Assert_IsValid(UObject* Object, const FString Message, const bool bCr
 
 	return true;
 #endif
+
+	return false;
 }
 
 void ULog::Number_Int_Blueprint(const int32 Number, const FString& Prefix, const FString& Suffix, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	LogInt(Number, Prefix, Suffix, NumberSystem, LoggingOption, TimeToDisplay);
+#endif
 }
 
 void ULog::Number_Float_Blueprint(const float Number, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	LogFloat(Number, Prefix, Suffix, LoggingOption, TimeToDisplay);
+#endif
 }
 
 void ULog::CheckObject(UObject* Object, const FString& Message)
@@ -1227,6 +1243,7 @@ void ULog::EnsureCondition(const bool bCondition, const bool bAlwaysEnsure, cons
 #endif
 }
 
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 void ULog::LogInt(const platform_int Number, const FString& Prefix, const FString& Suffix, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
@@ -1483,6 +1500,8 @@ FString ULog::DecimalToBinary(const platform_int DecimalNumber)
 
 	return Result;
 #endif
+
+	return "";
 }
 
 FString ULog::DecimalToOctal(const platform_int DecimalNumber)
@@ -1612,10 +1631,9 @@ FString ULog::DecimalToHexDigit(platform_int DecimalNumber)
 
 void ULog::AssertFailed(const FString& Message, const bool bCrashOnFailure)
 {
-#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	if (bCrashOnFailure)
 		Crash("Assert Failed: " + Message);
 	else
 		Error("Assert Failed: " + Message, LO_Both, false);
-#endif
 }
+#endif

@@ -3,8 +3,11 @@
 #include "Debug.h"
 
 #include "DebugLogLibrarySettings.h"
-#include "ISettingsModule.h"
 #include "Log.h"
+
+#if WITH_EDITOR
+#include "ISettingsModule.h"
+#endif
 
 #define LOCTEXT_NAMESPACE "FDebugModule"
 
@@ -28,21 +31,18 @@ bool FDebugModule::SupportsDynamicReloading()
 
 bool FDebugModule::HandleSettingsSaved()
 {
+#if WITH_EDITOR
 	UDebugLogLibrarySettings* Settings = GetMutableDefault<UDebugLogLibrarySettings>();
-	//bool ResaveSettings = false;
-	// You can put any validation code in here and resave the settings in case an invalid
-	// value has been entered
 
-	//if (ResaveSettings)
-	//{
-		Settings->SaveConfig();
-	//}
-
+	Settings->SaveConfig();
+#endif
+	
 	return true;
 }
 
 void FDebugModule::RegisterSettings()
 {
+#if WITH_EDITOR
 	if (ISettingsModule* SettingsModule = FModuleManager::GetModulePtr<ISettingsModule>("Settings"))
 	{
 		SettingsModule->RegisterSettings("Project", "Plugins", "Debug Log Library",
@@ -50,14 +50,17 @@ void FDebugModule::RegisterSettings()
 			LOCTEXT("RuntimeSettingsDescription", "Configure the Debug Log Library plugin"),
 			GetMutableDefault<UDebugLogLibrarySettings>());
 	}
+#endif
 }
 
 void FDebugModule::UnRegisterSettings()
 {
+#if WITH_EDITOR
 	if (ISettingsModule* SettingsModule = FModuleManager::GetModulePtr<ISettingsModule>("Settings"))
 	{
 		SettingsModule->UnregisterSettings("Project", "Plugins", "Debug Log Library");
 	}
+#endif
 }
 
 #undef LOCTEXT_NAMESPACE
