@@ -299,6 +299,23 @@ public:
 		static void Color(const FLinearColor& InColor, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 		static void Color(const FLinearColor& InColor, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
+	#pragma region Unit Systems
+	// Log a temperature value in degrees celsius to the console or viewport (Just adds a °C symbol at the end)
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
+		static void Celsius(float InDegreesCelsius, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+		static void Celsius(float InDegreesCelsius, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+
+	// Log a temperature value in degrees fahrenheit to the console or viewport (Just adds a °F symbol at the end)
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
+		static void Fahrenheit(float InDegreesFahrenheit, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+		static void Fahrenheit(float InDegreesFahrenheit, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+
+	// Log a temperature value in degrees kelvin to the console or viewport (Just adds a °K symbol at the end)
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
+		static void Kelvin(float InDegreesKelvin, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+		static void Kelvin(float InDegreesKelvin, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+	#pragma endregion
+
 	// Log sphere information to the console or viewport
 	static void Sphere(const FSphere& Sphere, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 

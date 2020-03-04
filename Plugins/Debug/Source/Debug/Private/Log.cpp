@@ -841,6 +841,78 @@ void ULog::Color(const FLinearColor& InColor, const ELoggingOptions LoggingOptio
 	Color(InColor, "", "", LoggingOption, TimeToDisplay);	
 }
 
+void ULog::Celsius(const float InDegreesCelsius, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+{
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
+	if (LoggingOption == LO_Viewport)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + FString::SanitizeFloat(InDegreesCelsius) + " C" + Suffix);
+	}
+	else if (LoggingOption == LO_Console)
+	{
+		UE_LOG(LogColor, Warning, TEXT("%s%s%s°C%s"), NET_MODE_PREFIX, *Prefix, *FString::SanitizeFloat(InDegreesCelsius), *Suffix)
+	}
+	else if (LoggingOption == LO_Both)
+	{
+		UE_LOG(LogColor, Warning, TEXT("%s%s%s°C%s"), NET_MODE_PREFIX, *Prefix, *FString::SanitizeFloat(InDegreesCelsius), *Suffix)
+		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + FString::SanitizeFloat(InDegreesCelsius) + " C" + Suffix);
+	}
+#endif
+}
+
+void ULog::Celsius(const float InDegreesCelsius, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+{
+	Celsius(InDegreesCelsius, "", "", LoggingOption, TimeToDisplay);
+}
+
+void ULog::Fahrenheit(const float InDegreesFahrenheit, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+{
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
+	if (LoggingOption == LO_Viewport)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + FString::SanitizeFloat(InDegreesFahrenheit) + " F" + Suffix);
+	}
+	else if (LoggingOption == LO_Console)
+	{
+		UE_LOG(LogColor, Warning, TEXT("%s%s%s°F%s"), NET_MODE_PREFIX, *Prefix, *FString::SanitizeFloat(InDegreesFahrenheit), *Suffix)
+	}
+	else if (LoggingOption == LO_Both)
+	{
+		UE_LOG(LogColor, Warning, TEXT("%s%s%s°F%s"), NET_MODE_PREFIX, *Prefix, *FString::SanitizeFloat(InDegreesFahrenheit), *Suffix)
+		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + FString::SanitizeFloat(InDegreesFahrenheit) + " F" + Suffix);
+	}
+#endif
+}
+
+void ULog::Fahrenheit(const float InDegreesFahrenheit, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+{
+	Fahrenheit(InDegreesFahrenheit, "", "", LoggingOption, TimeToDisplay);
+}
+
+void ULog::Kelvin(const float InDegreesKelvin, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+{
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
+	if (LoggingOption == LO_Viewport)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + FString::SanitizeFloat(InDegreesKelvin) + " K" + Suffix);
+	}
+	else if (LoggingOption == LO_Console)
+	{
+		UE_LOG(LogColor, Warning, TEXT("%s%s%s°K%s"), NET_MODE_PREFIX, *Prefix, *FString::SanitizeFloat(InDegreesKelvin), *Suffix)
+	}
+	else if (LoggingOption == LO_Both)
+	{
+		UE_LOG(LogColor, Warning, TEXT("%s%s%s°K%s"), NET_MODE_PREFIX, *Prefix, *FString::SanitizeFloat(InDegreesKelvin), *Suffix)
+		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + FString::SanitizeFloat(InDegreesKelvin) + " K" + Suffix);
+	}
+#endif
+}
+
+void ULog::Kelvin(const float InDegreesKelvin, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+{
+	Kelvin(InDegreesKelvin, "", "", LoggingOption, TimeToDisplay);
+}
+
 void ULog::Sphere(const FSphere& Sphere, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
