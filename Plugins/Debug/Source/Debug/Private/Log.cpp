@@ -55,6 +55,39 @@ void ULog::ObjectValidity(UObject* ObjectRef, const ELoggingOptions LoggingOptio
 #endif
 }
 
+void ULog::ObjectName(UObject* InObject, const ELoggingOptions LoggingOption)
+{
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
+	if (LoggingOption == LO_Viewport)
+	{
+		if (InObject)
+			GEngine->AddOnScreenDebugMessage(-1, 3.0f, Settings->InfoColor, NET_MODE_PREFIX + InObject->GetName());
+		else
+			GEngine->AddOnScreenDebugMessage(-1, 3.0f, Settings->ErrorColor, NET_MODE_PREFIX + FString("None (Object is null)"));
+	}
+	else if (LoggingOption == LO_Console)
+	{
+		if (InObject)
+			UE_LOG(LogMessage, Warning, TEXT("%s%s"), NET_MODE_PREFIX, *InObject->GetName())
+		else
+			UE_LOG(LogMessage, Error, TEXT("%sNone (Object is null)"), NET_MODE_PREFIX)
+	}
+	else if (LoggingOption == LO_Both)
+	{
+		if (InObject)
+		{
+			UE_LOG(LogMessage, Warning, TEXT("%s%s"), NET_MODE_PREFIX, *InObject->GetName())
+			GEngine->AddOnScreenDebugMessage(-1, 3.0f, Settings->InfoColor, NET_MODE_PREFIX + InObject->GetName());
+		}
+		else
+		{
+			UE_LOG(LogMessage, Error, TEXT("%sNone (Object is null)"), NET_MODE_PREFIX)	
+			GEngine->AddOnScreenDebugMessage(-1, 3.0f, Settings->ErrorColor, NET_MODE_PREFIX + FString("None (Object is null)"));
+		}
+	}
+#endif
+}
+
 void ULog::DebugMessage(const EDebugLogType LogSeverity, const FString& Message, const ELoggingOptions LoggingOption, const bool bAddPrefix, const float TimeToDisplay)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)

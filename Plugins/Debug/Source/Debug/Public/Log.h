@@ -134,7 +134,11 @@ class DEBUG_API ULog : public UBlueprintFunctionLibrary
 public:
 	// Log whether the object is valid or not
 	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
-		static void ObjectValidity(UObject* ObjectRef, ELoggingOptions LoggingOption = LO_Console);
+		static void ObjectValidity(UObject* InObject, ELoggingOptions LoggingOption = LO_Console);
+
+	// Log the given object's name, if it's valid
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
+		static void ObjectName(UObject* InObject, ELoggingOptions LoggingOption = LO_Console);
 
 	// Log a debug message to the console or viewport
 	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
