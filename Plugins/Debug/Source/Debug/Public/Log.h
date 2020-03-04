@@ -87,9 +87,9 @@ enum EDebugLogComparisonMethod
 	CM_Equal_To					UMETA(DisplayName = "Equal To (==)"),
 	CM_Not_Equal_To				UMETA(DisplayName = "Not Equal To (!=)"),
 	CM_Greater_Than_Or_Equal_To	UMETA(DisplayName = "Greater Than or Equal To (>=)"),
-	CM_Less_Than_Or_Equal_To		UMETA(DisplayName = "Less Than or Equal To (<=)"),
+	CM_Less_Than_Or_Equal_To	UMETA(DisplayName = "Less Than or Equal To (<=)"),
 	CM_Greater_Than				UMETA(DisplayName = "Greater Than (>)"),
-	CM_Less_Than					UMETA(DisplayName = "Less Than (<)")
+	CM_Less_Than				UMETA(DisplayName = "Less Than (<)")
 };
 
 /**
@@ -269,6 +269,11 @@ public:
 		static void Vector(const FVector& InVector, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 		static void Vector(const FVector& InVector, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
+	// Log a FVector2D value to the console or viewport
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
+		static void Vector2D(const FVector2D& InVector, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+		static void Vector2D(const FVector2D& InVector, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+
 	// Log a FRotator value to the console or viewport
 	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
 		static void Rotator(const FRotator& InRotator, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
@@ -351,9 +356,17 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Equal", DisplayName = "Assert Equal (Vector)", meta = (DevelopmentOnly))
 		static bool AssertEqual_Vector(FVector Actual, FVector Expected, FString Message, bool bCrashOnFailure = false);
 
+	// Assert that two vectors are equal
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Equal", DisplayName = "Assert Equal (Vector2D)", meta = (DevelopmentOnly))
+		static bool AssertEqual_Vector2D(FVector2D Actual, FVector2D Expected, FString Message, bool bCrashOnFailure = false);
+
 	// Assert that two vectors are not equal
 	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Not Equal", DisplayName = "Assert Not Equal (Vector)", meta = (DevelopmentOnly))
 		static bool AssertNotEqual_Vector(FVector Actual, FVector Expected, FString Message, bool bCrashOnFailure = false);
+
+	// Assert that two vectors are not equal
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Not Equal", DisplayName = "Assert Not Equal (Vector2D)", meta = (DevelopmentOnly))
+		static bool AssertNotEqual_Vector2D(FVector2D Actual, FVector2D Expected, FString Message, bool bCrashOnFailure = false);
 
 	// Assert that two rotators are equal
 	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Equal", DisplayName = "Assert Equal (Rotator)", meta = (DevelopmentOnly))

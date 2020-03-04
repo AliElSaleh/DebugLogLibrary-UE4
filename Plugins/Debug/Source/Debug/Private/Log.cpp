@@ -658,6 +658,30 @@ void ULog::Vector(const FVector& InVector, const ELoggingOptions LoggingOption, 
 	Vector(InVector, "", "", LoggingOption, TimeToDisplay);
 }
 
+void ULog::Vector2D(const FVector2D& InVector, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+{
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
+	if (LoggingOption == LO_Viewport)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + InVector.ToString() + Suffix);
+	}
+	else if (LoggingOption == LO_Console)
+	{
+		UE_LOG(LogVector, Warning, TEXT("%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *InVector.ToString(), *Suffix)
+	}
+	else if (LoggingOption == LO_Both)
+	{
+		UE_LOG(LogVector, Warning, TEXT("%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *InVector.ToString(), *Suffix)
+		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + InVector.ToString() + Suffix);
+	}
+#endif
+}
+
+void ULog::Vector2D(const FVector2D& InVector, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+{
+	Vector2D(InVector, "", "", LoggingOption, TimeToDisplay);
+}
+
 void ULog::Rotator(const FRotator& InRotator, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
@@ -981,9 +1005,19 @@ bool ULog::AssertEqual_Vector(const FVector Actual, const FVector Expected, cons
 	return AssertEqual<FVector>(Actual, Expected, "AssertEqual (Vector)", Message, bCrashOnFailure);
 }
 
+bool ULog::AssertEqual_Vector2D(const FVector2D Actual, const FVector2D Expected, const FString Message, const bool bCrashOnFailure)
+{
+	return AssertEqual<FVector2D>(Actual, Expected, "AssertEqual (Vector2D)", Message, bCrashOnFailure);
+}
+
 bool ULog::AssertNotEqual_Vector(const FVector Actual, const FVector Expected, const FString Message, const bool bCrashOnFailure)
 {
 	return AssertNotEqual<FVector>(Actual, Expected, "AssertNotEqual (Vector)", Message, bCrashOnFailure);
+}
+
+bool ULog::AssertNotEqual_Vector2D(const FVector2D Actual, const FVector2D Expected, const FString Message, const bool bCrashOnFailure)
+{
+	return AssertNotEqual<FVector2D>(Actual, Expected, "AssertNotEqual (Vector2D)", Message, bCrashOnFailure);
 }
 
 bool ULog::AssertEqual_Rotator(const FRotator Actual, const FRotator Expected, const FString Message, const bool bCrashOnFailure)
