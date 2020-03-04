@@ -841,76 +841,84 @@ void ULog::Color(const FLinearColor& InColor, const ELoggingOptions LoggingOptio
 	Color(InColor, "", "", LoggingOption, TimeToDisplay);	
 }
 
-void ULog::Celsius(const float InDegreesCelsius, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Temperature(const float InTemperatureValue, const EDebugLogTemperatureUnit TemperatureUnit, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+{
+	LogTemperature(InTemperatureValue, TemperatureUnit, Prefix, Suffix, LoggingOption, TimeToDisplay);
+}
+
+void ULog::Temperature(const float InTemperatureValue, const EDebugLogTemperatureUnit TemperatureUnit, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+{
+	Temperature(InTemperatureValue, TemperatureUnit, "", "", LoggingOption, TimeToDisplay);
+}
+
+void ULog::Volume(const float InVolumeValue, const EDebugLogVolumeUnit VolumeUnit, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	if (LoggingOption == LO_Viewport)
+	FString UnitSymbol = "";
+	switch (VolumeUnit)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + FString::SanitizeFloat(InDegreesCelsius) + " C" + Suffix);
+	case DLVU_Litre:
+		UnitSymbol = "L";
+	break;
+	case DLVU_Millilitre:
+		UnitSymbol = "ml";
+	break;
+	case DLVU_Gallon:
+		UnitSymbol = "GAL";
+	break;
+	case DLVU_Pint:
+		UnitSymbol = "pt";
+	break;
+	case DLVU_Quart:
+		UnitSymbol = "qt";
+	break;
 	}
-	else if (LoggingOption == LO_Console)
-	{
-		UE_LOG(LogColor, Warning, TEXT("%s%s%s°C%s"), NET_MODE_PREFIX, *Prefix, *FString::SanitizeFloat(InDegreesCelsius), *Suffix)
-	}
-	else if (LoggingOption == LO_Both)
-	{
-		UE_LOG(LogColor, Warning, TEXT("%s%s%s°C%s"), NET_MODE_PREFIX, *Prefix, *FString::SanitizeFloat(InDegreesCelsius), *Suffix)
-		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + FString::SanitizeFloat(InDegreesCelsius) + " C" + Suffix);
-	}
+	
+	LogUnitSystem(InVolumeValue, UnitSymbol, false, Prefix, Suffix, LoggingOption, TimeToDisplay);
 #endif
 }
 
-void ULog::Celsius(const float InDegreesCelsius, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Volume(const float InVolumeValue, const EDebugLogVolumeUnit VolumeUnit, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
-	Celsius(InDegreesCelsius, "", "", LoggingOption, TimeToDisplay);
+	Volume(InVolumeValue, VolumeUnit, "", "", LoggingOption, TimeToDisplay);
 }
 
-void ULog::Fahrenheit(const float InDegreesFahrenheit, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Data(const float InDataValue, const EDebugLogDataUnit DataUnit, const bool bConvertValueToInt, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	if (LoggingOption == LO_Viewport)
+	FString UnitSymbol = "";
+	switch (DataUnit)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + FString::SanitizeFloat(InDegreesFahrenheit) + " F" + Suffix);
+	case DLDU_Bit:
+		UnitSymbol = "bit";
+	break;
+	case DLDU_Byte:
+		UnitSymbol = "byte";
+	break;
+	case DLDU_Kilobyte:
+		UnitSymbol = "KB";
+	break;
+	case DLDU_Megabyte:
+		UnitSymbol = "MB";
+	break;
+	case DLDU_Gigabyte:
+		UnitSymbol = "GB";
+	break;
+	case DLDU_Terabyte:
+		UnitSymbol = "TB";
+	break;
+	case DLDU_Petabyte:
+		UnitSymbol = "PB";
+	break;
 	}
-	else if (LoggingOption == LO_Console)
-	{
-		UE_LOG(LogColor, Warning, TEXT("%s%s%s°F%s"), NET_MODE_PREFIX, *Prefix, *FString::SanitizeFloat(InDegreesFahrenheit), *Suffix)
-	}
-	else if (LoggingOption == LO_Both)
-	{
-		UE_LOG(LogColor, Warning, TEXT("%s%s%s°F%s"), NET_MODE_PREFIX, *Prefix, *FString::SanitizeFloat(InDegreesFahrenheit), *Suffix)
-		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + FString::SanitizeFloat(InDegreesFahrenheit) + " F" + Suffix);
-	}
+	
+	LogData(InDataValue, DataUnit, UnitSymbol, bConvertValueToInt, Prefix, Suffix, LoggingOption, TimeToDisplay);
 #endif
 }
 
-void ULog::Fahrenheit(const float InDegreesFahrenheit, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Data(const float InDataValue, const EDebugLogDataUnit DataUnit, const bool bConvertValueToInt, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
-	Fahrenheit(InDegreesFahrenheit, "", "", LoggingOption, TimeToDisplay);
-}
-
-void ULog::Kelvin(const float InDegreesKelvin, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
-{
-#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	if (LoggingOption == LO_Viewport)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + FString::SanitizeFloat(InDegreesKelvin) + " K" + Suffix);
-	}
-	else if (LoggingOption == LO_Console)
-	{
-		UE_LOG(LogColor, Warning, TEXT("%s%s%s°K%s"), NET_MODE_PREFIX, *Prefix, *FString::SanitizeFloat(InDegreesKelvin), *Suffix)
-	}
-	else if (LoggingOption == LO_Both)
-	{
-		UE_LOG(LogColor, Warning, TEXT("%s%s%s°K%s"), NET_MODE_PREFIX, *Prefix, *FString::SanitizeFloat(InDegreesKelvin), *Suffix)
-		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + FString::SanitizeFloat(InDegreesKelvin) + " K" + Suffix);
-	}
-#endif
-}
-
-void ULog::Kelvin(const float InDegreesKelvin, const ELoggingOptions LoggingOption, const float TimeToDisplay)
-{
-	Kelvin(InDegreesKelvin, "", "", LoggingOption, TimeToDisplay);
+	Data(InDataValue, DataUnit, bConvertValueToInt, "", "", LoggingOption, TimeToDisplay);
 }
 
 void ULog::Sphere(const FSphere& Sphere, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
@@ -1451,6 +1459,74 @@ void ULog::LogFloat(const float Number, const FString& Prefix, const FString& Su
 	{
 		UE_LOG(LogNumber, Warning, TEXT("%s%s%f%s"), NET_MODE_PREFIX, *Prefix, Number, *Suffix)
 		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + FString::SanitizeFloat(Number) + Suffix);
+	}
+#endif
+}
+
+void ULog::LogTemperature(const float Value, const EDebugLogTemperatureUnit TemperatureUnit, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+{
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
+	FString UnitSymbol = "";
+	switch (TemperatureUnit)
+	{
+	case DLTU_Celsius:
+		UnitSymbol = "C";
+	break;
+	case DLTU_Fahrenheit:
+		UnitSymbol = "F";
+	break;
+	case DLTU_Kelvin:
+		UnitSymbol = "K";
+	break;
+	}
+
+	if (LoggingOption == LO_Viewport)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + FString::SanitizeFloat(Value) + " " + UnitSymbol + Suffix);
+	}
+	else if (LoggingOption == LO_Console)
+	{
+		UE_LOG(LogUnit, Warning, TEXT("%s%s%s°%s%s"), NET_MODE_PREFIX, *Prefix, *FString::SanitizeFloat(Value), *UnitSymbol, *Suffix)
+	}
+	else if (LoggingOption == LO_Both)
+	{
+		UE_LOG(LogUnit, Warning, TEXT("%s%s%s°%s%s"), NET_MODE_PREFIX, *Prefix, *FString::SanitizeFloat(Value), *UnitSymbol, *Suffix)
+		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + FString::SanitizeFloat(Value) + " " + UnitSymbol + Suffix);
+	}
+#endif
+}
+
+void ULog::LogData(const float Value, const EDebugLogDataUnit DataUnit, FString& UnitSymbol, bool bConvertValueToInt, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+{
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
+	if (Value > 1 && (DataUnit == DLDU_Bit || DataUnit == DLDU_Byte))
+	{
+		UnitSymbol.Append("s");
+	}
+
+	LogUnitSystem(Value, UnitSymbol, bConvertValueToInt, Prefix, Suffix, LoggingOption, TimeToDisplay);
+#endif	
+}
+
+void ULog::LogUnitSystem(const float Value, const FString& UnitSymbol, const bool bConvertValueToInt, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+{
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
+	FString ValueInString = FString::SanitizeFloat(Value);
+	if (bConvertValueToInt)
+		ValueInString = FString::FromInt(Value);
+
+	if (LoggingOption == LO_Viewport)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + ValueInString + UnitSymbol + Suffix);
+	}
+	else if (LoggingOption == LO_Console)
+	{
+		UE_LOG(LogUnit, Warning, TEXT("%s%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *ValueInString, *UnitSymbol, *Suffix)
+	}
+	else if (LoggingOption == LO_Both)
+	{
+		UE_LOG(LogUnit, Warning, TEXT("%s%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *ValueInString, *UnitSymbol, *Suffix)
+		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + ValueInString + UnitSymbol + Suffix);
 	}
 #endif
 }

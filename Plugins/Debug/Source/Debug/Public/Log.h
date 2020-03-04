@@ -82,6 +82,37 @@ enum EDebugLogNumberSystems
 };
 
 UENUM(BlueprintType)
+enum EDebugLogTemperatureUnit
+{
+	DLTU_Celsius		UMETA(DisplayName = "Celsius (C)"),
+	DLTU_Fahrenheit		UMETA(DisplayName = "Fahrenheit (F)"),
+	DLTU_Kelvin			UMETA(DisplayName = "Kelvin (K)"),
+};
+
+UENUM(BlueprintType)
+enum EDebugLogVolumeUnit
+{
+	DLVU_Litre			UMETA(DisplayName = "Litre (L)"),
+	DLVU_Millilitre		UMETA(DisplayName = "Millilitre (ml)"),
+	DLVU_Gallon			UMETA(DisplayName = "Gallon (GAL)"),
+	DLVU_Pint			UMETA(DisplayName = "Pint (pt)"),
+	DLVU_Quart			UMETA(DisplayName = "Quart (qt)"),
+};
+
+UENUM(BlueprintType)
+enum EDebugLogDataUnit
+{
+	DLDU_Bit		UMETA(DisplayName = "Bit (bit)"),
+	DLDU_Byte		UMETA(DisplayName = "Byte (byte)"),
+	DLDU_Kilobyte	UMETA(DisplayName = "Kilobyte (KB)"),
+	DLDU_Megabyte	UMETA(DisplayName = "Megabyte (MB)"),
+	DLDU_Gigabyte	UMETA(DisplayName = "Gigabyte (GB)"),
+	DLDU_Terabyte	UMETA(DisplayName = "Terabyte (TB)"),
+	DLDU_Petabyte	UMETA(DisplayName = "Petabyte (PB)"),
+};
+
+
+UENUM(BlueprintType)
 enum EDebugLogComparisonMethod
 {
 	CM_Equal_To					UMETA(DisplayName = "Equal To (==)"),
@@ -300,20 +331,21 @@ public:
 		static void Color(const FLinearColor& InColor, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
 	#pragma region Unit Systems
-	// Log a temperature value in degrees celsius to the console or viewport (Just adds a °C symbol at the end)
+	// Log a temperature value in degrees celsius to the console or viewport (Just adds the appropriate symbol at the end)
 	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
-		static void Celsius(float InDegreesCelsius, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
-		static void Celsius(float InDegreesCelsius, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+		static void Temperature(float InTemperatureValue, EDebugLogTemperatureUnit TemperatureUnit, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+		static void Temperature(float InTemperatureValue, EDebugLogTemperatureUnit TemperatureUnit, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
-	// Log a temperature value in degrees fahrenheit to the console or viewport (Just adds a °F symbol at the end)
+	// Log a volume unit value to the console or viewport (Just adds the appropriate symbol at the end)
 	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
-		static void Fahrenheit(float InDegreesFahrenheit, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
-		static void Fahrenheit(float InDegreesFahrenheit, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+		static void Volume(float InVolumeValue, EDebugLogVolumeUnit VolumeUnit, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+		static void Volume(float InVolumeValue, EDebugLogVolumeUnit VolumeUnit, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
-	// Log a temperature value in degrees kelvin to the console or viewport (Just adds a °K symbol at the end)
+	// Log a data unit value to the console or viewport (Just adds the appropriate symbol at the end)
 	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
-		static void Kelvin(float InDegreesKelvin, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
-		static void Kelvin(float InDegreesKelvin, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+		static void Data(float InDataValue, EDebugLogDataUnit DataUnit, bool bConvertValueToInt = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+		static void Data(float InDataValue, EDebugLogDataUnit DataUnit, bool bConvertValueToInt = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+
 	#pragma endregion
 
 	// Log sphere information to the console or viewport
@@ -486,6 +518,10 @@ private:
 	static void LogUInt(platform_uint Number, const FString& Prefix = "", const FString& Suffix = "", EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 	static void LogLongInt(long Number, const FString& Prefix = "", const FString& Suffix = "", EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 	static void LogFloat(float Number, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+
+	static void LogTemperature(float Value, EDebugLogTemperatureUnit TemperatureUnit, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+	static void LogData(float Value, EDebugLogDataUnit DataUnit, FString& UnitSymbol, bool bConvertValueToInt = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+	static void LogUnitSystem(float Value, const FString& UnitSymbol, bool bConvertValueToInt = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
 	static FString DecimalToHex(platform_int DecimalNumber);
 	static FString DecimalToBinary(platform_int DecimalNumber);
