@@ -22,21 +22,21 @@ void ULog::PostInitProperties()
 	Settings = GetDefault<UDebugLogLibrarySettings>();
 }
 
-void ULog::ObjectValidity(UObject* ObjectRef, const ELoggingOptions LoggingOption)
+void ULog::ObjectValidity(UObject* ObjectRef, const bool bSilenceOnError, const ELoggingOptions LoggingOption)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	if (LoggingOption == LO_Viewport)
 	{
 		if (ObjectRef)
 			GEngine->AddOnScreenDebugMessage(-1, 3.0f, Settings->SuccessColor, NET_MODE_PREFIX + ObjectRef->GetName() + " is valid");
-		else
+		else if (!bSilenceOnError)
 			GEngine->AddOnScreenDebugMessage(-1, 3.0f, Settings->ErrorColor, NET_MODE_PREFIX + FString("Object is null"));
 	}
 	else if (LoggingOption == LO_Console)
 	{
 		if (ObjectRef)
 			UE_LOG(LogObjectValidity, Warning, TEXT("%s%s is valid"), NET_MODE_PREFIX, *ObjectRef->GetName())
-		else
+		else if (!bSilenceOnError)
 			UE_LOG(LogObjectValidity, Error, TEXT("%sObject is null"), NET_MODE_PREFIX)
 	}
 	else if (LoggingOption == LO_Both)
@@ -46,7 +46,7 @@ void ULog::ObjectValidity(UObject* ObjectRef, const ELoggingOptions LoggingOptio
 			UE_LOG(LogObjectValidity, Warning, TEXT("%s%s is valid"), NET_MODE_PREFIX, *ObjectRef->GetName())
 			GEngine->AddOnScreenDebugMessage(-1, 3.0f, Settings->SuccessColor, NET_MODE_PREFIX + ObjectRef->GetName() + " is valid");
 		}
-		else
+		else if (!bSilenceOnError)
 		{
 			UE_LOG(LogObjectValidity, Error, TEXT("%sObject is null"), NET_MODE_PREFIX)	
 			GEngine->AddOnScreenDebugMessage(-1, 3.0f, Settings->ErrorColor, NET_MODE_PREFIX + FString("Object is null"));
@@ -55,21 +55,21 @@ void ULog::ObjectValidity(UObject* ObjectRef, const ELoggingOptions LoggingOptio
 #endif
 }
 
-void ULog::ObjectName(UObject* InObject, const ELoggingOptions LoggingOption)
+void ULog::ObjectName(UObject* InObject, const bool bSilenceOnError, const ELoggingOptions LoggingOption)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	if (LoggingOption == LO_Viewport)
 	{
 		if (InObject)
 			GEngine->AddOnScreenDebugMessage(-1, 3.0f, Settings->InfoColor, NET_MODE_PREFIX + InObject->GetName());
-		else
+		else if (!bSilenceOnError)
 			GEngine->AddOnScreenDebugMessage(-1, 3.0f, Settings->ErrorColor, NET_MODE_PREFIX + FString("None (Object is null)"));
 	}
 	else if (LoggingOption == LO_Console)
 	{
 		if (InObject)
 			UE_LOG(LogMessage, Warning, TEXT("%s%s"), NET_MODE_PREFIX, *InObject->GetName())
-		else
+		else if (!bSilenceOnError)
 			UE_LOG(LogMessage, Error, TEXT("%sNone (Object is null)"), NET_MODE_PREFIX)
 	}
 	else if (LoggingOption == LO_Both)
@@ -79,7 +79,7 @@ void ULog::ObjectName(UObject* InObject, const ELoggingOptions LoggingOption)
 			UE_LOG(LogMessage, Warning, TEXT("%s%s"), NET_MODE_PREFIX, *InObject->GetName())
 			GEngine->AddOnScreenDebugMessage(-1, 3.0f, Settings->InfoColor, NET_MODE_PREFIX + InObject->GetName());
 		}
-		else
+		else if (!bSilenceOnError)
 		{
 			UE_LOG(LogMessage, Error, TEXT("%sNone (Object is null)"), NET_MODE_PREFIX)	
 			GEngine->AddOnScreenDebugMessage(-1, 3.0f, Settings->ErrorColor, NET_MODE_PREFIX + FString("None (Object is null)"));
