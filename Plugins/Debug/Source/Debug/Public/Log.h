@@ -385,13 +385,13 @@ public:
 	#pragma region Unit Systems
 	// Log a temperature value in degrees celsius to the console or viewport (Just adds the appropriate symbol at the end)
 	UFUNCTION(BlueprintCallable, Category = "Debug | Unit Systems", meta = (DevelopmentOnly))
-		static void Temperature(float InTemperatureValue, EDebugLogTemperatureUnit TemperatureUnit, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
-		static void Temperature(float InTemperatureValue, EDebugLogTemperatureUnit TemperatureUnit, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+		static void Temperature(float InTemperatureValue, EDebugLogTemperatureUnit TemperatureUnit, bool bConvertValueToInt = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+		static void Temperature(float InTemperatureValue, EDebugLogTemperatureUnit TemperatureUnit, bool bConvertValueToInt = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
 	// Log a volume unit value to the console or viewport (Just adds the appropriate symbol at the end)
 	UFUNCTION(BlueprintCallable, Category = "Debug | Unit Systems", meta = (DevelopmentOnly))
-		static void Volume(float InVolumeValue, EDebugLogVolumeUnit VolumeUnit, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
-		static void Volume(float InVolumeValue, EDebugLogVolumeUnit VolumeUnit, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+		static void Volume(float InVolumeValue, EDebugLogVolumeUnit VolumeUnit, bool bConvertValueToInt = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+		static void Volume(float InVolumeValue, EDebugLogVolumeUnit VolumeUnit, bool bConvertValueToInt = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
 	// Log a data unit value to the console or viewport (Just adds the appropriate symbol at the end)
 	UFUNCTION(BlueprintCallable, Category = "Debug | Unit Systems", meta = (DevelopmentOnly))
