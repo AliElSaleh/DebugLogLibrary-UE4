@@ -9,8 +9,6 @@
 
 #include "DebugLogLibrarySettings.h"
 
-#include <sstream>
-
 #define MAX_HEX_VALUES 16
 
 const UDebugLogLibrarySettings* ULog::Settings;
@@ -876,7 +874,9 @@ void ULog::Color(const FLinearColor& InColor, const ELoggingOptions LoggingOptio
 
 void ULog::Temperature(const float InTemperatureValue, const EDebugLogTemperatureUnit TemperatureUnit, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	LogTemperature(InTemperatureValue, TemperatureUnit, Prefix, Suffix, LoggingOption, TimeToDisplay);
+#endif
 }
 
 void ULog::Temperature(const float InTemperatureValue, const EDebugLogTemperatureUnit TemperatureUnit, const ELoggingOptions LoggingOption, const float TimeToDisplay)
