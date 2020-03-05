@@ -1,4 +1,4 @@
-// Copyright Ali El Saleh 2019
+ï»¿// Copyright Ali El Saleh 2019
 
 #include "Log.h"
 #include "Debug.h"
@@ -954,6 +954,159 @@ void ULog::Data(const float InDataValue, const EDebugLogDataUnit DataUnit, const
 	Data(InDataValue, DataUnit, bConvertValueToInt, "", "", LoggingOption, TimeToDisplay);
 }
 
+void ULog::Length(const float InLengthValue, const EDebugLogLengthUnit LengthUnit, const bool bConvertValueToInt, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+{
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
+	FString UnitSymbol = "";
+	switch (LengthUnit)
+	{
+	case DLLU_Centimeter:
+		UnitSymbol = "cm";
+	break;
+	case DLLU_Millimeter:
+		UnitSymbol = "mm";
+	break;
+	case DLLU_Meter:
+		UnitSymbol = "m";
+	break;
+	case DLLU_Kilometer:
+		UnitSymbol = "km";
+	break;
+	case DLLU_Inch:
+		UnitSymbol = "in";
+	break;
+	case DLLU_Feet:
+		UnitSymbol = "ft";
+	break;
+	case DLLU_Mile:
+		UnitSymbol = "mi";
+	break;
+	case DLLU_NauticalMile:
+		UnitSymbol = "nm";
+	break;
+	case DLLU_Yard:
+		UnitSymbol = "yd";
+	break;
+	}
+
+	LogUnitSystem(InLengthValue, UnitSymbol, bConvertValueToInt, Prefix, Suffix, LoggingOption, TimeToDisplay);
+#endif
+}
+
+void ULog::Length(const float InLengthValue, const EDebugLogLengthUnit LengthUnit, const bool bConvertValueToInt, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+{
+	Length(InLengthValue, LengthUnit, bConvertValueToInt, "", "", LoggingOption, TimeToDisplay);
+}
+
+void ULog::Mass(const float InMassValue, const EDebugLogMassUnit MassUnit, const bool bConvertValueToInt, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+{
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
+	FString UnitSymbol = "";
+	switch (MassUnit)
+	{
+	case DLMU_Microgram:
+		UnitSymbol = "ug";
+	break;
+	case DLMU_Milligram:
+		UnitSymbol = "mg";
+	break;
+	case DLMU_Gram:
+		UnitSymbol = "g";
+	break;
+	case DLMU_Kilogram:
+		UnitSymbol = "kg";
+	break;
+	case DLMU_Ounce:
+		UnitSymbol = "oz";
+	break;
+	case DLMU_Stone:
+		UnitSymbol = "st";
+	break;
+	case DLMU_Pound:
+		UnitSymbol = "lb";
+	break;
+	case DLMU_Tonne:
+		UnitSymbol = "t";
+	break;
+	}
+
+	LogUnitSystem(InMassValue, UnitSymbol, bConvertValueToInt, Prefix, Suffix, LoggingOption, TimeToDisplay);
+#endif
+}
+
+void ULog::Mass(const float InMassValue, const EDebugLogMassUnit MassUnit, const bool bConvertValueToInt, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+{
+	Mass(InMassValue, MassUnit, bConvertValueToInt, "", "", LoggingOption, TimeToDisplay);
+}
+
+void ULog::Speed(const float InSpeedValue, const EDebugLogSpeedUnit SpeedUnit, const bool bConvertValueToInt, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+{
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
+	FString UnitSymbol = "";
+	switch (SpeedUnit)
+	{
+	case DLSU_CentimetersPerSec:
+		UnitSymbol = "cm/s";
+	break;
+	case DLSU_CentimetersPerHour:
+		UnitSymbol = "cm/h";
+	break;
+	case DLSU_MillimetersPerSec:
+		UnitSymbol = "mm/s";
+	break;
+	case DLSU_MillimetersPerHour:
+		UnitSymbol = "mm/h";
+	break;
+	case DLSU_MetersPerSec:
+		UnitSymbol = "m/s";
+	break;
+	case DLSU_MetersPerHour:
+		UnitSymbol = "m/h";
+	break;
+	case DLSU_KilometersPerSec:
+		UnitSymbol = "km/s";
+	break;
+	case DLSU_KilometersPerHour:
+		UnitSymbol = "km/h";
+	break;
+	case DLSU_InchesPerSec:
+		UnitSymbol = "in/s";
+	break;
+	case DLSU_InchesPerHour:
+		UnitSymbol = "in/h";
+	break;
+	case DLSU_FeetPerSec:
+		UnitSymbol = "ft/s";
+	break;
+	case DLSU_FeetPerHour:
+		UnitSymbol = "ft/h";
+	break;
+	case DLSU_MilesPerSec:
+		UnitSymbol = "mi/s";
+	break;
+	case DLSU_MilesPerHour:
+		UnitSymbol = "mi/h";
+	break;
+	case DLSU_YardsPerSec:
+		UnitSymbol = "yd/s";
+	break;
+	case DLSU_YardsPerHour:
+		UnitSymbol = "yd/h";
+	break;
+	case DLSU_Knots:
+		UnitSymbol = "kn";
+	break;
+	}
+
+	LogUnitSystem(InSpeedValue, UnitSymbol, bConvertValueToInt, Prefix, Suffix, LoggingOption, TimeToDisplay);
+#endif
+}
+
+void ULog::Speed(const float InSpeedValue, const EDebugLogSpeedUnit SpeedUnit, const bool bConvertValueToInt, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+{
+	Speed(InSpeedValue, SpeedUnit, bConvertValueToInt, "", "", LoggingOption, TimeToDisplay);
+}
+
 void ULog::Sphere(const FSphere& Sphere, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
@@ -1519,11 +1672,11 @@ void ULog::LogTemperature(const float Value, const EDebugLogTemperatureUnit Temp
 	}
 	else if (LoggingOption == LO_Console)
 	{
-		UE_LOG(LogUnit, Warning, TEXT("%s%s%s°%s%s"), NET_MODE_PREFIX, *Prefix, *FString::SanitizeFloat(Value), *UnitSymbol, *Suffix)
+		UE_LOG(LogUnit, Warning, TEXT("%s%s%sÂ°%s%s"), NET_MODE_PREFIX, *Prefix, *FString::SanitizeFloat(Value), *UnitSymbol, *Suffix)
 	}
 	else if (LoggingOption == LO_Both)
 	{
-		UE_LOG(LogUnit, Warning, TEXT("%s%s%s°%s%s"), NET_MODE_PREFIX, *Prefix, *FString::SanitizeFloat(Value), *UnitSymbol, *Suffix)
+		UE_LOG(LogUnit, Warning, TEXT("%s%s%sÂ°%s%s"), NET_MODE_PREFIX, *Prefix, *FString::SanitizeFloat(Value), *UnitSymbol, *Suffix)
 		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + FString::SanitizeFloat(Value) + " " + UnitSymbol + Suffix);
 	}
 #endif

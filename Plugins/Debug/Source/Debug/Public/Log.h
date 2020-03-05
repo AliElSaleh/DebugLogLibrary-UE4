@@ -1,4 +1,4 @@
-// Copyright Ali El Saleh 2019
+﻿// Copyright Ali El Saleh 2019
 
 #pragma once
 
@@ -86,7 +86,7 @@ enum EDebugLogTemperatureUnit
 {
 	DLTU_Celsius		UMETA(DisplayName = "Celsius (C)"),
 	DLTU_Fahrenheit		UMETA(DisplayName = "Fahrenheit (F)"),
-	DLTU_Kelvin			UMETA(DisplayName = "Kelvin (K)"),
+	DLTU_Kelvin			UMETA(DisplayName = "Kelvin (K)")
 };
 
 UENUM(BlueprintType)
@@ -96,7 +96,7 @@ enum EDebugLogVolumeUnit
 	DLVU_Millilitre		UMETA(DisplayName = "Millilitre (ml)"),
 	DLVU_Gallon			UMETA(DisplayName = "Gallon (GAL)"),
 	DLVU_Pint			UMETA(DisplayName = "Pint (pt)"),
-	DLVU_Quart			UMETA(DisplayName = "Quart (qt)"),
+	DLVU_Quart			UMETA(DisplayName = "Quart (qt)")
 };
 
 UENUM(BlueprintType)
@@ -108,9 +108,57 @@ enum EDebugLogDataUnit
 	DLDU_Megabyte	UMETA(DisplayName = "Megabyte (MB)"),
 	DLDU_Gigabyte	UMETA(DisplayName = "Gigabyte (GB)"),
 	DLDU_Terabyte	UMETA(DisplayName = "Terabyte (TB)"),
-	DLDU_Petabyte	UMETA(DisplayName = "Petabyte (PB)"),
+	DLDU_Petabyte	UMETA(DisplayName = "Petabyte (PB)")
 };
 
+UENUM(BlueprintType)
+enum EDebugLogLengthUnit
+{
+	DLLU_Centimeter		UMETA(DisplayName = "Centimeter (cm)"),
+	DLLU_Millimeter		UMETA(DisplayName = "Millimeter (mm)"),
+	DLLU_Meter			UMETA(DisplayName = "Meter (m)"),
+	DLLU_Kilometer		UMETA(DisplayName = "Kilometer (km)"),
+	DLLU_Inch			UMETA(DisplayName = "Inches (in)"),
+	DLLU_Feet			UMETA(DisplayName = "Feet (ft)"),
+	DLLU_Mile			UMETA(DisplayName = "Miles (mi)"),
+	DLLU_NauticalMile	UMETA(DisplayName = "Nautical Mile (nm)"),
+	DLLU_Yard			UMETA(DisplayName = "Yard (yd)")
+};
+
+UENUM(BlueprintType)
+enum EDebugLogMassUnit
+{
+	DLMU_Microgram		UMETA(DisplayName = "Microgram (μg)"),
+	DLMU_Milligram		UMETA(DisplayName = "Milligram (mg)"),
+	DLMU_Gram			UMETA(DisplayName = "Gram (g)"),
+	DLMU_Kilogram		UMETA(DisplayName = "Kilogram (kg)"),
+	DLMU_Tonne			UMETA(DisplayName = "Tonne (t)"),
+	DLMU_Ounce			UMETA(DisplayName = "Ounce (oz)"),
+	DLMU_Pound			UMETA(DisplayName = "Pound (lb)"),
+	DLMU_Stone			UMETA(DisplayName = "Stone (st)")
+};
+
+UENUM(BlueprintType)
+enum EDebugLogSpeedUnit
+{
+	DLSU_CentimetersPerSec		UMETA(DisplayName = "Centimeters per Sec (cm/s)"),
+	DLSU_CentimetersPerHour		UMETA(DisplayName = "Centimeters per Hour (cm/h))"),
+	DLSU_MillimetersPerSec		UMETA(DisplayName = "Millimeters per Sec (mm/s)"),
+	DLSU_MillimetersPerHour		UMETA(DisplayName = "Millimeters per Hour (mm/h)"),
+	DLSU_MetersPerSec			UMETA(DisplayName = "Meters per Sec (m/s)"),
+	DLSU_MetersPerHour			UMETA(DisplayName = "Meters per Hour (m/h)"),
+	DLSU_KilometersPerSec		UMETA(DisplayName = "Kilometers per Sec (km/s)"),
+	DLSU_KilometersPerHour		UMETA(DisplayName = "Kilometers per Hour (km/h)"),
+	DLSU_InchesPerSec			UMETA(DisplayName = "Inches per Sec (in/s)"),
+	DLSU_InchesPerHour			UMETA(DisplayName = "Inches per Hour (in/h)"),
+	DLSU_FeetPerSec				UMETA(DisplayName = "Feet per Sec (ft/s)"),
+	DLSU_FeetPerHour			UMETA(DisplayName = "Feet per Hour (ft/h)"),
+	DLSU_MilesPerSec			UMETA(DisplayName = "Miles per Sec (mi/s)"),
+	DLSU_MilesPerHour			UMETA(DisplayName = "Miles per Hour (mi/h)"),
+	DLSU_YardsPerSec			UMETA(DisplayName = "Yards per Sec (yd/s)"),
+	DLSU_YardsPerHour			UMETA(DisplayName = "Yards per Hour (yd/h)"),
+	DLSU_Knots					UMETA(DisplayName = "Knots (kn)")
+};
 
 UENUM(BlueprintType)
 enum EDebugLogComparisonMethod
@@ -350,6 +398,20 @@ public:
 		static void Data(float InDataValue, EDebugLogDataUnit DataUnit, bool bConvertValueToInt = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 		static void Data(float InDataValue, EDebugLogDataUnit DataUnit, bool bConvertValueToInt = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
+	// Log a length unit value to the console or viewport (Just adds the appropriate symbol at the end)
+	UFUNCTION(BlueprintCallable, Category = "Debug | Unit Systems", meta = (DevelopmentOnly))
+		static void Length(float InLengthValue, EDebugLogLengthUnit LengthUnit, bool bConvertValueToInt = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+		static void Length(float InLengthValue, EDebugLogLengthUnit LengthUnit, bool bConvertValueToInt = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+
+	// Log a mass unit value to the console or viewport (Just adds the appropriate symbol at the end)
+	UFUNCTION(BlueprintCallable, Category = "Debug | Unit Systems", meta = (DevelopmentOnly))
+		static void Mass(float InMassValue, EDebugLogMassUnit MassUnit, bool bConvertValueToInt = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+		static void Mass(float InMassValue, EDebugLogMassUnit MassUnit, bool bConvertValueToInt = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+
+	// Log a speed unit value to the console or viewport (Just adds the appropriate symbol at the end)
+	UFUNCTION(BlueprintCallable, Category = "Debug | Unit Systems", meta = (DevelopmentOnly))
+		static void Speed(float InSpeedValue, EDebugLogSpeedUnit SpeedUnit, bool bConvertValueToInt = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+		static void Speed(float InSpeedValue, EDebugLogSpeedUnit SpeedUnit, bool bConvertValueToInt = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 	#pragma endregion
 
 	// Log sphere information to the console or viewport
