@@ -959,8 +959,13 @@ void ULog::Data(const float InDataValue, const EDebugLogDataUnit DataUnit, const
 		UnitSymbol = "PB";
 	break;
 	}
+
+	if (InDataValue > 1 && (DataUnit == DLDU_Bit || DataUnit == DLDU_Byte))
+	{
+		UnitSymbol.Append("s");
+	}
 	
-	LogData(InDataValue, DataUnit, UnitSymbol, bConvertValueToInt, Prefix, Suffix, LoggingOption, TimeToDisplay);
+	LogUnitSystem(InDataValue, UnitSymbol, bConvertValueToInt, Prefix, Suffix, LoggingOption, TimeToDisplay);
 #endif
 }
 
@@ -1120,6 +1125,92 @@ void ULog::Speed(const float InSpeedValue, const EDebugLogSpeedUnit SpeedUnit, c
 void ULog::Speed(const float InSpeedValue, const EDebugLogSpeedUnit SpeedUnit, const bool bConvertValueToInt, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 	Speed(InSpeedValue, SpeedUnit, bConvertValueToInt, "", "", LoggingOption, TimeToDisplay);
+}
+
+void ULog::Time(const float InTimeValue, const EDebugLogTimeUnit TimeUnit, const bool bConvertValueToInt, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+{
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
+	FString UnitSymbol = "";
+	switch (TimeUnit)
+	{
+	case DLTU_Nanoseconds:
+		UnitSymbol = "ns";
+	break;
+	case DLTU_Microseconds:
+		UnitSymbol = "us";
+	break;
+	case DLTU_Milliseconds:
+		UnitSymbol = "ms";
+	break;
+	case DLTU_Seconds:
+		UnitSymbol = "sec";
+		
+		if (InTimeValue > 1)
+			UnitSymbol.Append("s");
+	break;
+	case DLTU_Minutes:
+		UnitSymbol = "min";
+		
+		if (InTimeValue > 1)
+			UnitSymbol.Append("s");
+	break;
+	case DLTU_Hours:
+		UnitSymbol = "hr";
+		
+		if (InTimeValue > 1)
+			UnitSymbol.Append("s");
+	break;
+	case DLTU_Days:
+		UnitSymbol = " day";
+		
+		if (InTimeValue > 1)
+			UnitSymbol.Append("s");
+	break;
+	case DLTU_Weeks:
+		UnitSymbol = " wk";
+		
+		if (InTimeValue > 1)
+			UnitSymbol.Append("s");
+	break;
+	case DLTU_Months:
+		UnitSymbol = " mth";
+		
+		if (InTimeValue > 1)
+			UnitSymbol.Append("s");
+	break;
+	case DLTU_Years:
+		UnitSymbol = " yr";
+		
+		if (InTimeValue > 1)
+			UnitSymbol.Append("s");
+	break;
+	case DLTU_Decades:
+		UnitSymbol = " decade";
+
+		if (InTimeValue > 1)
+			UnitSymbol.Append("s");
+	break;
+	case DLTU_Centuries:
+		UnitSymbol = " century";
+		
+		if (InTimeValue > 1)
+			UnitSymbol = " centuries";
+	break;
+	case DLTU_Millennium:
+		UnitSymbol = " millennium";
+		
+		if (InTimeValue > 1)
+			UnitSymbol.Append("s");
+	break;
+	}
+	
+	LogUnitSystem(InTimeValue, UnitSymbol, bConvertValueToInt, Prefix, Suffix, LoggingOption, TimeToDisplay);
+#endif
+}
+
+void ULog::Time(const float InTimeValue, const EDebugLogTimeUnit TimeUnit, const bool bConvertValueToInt, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+{
+	Time(InTimeValue, TimeUnit, bConvertValueToInt, "", "", LoggingOption, TimeToDisplay);
 }
 
 void ULog::Sphere(const FSphere& Sphere, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
@@ -1662,18 +1753,6 @@ void ULog::LogFloat(const float Number, const FString& Prefix, const FString& Su
 		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + FString::SanitizeFloat(Number) + Suffix);
 	}
 #endif
-}
-
-void ULog::LogData(const float Value, const EDebugLogDataUnit DataUnit, FString& UnitSymbol, bool bConvertValueToInt, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
-{
-#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	if (Value > 1 && (DataUnit == DLDU_Bit || DataUnit == DLDU_Byte))
-	{
-		UnitSymbol.Append("s");
-	}
-
-	LogUnitSystem(Value, UnitSymbol, bConvertValueToInt, Prefix, Suffix, LoggingOption, TimeToDisplay);
-#endif	
 }
 
 void ULog::LogUnitSystem(const float Value, const FString& UnitSymbol, const bool bConvertValueToInt, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)

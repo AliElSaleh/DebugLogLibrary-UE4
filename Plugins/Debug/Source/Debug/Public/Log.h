@@ -161,6 +161,24 @@ enum EDebugLogSpeedUnit
 };
 
 UENUM(BlueprintType)
+enum EDebugLogTimeUnit
+{
+	DLTU_Nanoseconds			UMETA(DisplayName = "Nanoseconds (ns)"),
+	DLTU_Microseconds			UMETA(DisplayName = "Microseconds (us)"),
+	DLTU_Milliseconds			UMETA(DisplayName = "Milliseconds (ms)"),
+	DLTU_Seconds				UMETA(DisplayName = "Seconds (sec)"),
+	DLTU_Minutes				UMETA(DisplayName = "Minutes (min)"),
+	DLTU_Hours					UMETA(DisplayName = "Hours (hr)"),
+	DLTU_Days					UMETA(DisplayName = "Days (day)"),
+	DLTU_Weeks					UMETA(DisplayName = "Weeks (wk)"),
+	DLTU_Months					UMETA(DisplayName = "Months (mth)"),
+	DLTU_Years					UMETA(DisplayName = "Years (yrs)"),
+	DLTU_Decades				UMETA(DisplayName = "Decades (decade)"),
+	DLTU_Centuries				UMETA(DisplayName = "Centuries (century)"),
+	DLTU_Millennium				UMETA(DisplayName = "Millennuim"),
+};
+
+UENUM(BlueprintType)
 enum EDebugLogComparisonMethod
 {
 	CM_Equal_To					UMETA(DisplayName = "Equal To (==)"),
@@ -412,6 +430,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Debug | Unit Systems", meta = (DevelopmentOnly))
 		static void Speed(float InSpeedValue, EDebugLogSpeedUnit SpeedUnit, bool bConvertValueToInt = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 		static void Speed(float InSpeedValue, EDebugLogSpeedUnit SpeedUnit, bool bConvertValueToInt = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+
+	// Log a time unit value to the console or viewport (Just adds the appropriate symbol at the end)
+	UFUNCTION(BlueprintCallable, Category = "Debug | Unit Systems", meta = (DevelopmentOnly))
+		static void Time(float InTimeValue, EDebugLogTimeUnit TimeUnit, bool bConvertValueToInt = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+		static void Time(float InTimeValue, EDebugLogTimeUnit TimeUnit, bool bConvertValueToInt = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 	#pragma endregion
 
 	// Log sphere information to the console or viewport
@@ -585,8 +608,6 @@ private:
 	static void LogLongInt(long Number, const FString& Prefix = "", const FString& Suffix = "", EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 	static void LogFloat(float Number, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
-	static void LogTemperature(float Value, EDebugLogTemperatureUnit TemperatureUnit, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
-	static void LogData(float Value, EDebugLogDataUnit DataUnit, FString& UnitSymbol, bool bConvertValueToInt = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 	static void LogUnitSystem(float Value, const FString& UnitSymbol, bool bConvertValueToInt = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
 	static FString DecimalToHex(platform_int DecimalNumber);
