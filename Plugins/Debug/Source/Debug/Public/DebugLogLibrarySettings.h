@@ -36,4 +36,8 @@ public:
 	// Should we use Two's Compliment when converting a decimal number to a hexadecimal value on negative numbers?
 	UPROPERTY(EditAnywhere, config, Category = "Settings")
 		uint8 bUseTwosComplimentForDecimalToHexConversionOnNegativeNumbers : 1;
+
+	// Should the game crash if any ULog functions are called in a shipping build configuration?
+	UPROPERTY(EditAnywhere, config, Category = "Settings")
+		uint8 bCrashGameInShippingConfiguration : 1;
 };

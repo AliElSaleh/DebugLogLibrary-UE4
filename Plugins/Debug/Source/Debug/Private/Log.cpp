@@ -1374,6 +1374,9 @@ void ULog::LogMessage_Internal(const FString& Message, const FString& Prefix, co
 		UE_LOG(LogMessage, Warning, TEXT("%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *Message, *Suffix)
 		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, LogColor, NET_MODE_PREFIX + Prefix + Message + Suffix);
 	}
+#elif (UE_BUILD_SHIPPING)
+	if (bCrashGameInShippingConfiguration)
+		Crash("DebugLogLibrary does not work in a Shipping build. Disable the plugin or remove all ULog:: calls!");
 #endif
 }
 
