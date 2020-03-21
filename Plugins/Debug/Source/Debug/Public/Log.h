@@ -72,9 +72,21 @@
 #define QUICK_LOG_CONSOLE_COLOR(Variable) ULog::Color(Variable, "", "", LO_Console, 5.0f)
 #define QUICK_LOG_VIEWPORT_COLOR(Variable) ULog::Color(Variable, "", "", LO_Viewport, 5.0f)
 
-#define QUICK_LOG_TRUE() ULog::Warning("True", LO_Viewport, false, 5.0f)
-#define QUICK_LOG_CONSOLE_TRUE() ULog::Warning("True", LO_Viewport, false, 5.0f)
+#define QUICK_LOG_TRUE() ULog::Warning("True", LO_Both, false, 5.0f)
+#define QUICK_LOG_CONSOLE_TRUE() ULog::Warning("True", LO_Console, false, 5.0f)
 #define QUICK_LOG_VIEWPORT_TRUE() ULog::Warning("True", LO_Viewport, false, 5.0f)
+
+#define QUICK_LOG_FALSE() ULog::Warning("False", LO_Both, false, 5.0f)
+#define QUICK_LOG_CONSOLE_FALSE() ULog::Warning("False", LO_Console, false, 5.0f)
+#define QUICK_LOG_VIEWPORT_FALSE() ULog::Warning("False", LO_Viewport, false, 5.0f)
+
+#define QUICK_LOG_NUMBER(Variable) ULog::Number(Variable, "", "", DLNS_Decimal, LO_Both, 5.0f)
+#define QUICK_LOG_CONSOLE_NUMBER(Variable) ULog::Number(Variable, "", "", DLNS_Decimal, LO_Console, 5.0f)
+#define QUICK_LOG_VIEWPORT_NUMBER(Variable) ULog::Number(Variable, "", "", DLNS_Decimal, LO_Viewport, 5.0f)
+
+#define QUICK_LOG_BOOL(Variable) ULog::Bool(Variable, "", "", LO_Both, 5.0f)
+#define QUICK_LOG_CONSOLE_BOOL(Variable) ULog::Bool(Variable, "", "", LO_Both, 5.0f)
+#define QUICK_LOG_VIEWPORT_BOOL(Variable) ULog::Bool(Variable, "", "", LO_Both, 5.0f)
 #endif
 
 #if PLATFORM_64BITS
@@ -391,37 +403,37 @@ public:
 	static void Number(long Number, const FString& Prefix = "", const FString& Suffix = "", EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
 	// Log a number to the console or viewport (int8 version, no prefix and suffix)
-	static void Number(int8 Number, EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+	static void Number(int8 Number, EDebugLogNumberSystems NumberSystem, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
 	// Log a number to the console or viewport (int16 version, no prefix and suffix)
-	static void Number(int16 Number, EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+	static void Number(int16 Number, EDebugLogNumberSystems NumberSystem, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
 	// Log a number to the console or viewport (int32 version, no prefix and suffix)
-	static void Number(int32 Number, EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+	static void Number(int32 Number, EDebugLogNumberSystems NumberSystem, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
 	// Log a number to the console or viewport (int64 version, no prefix and suffix)
-	static void Number(int64 Number, EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+	static void Number(int64 Number, EDebugLogNumberSystems NumberSystem, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
 	// Log a number to the console or viewport (uint8 version, no prefix and suffix)
-	static void Number(uint8 Number, EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+	static void Number(uint8 Number, EDebugLogNumberSystems NumberSystem, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
 	// Log a number to the console or viewport (uint16 version, no prefix and suffix)
-	static void Number(uint16 Number, EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+	static void Number(uint16 Number, EDebugLogNumberSystems NumberSystem, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
 	// Log a number to the console or viewport (uint32 version, no prefix and suffix)
-	static void Number(uint32 Number, EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+	static void Number(uint32 Number, EDebugLogNumberSystems NumberSystem, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
 	// Log a number to the console or viewport (uint64 version, no prefix and suffix)
-	static void Number(uint64 Number, EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+	static void Number(uint64 Number, EDebugLogNumberSystems NumberSystem, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
 	// Log a number to the console or viewport (float version, no prefix and suffix)
-	static void Number(float Number, EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+	static void Number(float Number, EDebugLogNumberSystems NumberSystem, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
 	// Log a number to the console or viewport (double version, no prefix and suffix)
-	static void Number(double Number, EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+	static void Number(double Number, EDebugLogNumberSystems NumberSystem, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
 	// Log a number to the console or viewport (long version, no prefix and suffix)
-	static void Number(long Number, EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+	static void Number(long Number, EDebugLogNumberSystems NumberSystem, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 #endif
 	
 	// Log the a percentage value to the console or viewport (Just appends a % symbol)
