@@ -5,8 +5,6 @@
 
 #include "Engine/Engine.h"
 
-#include "Kismet/KismetSystemLibrary.h"
-
 #include "Math/Vector.h"
 
 #include "DebugLogLibrarySettings.h"
@@ -315,179 +313,105 @@ void ULog::Info_WithCondition(const FString& Message, const bool bCondition, con
 void ULog::Hello(const ELoggingOptions LoggingOption)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	if (LoggingOption == LO_Viewport)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, Settings->InfoColor, NET_MODE_PREFIX + FString("Hello"));
-	}
-	else if (LoggingOption == LO_Console)
-	{
-		UE_LOG(LogMessage, Warning, TEXT("%sHello"), NET_MODE_PREFIX)
-	}
-	else if (LoggingOption == LO_Both)
-	{
-		UE_LOG(LogMessage, Warning, TEXT("%sHello"), NET_MODE_PREFIX)
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, Settings->InfoColor, NET_MODE_PREFIX + FString("Hello"));
-	}
+	LogMessage_Internal("Hello", "", "", Settings->InfoColor, LoggingOption, 5.0f);
+#endif
+}
+
+void ULog::Hey(const ELoggingOptions LoggingOption)
+{
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
+	LogMessage_Internal("Hey", "", "", Settings->InfoColor, LoggingOption, 5.0f);
+#endif
+}
+
+void ULog::Bye(const ELoggingOptions LoggingOption)
+{
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
+	LogMessage_Internal("Bye", "", "", Settings->InfoColor, LoggingOption, 5.0f);
+#endif
+}
+
+void ULog::Goodbye(const ELoggingOptions LoggingOption)
+{
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
+	LogMessage_Internal("Goodbye", "", "", Settings->InfoColor, LoggingOption, 5.0f);
+#endif
+}
+
+void ULog::Cya(const ELoggingOptions LoggingOption)
+{
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
+	LogMessage_Internal("Cya", "", "", Settings->InfoColor, LoggingOption, 5.0f);
+#endif
+}
+
+void ULog::Wassup(const ELoggingOptions LoggingOption)
+{
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
+	LogMessage_Internal("Wassup", "", "", Settings->InfoColor, LoggingOption, 5.0f);
+#endif
+}
+
+void ULog::Yo(const ELoggingOptions LoggingOption)
+{
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
+	LogMessage_Internal("Yo", "", "", Settings->InfoColor, LoggingOption, 5.0f);
 #endif
 }
 
 void ULog::Yes(const ELoggingOptions LoggingOption)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	if (LoggingOption == LO_Viewport)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, Settings->InfoColor, NET_MODE_PREFIX + FString("Yes"));
-	}
-	else if (LoggingOption == LO_Console)
-	{
-		UE_LOG(LogMessage, Warning, TEXT("%sYes"), NET_MODE_PREFIX)
-	}
-	else if (LoggingOption == LO_Both)
-	{
-		UE_LOG(LogMessage, Warning, TEXT("%sYes"), NET_MODE_PREFIX)
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, Settings->InfoColor, NET_MODE_PREFIX + FString("Yes"));
-	}
+	LogMessage_Internal("Yes", "", "", Settings->InfoColor, LoggingOption, 5.0f);
 #endif
 }
 
 void ULog::Yes(const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	const FString Message = NET_MODE_PREFIX + Prefix + "Yes" + Suffix;
-
-	if (LoggingOption == LO_Viewport)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, Settings->InfoColor, Message);
-	}
-	else if (LoggingOption == LO_Console)
-	{
-		UE_LOG(LogMessage, Warning, TEXT("%s"), *Message)
-	}
-	else if (LoggingOption == LO_Both)
-	{
-		UE_LOG(LogMessage, Warning, TEXT("%s"), *Message)
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, Settings->InfoColor, Message);
-	}
+	LogMessage_Internal("Yes", Prefix, Suffix, Settings->InfoColor, LoggingOption, 5.0f);
 #endif
 }
 
 void ULog::No(const ELoggingOptions LoggingOption)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	if (LoggingOption == LO_Viewport)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, Settings->InfoColor, NET_MODE_PREFIX + FString("No"));
-	}
-	else if (LoggingOption == LO_Console)
-	{
-		UE_LOG(LogWarning, Warning, TEXT("%sNo"), NET_MODE_PREFIX)
-	}
-	else if (LoggingOption == LO_Both)
-	{
-		UE_LOG(LogWarning, Warning, TEXT("%sNo"), NET_MODE_PREFIX)
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, Settings->InfoColor, NET_MODE_PREFIX + FString("No"));
-	}
-#endif
-}
-
-void ULog::Valid(const ELoggingOptions LoggingOption)
-{
-#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	if (LoggingOption == LO_Viewport)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, Settings->SuccessColor, NET_MODE_PREFIX + FString("Valid"));
-	}
-	else if (LoggingOption == LO_Console)
-	{
-		UE_LOG(LogSuccess, Warning, TEXT("%sValid"), NET_MODE_PREFIX)
-	}
-	else if (LoggingOption == LO_Both)
-	{
-		UE_LOG(LogSuccess, Warning, TEXT("%sValid"), NET_MODE_PREFIX)
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, Settings->SuccessColor, NET_MODE_PREFIX + FString("Valid"));
-	}
-#endif
-}
-
-void ULog::Invalid(const ELoggingOptions LoggingOption)
-{
-#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	if (LoggingOption == LO_Viewport)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, Settings->ErrorColor, NET_MODE_PREFIX + FString("Invalid"));
-	}
-	else if (LoggingOption == LO_Console)
-	{
-		UE_LOG(LogError, Error, TEXT("%sInvalid"), NET_MODE_PREFIX)
-	}
-	else if (LoggingOption == LO_Both)
-	{
-		UE_LOG(LogError, Error, TEXT("%sInvalid"), NET_MODE_PREFIX)
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, Settings->ErrorColor, NET_MODE_PREFIX + FString("Invalid"));
-	}
+	LogMessage_Internal("No", "", "", Settings->InfoColor, LoggingOption, 5.0f);
 #endif
 }
 
 void ULog::No(const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	const FString Message = NET_MODE_PREFIX + Prefix + ": No" + Suffix;
+	LogMessage_Internal("No", Prefix, Suffix, Settings->ErrorColor, LoggingOption, 5.0f);
+#endif
+}
 
-	if (LoggingOption == LO_Viewport)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, Settings->InfoColor, Message);
-	}
-	else if (LoggingOption == LO_Console)
-	{
-		UE_LOG(LogWarning, Warning, TEXT("%s"), *Message)
-	}
-	else if (LoggingOption == LO_Both)
-	{
-		UE_LOG(LogWarning, Warning, TEXT("%s"), *Message)
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, Settings->InfoColor, Message);
-	}
+void ULog::Valid(const ELoggingOptions LoggingOption)
+{
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
+	LogMessage_Internal("Valid", "", "", Settings->SuccessColor, LoggingOption, 5.0f);
 #endif
 }
 
 void ULog::Valid(const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	const FString Message = NET_MODE_PREFIX + Prefix + FString("Valid") + Suffix;
+	LogMessage_Internal("Valid", Prefix, Suffix, Settings->SuccessColor, LoggingOption, 5.0f);
+#endif
+}
 
-	if (LoggingOption == LO_Viewport)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, Settings->SuccessColor, Message);
-	}
-	else if (LoggingOption == LO_Console)
-	{
-		UE_LOG(LogSuccess, Warning, TEXT("%s"), *Message)
-	}
-	else if (LoggingOption == LO_Both)
-	{
-		UE_LOG(LogSuccess, Warning, TEXT("%s"), *Message)
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, Settings->SuccessColor, Message);
-	}
+void ULog::Invalid(const ELoggingOptions LoggingOption)
+{
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
+	LogMessage_Internal("Invalid", "", "", Settings->ErrorColor, LoggingOption, 5.0f);
 #endif
 }
 
 void ULog::Invalid(const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	const FString Message = NET_MODE_PREFIX + Prefix + FString("Invalid") + Suffix;
-
-	if (LoggingOption == LO_Viewport)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, Settings->ErrorColor, Message);
-	}
-	else if (LoggingOption == LO_Console)
-	{
-		UE_LOG(LogError, Error, TEXT("%s"), *Message)
-	}
-	else if (LoggingOption == LO_Both)
-	{
-		UE_LOG(LogError, Error, TEXT("%s"), *Message)
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, Settings->ErrorColor, Message);
-	}
+	LogMessage_Internal("Invalid", Prefix, Suffix, Settings->ErrorColor, LoggingOption, 5.0f);
 #endif
 }
 
@@ -872,6 +796,18 @@ void ULog::Color(const FLinearColor& InColor, const FString& Prefix, const FStri
 void ULog::Color(const FLinearColor& InColor, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 	Color(InColor, "", "", LoggingOption, TimeToDisplay);	
+}
+
+void ULog::DateTime(const FDateTime& InDateTime, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+{
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
+	LogMessage_Internal(InDateTime.ToString(), Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay);
+#endif
+}
+
+void ULog::DateTime(const FDateTime& InDateTime, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+{
+	DateTime(InDateTime, "", "", LoggingOption, TimeToDisplay);
 }
 
 void ULog::Temperature(const float InTemperatureValue, const EDebugLogTemperatureUnit TemperatureUnit, const bool bConvertValueToInt, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
@@ -1604,6 +1540,25 @@ void ULog::UnImplemented()
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	unimplemented();
+#endif
+}
+
+void ULog::LogMessage_Internal(const FString& Message, const FString& Prefix, const FString& Suffix, const FColor& LogColor, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+{
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
+	if (LoggingOption == LO_Viewport)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, LogColor, NET_MODE_PREFIX + Prefix + Message + Suffix);
+	}
+	else if (LoggingOption == LO_Console)
+	{
+		UE_LOG(LogMessage, Warning, TEXT("%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *Message, *Suffix)
+	}
+	else if (LoggingOption == LO_Both)
+	{
+		UE_LOG(LogMessage, Warning, TEXT("%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *Message, *Suffix)
+		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, LogColor, NET_MODE_PREFIX + Prefix + Message + Suffix);
+	}
 #endif
 }
 

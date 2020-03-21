@@ -42,6 +42,39 @@
 
 // Development build only. Logs an assert message and crashes the program
 #define ASSERT(expr, message) FDebug::AssertFailed(#expr, UE_LOG_SOURCE_FILE(__FILE__), __LINE__, TEXT("%s"), *message);
+
+// Development build only. Quick debug logging macros
+#define QUICK_LOG_VECTOR(Variable) ULog::Vector(Variable, "", "", LO_Both, 5.0f)
+#define QUICK_LOG_CONSOLE_VECTOR(Variable) ULog::Vector(Variable, "", "", LO_Console, 5.0f)
+#define QUICK_LOG_VIEWPORT_VECTOR(Variable) ULog::Vector(Variable, "", "", LO_Viewport, 5.0f)
+
+#define QUICK_LOG_VECTOR2D(Variable) ULog::Vector2D(Variable, "", "", LO_Both, 5.0f)
+#define QUICK_LOG_CONSOLE_VECTOR2D(Variable) ULog::Vector2D(Variable, "", "", LO_Console, 5.0f)
+#define QUICK_LOG_VIEWPORT_VECTOR2D(Variable) ULog::Vector2D(Variable, "", "", LO_Viewport, 5.0f)
+
+#define QUICK_LOG_ROTATOR(Variable) ULog::Rotator(Variable, "", "", LO_Both, 5.0f)
+#define QUICK_LOG_CONSOLE_ROTATOR(Variable) ULog::Rotator(Variable, "", "", LO_Console, 5.0f)
+#define QUICK_LOG_VIEWPORT_ROTATOR(Variable) ULog::Rotator(Variable, "", "", LO_Viewport, 5.0f)
+
+#define QUICK_LOG_TRANSFORM(Variable) ULog::Transform(Variable, "", "", LO_Both, 5.0f)
+#define QUICK_LOG_CONSOLE_TRANSFORM(Variable) ULog::Transform(Variable, "", "", LO_Console, 5.0f)
+#define QUICK_LOG_VIEWPORT_TRANSFORM(Variable) ULog::Transform(Variable, "", "", LO_Viewport, 5.0f)
+
+#define QUICK_LOG_QUAT(Variable) ULog::Quat(Variable, "", "", LO_Both, 5.0f)
+#define QUICK_LOG_CONSOLE_QUAT(Variable) ULog::Quat(Variable, "", "", LO_Console, 5.0f)
+#define QUICK_LOG_VIEWPORT_QUAT(Variable) ULog::Quat(Variable, "", "", LO_Viewport, 5.0f)
+
+#define QUICK_LOG_MATRIX(Variable) ULog::Matrix(Variable, "", "", LO_Both, 5.0f)
+#define QUICK_LOG_CONSOLE_MATRIX(Variable) ULog::Matrix(Variable, "", "", LO_Console, 5.0f)
+#define QUICK_LOG_VIEWPORT_MATRIX(Variable) ULog::Matrix(Variable, "", "", LO_Viewport, 5.0f)
+
+#define QUICK_LOG_COLOR(Variable) ULog::Color(Variable, "", "", LO_Both, 5.0f)
+#define QUICK_LOG_CONSOLE_COLOR(Variable) ULog::Color(Variable, "", "", LO_Console, 5.0f)
+#define QUICK_LOG_VIEWPORT_COLOR(Variable) ULog::Color(Variable, "", "", LO_Viewport, 5.0f)
+
+#define QUICK_LOG_TRUE() ULog::Warning("True", LO_Viewport, false, 5.0f)
+#define QUICK_LOG_CONSOLE_TRUE() ULog::Warning("True", LO_Viewport, false, 5.0f)
+#define QUICK_LOG_VIEWPORT_TRUE() ULog::Warning("True", LO_Viewport, false, 5.0f)
 #endif
 
 #if PLATFORM_64BITS
@@ -275,6 +308,30 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
 		static void Hello(ELoggingOptions LoggingOption = LO_Console);
 
+	// Log a hey message to the console or viewport
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
+		static void Hey(ELoggingOptions LoggingOption = LO_Console);
+
+	// Log a bye message to the console or viewport
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
+		static void Bye(ELoggingOptions LoggingOption = LO_Console);
+
+	// Log a goodbye message to the console or viewport
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
+		static void Goodbye(ELoggingOptions LoggingOption = LO_Console);
+
+	// Log a cya message to the console or viewport
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
+		static void Cya(ELoggingOptions LoggingOption = LO_Console);
+
+	// Log a wassup message to the console or viewport
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
+		static void Wassup(ELoggingOptions LoggingOption = LO_Console);
+
+	// Log a yo message to the console or viewport
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
+		static void Yo(ELoggingOptions LoggingOption = LO_Console);
+
 	// Log a 'valid' message to the console or viewport
 	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
 		static void Valid(const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console);
@@ -412,6 +469,11 @@ public:
 		static void Color(const FLinearColor& InColor, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 		static void Color(const FLinearColor& InColor, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
+	// Log a DateTime value to the console or viewport
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
+		static void DateTime(const FDateTime& InDateTime, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+		static void DateTime(const FDateTime& InDateTime, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+	
 	#pragma region Unit Systems
 	// Log a temperature value in degrees celsius to the console or viewport (Just adds the appropriate symbol at the end)
 	UFUNCTION(BlueprintCallable, Category = "Debug | Unit Systems", meta = (DevelopmentOnly))
@@ -620,10 +682,12 @@ protected:
 
 private:
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
+	static void LogMessage_Internal(const FString& Message, const FString& Prefix = "", const FString& Suffix = "", const FColor& LogColor = FColor::Cyan, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+
+	static void LogFloat(float Number, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 	static void LogInt(platform_int Number, const FString& Prefix = "", const FString& Suffix = "", EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 	static void LogUInt(platform_uint Number, const FString& Prefix = "", const FString& Suffix = "", EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 	static void LogLongInt(long Number, const FString& Prefix = "", const FString& Suffix = "", EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
-	static void LogFloat(float Number, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
 	static void LogUnitSystem(float Value, const FString& UnitSymbol, bool bConvertValueToInt = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 	static void LogCurrencyUnitSystem(float Value, const FString& UnitSymbol, bool bConvertValueToInt = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
