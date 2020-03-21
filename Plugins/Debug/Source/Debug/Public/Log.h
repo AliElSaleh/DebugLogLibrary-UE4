@@ -178,6 +178,18 @@ enum EDebugLogTimeUnit
 	DLTU_Millennium				UMETA(DisplayName = "Millennuim"),
 };
 
+//UENUM(BlueprintType)
+//enum EDebugLogCurrencyUnit
+//{
+//	DLCU_Dollar					UMETA(DisplayName = "Dollar ($)"),
+//	DLCU_Pound					UMETA(DisplayName = "Pound (£)"),
+//	DLCU_Euro					UMETA(DisplayName = "Euro (€)"),
+//	DLCU_ChineseYuan			UMETA(DisplayName = "Chinese Yuan (元)"),
+//	DLCU_JapaneseYen 			UMETA(DisplayName = "Japanese Yen (¥)"),
+//	DLCU_IndianRupee			UMETA(DisplayName = "Indian Rupee (₹)"),
+//	DLCU_TurkishLira 			UMETA(DisplayName = "Turkish Lira (₺)"),
+//};
+
 UENUM(BlueprintType)
 enum EDebugLogComparisonMethod
 {
@@ -435,6 +447,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Debug | Unit Systems", meta = (DevelopmentOnly))
 		static void Time(float InTimeValue, EDebugLogTimeUnit TimeUnit, bool bConvertValueToInt = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 		static void Time(float InTimeValue, EDebugLogTimeUnit TimeUnit, bool bConvertValueToInt = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+
+	// Log a dollar value to the console or viewport (Just adds the $ symbol at the start)
+	UFUNCTION(BlueprintCallable, Category = "Debug | Unit Systems", meta = (DevelopmentOnly))
+		static void Dollar(float InDollarValue, bool bConvertValueToInt = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+		static void Dollar(float InDollarValue, bool bConvertValueToInt = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 	#pragma endregion
 
 	// Log sphere information to the console or viewport
@@ -609,6 +626,7 @@ private:
 	static void LogFloat(float Number, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
 	static void LogUnitSystem(float Value, const FString& UnitSymbol, bool bConvertValueToInt = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+	static void LogCurrencyUnitSystem(float Value, const FString& UnitSymbol, bool bConvertValueToInt = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
 	static FString DecimalToHex(platform_int DecimalNumber);
 	static FString DecimalToBinary(platform_int DecimalNumber);

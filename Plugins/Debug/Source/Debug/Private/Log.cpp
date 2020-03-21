@@ -5,6 +5,8 @@
 
 #include "Engine/Engine.h"
 
+#include "Kismet/KismetSystemLibrary.h"
+
 #include "Math/Vector.h"
 
 #include "DebugLogLibrarySettings.h"
@@ -1213,6 +1215,18 @@ void ULog::Time(const float InTimeValue, const EDebugLogTimeUnit TimeUnit, const
 	Time(InTimeValue, TimeUnit, bConvertValueToInt, "", "", LoggingOption, TimeToDisplay);
 }
 
+void ULog::Dollar(const float InDollarValue, const bool bConvertValueToInt, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+{
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
+	LogCurrencyUnitSystem(InDollarValue, "$", bConvertValueToInt, Prefix, Suffix, LoggingOption, TimeToDisplay);
+#endif
+}
+
+void ULog::Dollar(const float InDollarValue, const bool bConvertValueToInt, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+{
+	Dollar(InDollarValue, bConvertValueToInt, "", "", LoggingOption, TimeToDisplay);
+}
+
 void ULog::Sphere(const FSphere& Sphere, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
@@ -1774,6 +1788,29 @@ void ULog::LogUnitSystem(const float Value, const FString& UnitSymbol, const boo
 	{
 		UE_LOG(LogUnit, Warning, TEXT("%s%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *ValueInString, *UnitSymbol, *Suffix)
 		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + ValueInString + UnitSymbol + Suffix);
+	}
+#endif
+}
+
+void ULog::LogCurrencyUnitSystem(const float Value, const FString& UnitSymbol, const bool bConvertValueToInt, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+{
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
+	FString ValueInString = FString::SanitizeFloat(Value);
+	if (bConvertValueToInt)
+		ValueInString = FString::FromInt(Value);
+
+	if (LoggingOption == LO_Viewport)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + UnitSymbol + ValueInString + Suffix);
+	}
+	else if (LoggingOption == LO_Console)
+	{
+		UE_LOG(LogUnit, Warning, TEXT("%s%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *UnitSymbol, *ValueInString, *Suffix)
+	}
+	else if (LoggingOption == LO_Both)
+	{
+		UE_LOG(LogUnit, Warning, TEXT("%s%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *UnitSymbol, *ValueInString, *Suffix)
+		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + UnitSymbol + ValueInString + Suffix);
 	}
 #endif
 }
