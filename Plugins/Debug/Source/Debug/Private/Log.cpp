@@ -1,4 +1,4 @@
-﻿// Copyright Ali El Saleh 2019
+﻿// Copyright Ali El Saleh 2020
 
 #include "Log.h"
 #include "Debug.h"
@@ -20,69 +20,23 @@ void ULog::PostInitProperties()
 	Settings = GetDefault<UDebugLogLibrarySettings>();
 }
 
-void ULog::ObjectValidity(UObject* ObjectRef, const bool bSilenceOnError, const ELoggingOptions LoggingOption)
+void ULog::ObjectValidity(UObject* ObjectRef, const bool bSilenceOnError, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	if (LoggingOption == LO_Viewport)
-	{
-		if (ObjectRef)
-			GEngine->AddOnScreenDebugMessage(-1, 3.0f, Settings->SuccessColor, NET_MODE_PREFIX + ObjectRef->GetName() + " is valid");
-		else if (!bSilenceOnError)
-			GEngine->AddOnScreenDebugMessage(-1, 3.0f, Settings->ErrorColor, NET_MODE_PREFIX + FString("Object is null"));
-	}
-	else if (LoggingOption == LO_Console)
-	{
-		if (ObjectRef)
-			UE_LOG(LogObjectValidity, Warning, TEXT("%s%s is valid"), NET_MODE_PREFIX, *ObjectRef->GetName())
-		else if (!bSilenceOnError)
-			UE_LOG(LogObjectValidity, Error, TEXT("%sObject is null"), NET_MODE_PREFIX)
-	}
-	else if (LoggingOption == LO_Both)
-	{
-		if (ObjectRef)
-		{
-			UE_LOG(LogObjectValidity, Warning, TEXT("%s%s is valid"), NET_MODE_PREFIX, *ObjectRef->GetName())
-			GEngine->AddOnScreenDebugMessage(-1, 3.0f, Settings->SuccessColor, NET_MODE_PREFIX + ObjectRef->GetName() + " is valid");
-		}
-		else if (!bSilenceOnError)
-		{
-			UE_LOG(LogObjectValidity, Error, TEXT("%sObject is null"), NET_MODE_PREFIX)	
-			GEngine->AddOnScreenDebugMessage(-1, 3.0f, Settings->ErrorColor, NET_MODE_PREFIX + FString("Object is null"));
-		}
-	}
+	if (ObjectRef)
+		LogMessage_Internal(ObjectRef->GetName() + " is valid", "", "", Settings->SuccessColor, LoggingOption, TimeToDisplay);
+	else if (!bSilenceOnError)
+		LogMessage_Internal("None (Object is null)", "", "", Settings->ErrorColor, LoggingOption, TimeToDisplay);
 #endif
 }
 
-void ULog::ObjectName(UObject* InObject, const bool bSilenceOnError, const ELoggingOptions LoggingOption)
+void ULog::ObjectName(UObject* InObject, const bool bSilenceOnError, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	if (LoggingOption == LO_Viewport)
-	{
-		if (InObject)
-			GEngine->AddOnScreenDebugMessage(-1, 3.0f, Settings->InfoColor, NET_MODE_PREFIX + InObject->GetName());
-		else if (!bSilenceOnError)
-			GEngine->AddOnScreenDebugMessage(-1, 3.0f, Settings->ErrorColor, NET_MODE_PREFIX + FString("None (Object is null)"));
-	}
-	else if (LoggingOption == LO_Console)
-	{
-		if (InObject)
-			UE_LOG(LogMessage, Warning, TEXT("%s%s"), NET_MODE_PREFIX, *InObject->GetName())
-		else if (!bSilenceOnError)
-			UE_LOG(LogMessage, Error, TEXT("%sNone (Object is null)"), NET_MODE_PREFIX)
-	}
-	else if (LoggingOption == LO_Both)
-	{
-		if (InObject)
-		{
-			UE_LOG(LogMessage, Warning, TEXT("%s%s"), NET_MODE_PREFIX, *InObject->GetName())
-			GEngine->AddOnScreenDebugMessage(-1, 3.0f, Settings->InfoColor, NET_MODE_PREFIX + InObject->GetName());
-		}
-		else if (!bSilenceOnError)
-		{
-			UE_LOG(LogMessage, Error, TEXT("%sNone (Object is null)"), NET_MODE_PREFIX)	
-			GEngine->AddOnScreenDebugMessage(-1, 3.0f, Settings->ErrorColor, NET_MODE_PREFIX + FString("None (Object is null)"));
-		}
-	}
+	if (InObject)
+		LogMessage_Internal(InObject->GetName(), "", "", Settings->InfoColor, LoggingOption, TimeToDisplay);
+	else if (!bSilenceOnError)
+		LogMessage_Internal("None (Object is null)", "", "", Settings->ErrorColor, LoggingOption, TimeToDisplay);
 #endif
 }
 
@@ -182,24 +136,13 @@ void ULog::Error(const FString& Message, const ELoggingOptions LoggingOption, co
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	FString NewMessage;
-	if (bAddPrefix && LoggingOption != LO_Console)
-		NewMessage = NET_MODE_PREFIX + FString("Error: ") + Message;
-	else
-		NewMessage = NET_MODE_PREFIX + Message;
 
-	if (LoggingOption == LO_Viewport)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->ErrorColor, NewMessage);
-	}
-	else if (LoggingOption == LO_Console)
-	{
-		UE_LOG(LogError, Error, TEXT("%s%s"), NET_MODE_PREFIX, *Message)
-	}
-	else if (LoggingOption == LO_Both)
-	{
-		UE_LOG(LogError, Error, TEXT("%s%s"), NET_MODE_PREFIX, *Message)
-		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->ErrorColor, NewMessage);
-	}
+	if (bAddPrefix && LoggingOption != LO_Console)
+		NewMessage = FString("Error: ") + Message;
+	else
+		NewMessage = Message;
+
+	LogMessage_Internal(NewMessage, "", "", Settings->ErrorColor, LoggingOption, TimeToDisplay);
 #endif
 }
 
@@ -216,23 +159,11 @@ void ULog::Success(const FString& Message, const ELoggingOptions LoggingOption, 
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	FString NewMessage;
 	if (bAddPrefix)
-		NewMessage = NET_MODE_PREFIX + FString("Success: ") + Message;
+		NewMessage = FString("Success: ") + Message;
 	else
-		NewMessage = NET_MODE_PREFIX + Message;
+		NewMessage = Message;
 	
-	if (LoggingOption == LO_Viewport)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->SuccessColor, NewMessage);
-	}
-	else if (LoggingOption == LO_Console)
-	{
-		UE_LOG(LogSuccess, Warning, TEXT("%s"), *NewMessage)
-	}
-	else if (LoggingOption == LO_Both)
-	{
-		UE_LOG(LogSuccess, Warning, TEXT("%s"), *NewMessage)
-		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->SuccessColor, NewMessage);
-	}
+	LogMessage_Internal(NewMessage, "", "", Settings->SuccessColor, LoggingOption, TimeToDisplay);
 #endif
 }
 
@@ -248,24 +179,13 @@ void ULog::Warning(const FString& Message, const ELoggingOptions LoggingOption, 
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	FString NewMessage;
+
 	if (bAddPrefix && LoggingOption != LO_Console)
-		NewMessage = NET_MODE_PREFIX + FString("Warning: ") + Message;
+		NewMessage = FString("Warning: ") + Message;
 	else
-		NewMessage = NET_MODE_PREFIX + Message;
+		NewMessage = Message;
 	
-	if (LoggingOption == LO_Viewport)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->WarningColor, NewMessage);
-	}
-	else if (LoggingOption == LO_Console)
-	{
-		UE_LOG(LogWarning, Warning, TEXT("%s%s"), NET_MODE_PREFIX, *Message)
-	}
-	else if (LoggingOption == LO_Both)
-	{
-		UE_LOG(LogWarning, Warning, TEXT("%s%s"), NET_MODE_PREFIX, *Message)
-		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->WarningColor, NewMessage);
-	}
+	LogMessage_Internal(NewMessage, "", "", Settings->WarningColor, LoggingOption, TimeToDisplay);
 #endif
 }
 
@@ -281,24 +201,13 @@ void ULog::Info(const FString& Message, const ELoggingOptions LoggingOption, con
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	FString NewMessage;
+
 	if (bAddPrefix)
-		NewMessage = NET_MODE_PREFIX + FString("Info: ") + Message;
+		NewMessage = FString("Info: ") + Message;
 	else
-		NewMessage = NET_MODE_PREFIX + Message;
+		NewMessage = Message;
 	
-	if (LoggingOption == LO_Viewport)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NewMessage);
-	}
-	else if (LoggingOption == LO_Console)
-	{
-		UE_LOG(LogMessage, Display, TEXT("%s"), *NewMessage)
-	}
-	else if (LoggingOption == LO_Both)
-	{
-		UE_LOG(LogMessage, Display, TEXT("%s"), *NewMessage)
-		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NewMessage);
-	}
+	LogMessage_Internal(NewMessage, "", "", Settings->InfoColor, LoggingOption, TimeToDisplay);
 #endif
 }
 
@@ -530,21 +439,7 @@ void ULog::Number(const long Number, const EDebugLogNumberSystems NumberSystem, 
 void ULog::Percent(const float Number, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	const FString NewMessage = NET_MODE_PREFIX + Prefix + FString::SanitizeFloat(Number) + "%" + Suffix;
-
-	if (LoggingOption == LO_Viewport)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NewMessage);
-	}
-	else if (LoggingOption == LO_Console)
-	{
-		UE_LOG(LogNumber, Warning, TEXT("%s"), *NewMessage)
-	}
-	else if (LoggingOption == LO_Both)
-	{
-		UE_LOG(LogNumber, Warning, TEXT("%s"), *NewMessage)
-		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NewMessage);
-	}
+	LogMessage_Internal(FString::SanitizeFloat(Number) + "%", Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay);
 #endif
 }
 
@@ -556,33 +451,10 @@ void ULog::Percent(const float Number, const ELoggingOptions LoggingOption, cons
 void ULog::Bool(const bool bBoolToTest, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	if (LoggingOption == LO_Viewport)
-	{
-		if (bBoolToTest)
-			GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + "True" + Suffix);
-		else
-			GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + "False" + Suffix);
-	}
-	else if (LoggingOption == LO_Console)
-	{
-		if (bBoolToTest)
-			UE_LOG(LogBool, Warning, TEXT("%s%sTrue%s"), NET_MODE_PREFIX, *Prefix, *Suffix)
-		else
-			UE_LOG(LogBool, Warning, TEXT("%s%sFalse%s"), NET_MODE_PREFIX, *Prefix, *Suffix)
-	}
-	else if (LoggingOption == LO_Both)
-	{
-		if (bBoolToTest)
-		{
-			UE_LOG(LogBool, Warning, TEXT("%s%sTrue%s"), NET_MODE_PREFIX, *Prefix, *Suffix)
-			GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + "True" + Suffix);
-		}
-		else
-		{
-			UE_LOG(LogBool, Warning, TEXT("%s%sFalse%s"), NET_MODE_PREFIX, *Prefix, *Suffix)
-			GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + "False" + Suffix);
-		}
-	}
+	if (bBoolToTest)
+		LogMessage_Internal("True", Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay);
+	else
+		LogMessage_Internal("False", Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay);
 #endif
 }
 
@@ -594,19 +466,7 @@ void ULog::Bool(const bool bBoolToTest, const ELoggingOptions LoggingOption, con
 void ULog::Vector(const FVector& InVector, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	if (LoggingOption == LO_Viewport)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + InVector.ToString() + Suffix);
-	}
-	else if (LoggingOption == LO_Console)
-	{
-		UE_LOG(LogVector, Warning, TEXT("%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *InVector.ToString(), *Suffix)
-	}
-	else if (LoggingOption == LO_Both)
-	{
-		UE_LOG(LogVector, Warning, TEXT("%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *InVector.ToString(), *Suffix)
-		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + InVector.ToString() + Suffix);
-	}
+	LogMessage_Internal(InVector.ToString(), Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay);
 #endif
 }
 
@@ -615,46 +475,22 @@ void ULog::Vector(const FVector& InVector, const ELoggingOptions LoggingOption, 
 	Vector(InVector, "", "", LoggingOption, TimeToDisplay);
 }
 
-void ULog::Vector2D(const FVector2D& InVector, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Vector2D(const FVector2D& InVector2D, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	if (LoggingOption == LO_Viewport)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + InVector.ToString() + Suffix);
-	}
-	else if (LoggingOption == LO_Console)
-	{
-		UE_LOG(LogVector, Warning, TEXT("%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *InVector.ToString(), *Suffix)
-	}
-	else if (LoggingOption == LO_Both)
-	{
-		UE_LOG(LogVector, Warning, TEXT("%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *InVector.ToString(), *Suffix)
-		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + InVector.ToString() + Suffix);
-	}
+	LogMessage_Internal(InVector2D.ToString(), Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay);
 #endif
 }
 
-void ULog::Vector2D(const FVector2D& InVector, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Vector2D(const FVector2D& InVector2D, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
-	Vector2D(InVector, "", "", LoggingOption, TimeToDisplay);
+	Vector2D(InVector2D, "", "", LoggingOption, TimeToDisplay);
 }
 
 void ULog::Rotator(const FRotator& InRotator, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	if (LoggingOption == LO_Viewport)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + InRotator.ToString() + Suffix);
-	}
-	else if (LoggingOption == LO_Console)
-	{
-		UE_LOG(LogRotator, Warning, TEXT("%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *InRotator.ToString(), *Suffix)
-	}
-	else if (LoggingOption == LO_Both)
-	{
-		UE_LOG(LogRotator, Warning, TEXT("%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *InRotator.ToString(), *Suffix)
-		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + InRotator.ToString() + Suffix);
-	}
+	LogMessage_Internal(InRotator.ToString(), Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay);
 #endif
 }
 
@@ -729,19 +565,7 @@ void ULog::Transform(const FTransform& InTransform, const ELoggingOptions Loggin
 void ULog::Quat(const FQuat& Quaternion, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	if (LoggingOption == LO_Viewport)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + Quaternion.ToString() + Suffix);
-	}
-	else if (LoggingOption == LO_Console)
-	{
-		UE_LOG(LogQuaternion, Warning, TEXT("%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *Quaternion.ToString(), *Suffix)
-	}
-	else if (LoggingOption == LO_Both)
-	{
-		UE_LOG(LogQuaternion, Warning, TEXT("%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *Quaternion.ToString(), *Suffix)
-		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + Quaternion.ToString() + Suffix);
-	}
+	LogMessage_Internal(Quaternion.ToString(), Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay);
 #endif
 }
 
@@ -753,19 +577,7 @@ void ULog::Quat(const FQuat& Quaternion, const ELoggingOptions LoggingOption, co
 void ULog::Matrix(const FMatrix& InMatrix, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	if (LoggingOption == LO_Viewport)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + InMatrix.ToString() + Suffix);
-	}
-	else if (LoggingOption == LO_Console)
-	{
-		UE_LOG(LogMatrix, Warning, TEXT("%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *InMatrix.ToString(), *Suffix)
-	}
-	else if (LoggingOption == LO_Console)
-	{
-		UE_LOG(LogMatrix, Warning, TEXT("%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *InMatrix.ToString(), *Suffix)
-		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + InMatrix.ToString() + Suffix);
-	}
+	LogMessage_Internal(InMatrix.ToString(), Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay);
 #endif
 }
 
@@ -777,19 +589,7 @@ void ULog::Matrix(const FMatrix& InMatrix, const ELoggingOptions LoggingOption, 
 void ULog::Color(const FLinearColor& InColor, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	if (LoggingOption == LO_Viewport)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + InColor.ToString() + Suffix);
-	}
-	else if (LoggingOption == LO_Console)
-	{
-		UE_LOG(LogColor, Warning, TEXT("%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *InColor.ToString(), *Suffix)
-	}
-	else if (LoggingOption == LO_Both)
-	{
-		UE_LOG(LogColor, Warning, TEXT("%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *InColor.ToString(), *Suffix)
-		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + InColor.ToString() + Suffix);
-	}
+	LogMessage_Internal(InColor.ToString(), Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay);
 #endif
 }
 
@@ -1646,19 +1446,7 @@ void ULog::LogInt(const platform_int Number, const FString& Prefix, const FStrin
 		break;
 	}
 	
-	if (LoggingOption == LO_Viewport)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + FinalNumber + Suffix);
-	}
-	else if (LoggingOption == LO_Console)
-	{
-		UE_LOG(LogNumber, Warning, TEXT("%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *FinalNumber, *Suffix)
-	}
-	else if (LoggingOption == LO_Both)
-	{
-		UE_LOG(LogNumber, Warning, TEXT("%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *FinalNumber, *Suffix)
-		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + FinalNumber + Suffix);
-	}
+	LogMessage_Internal(FinalNumber, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay);
 #endif
 }
 
@@ -1689,38 +1477,14 @@ void ULog::LogUInt(const platform_uint Number, const FString& Prefix, const FStr
 		break;
 	}
 
-	if (LoggingOption == LO_Viewport)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + FinalNumber + Suffix);
-	}
-	else if (LoggingOption == LO_Console)
-	{
-		UE_LOG(LogNumber, Warning, TEXT("%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *FinalNumber, *Suffix)
-	}
-	else if (LoggingOption == LO_Both)
-	{
-		UE_LOG(LogNumber, Warning, TEXT("%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *FinalNumber, *Suffix)
-		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + FinalNumber + Suffix);
-	}
+	LogMessage_Internal(FinalNumber, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay);
 #endif
 }
 
 void ULog::LogFloat(const float Number, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	if (LoggingOption == LO_Viewport)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + FString::SanitizeFloat(Number) + Suffix);
-	}
-	else if (LoggingOption == LO_Console)
-	{
-		UE_LOG(LogNumber, Warning, TEXT("%s%s%f%s"), NET_MODE_PREFIX, *Prefix, Number, *Suffix)
-	}
-	else if (LoggingOption == LO_Both)
-	{
-		UE_LOG(LogNumber, Warning, TEXT("%s%s%f%s"), NET_MODE_PREFIX, *Prefix, Number, *Suffix)
-		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + FString::SanitizeFloat(Number) + Suffix);
-	}
+	LogMessage_Internal(FString::SanitizeFloat(Number), Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay);
 #endif
 }
 
@@ -1728,22 +1492,11 @@ void ULog::LogUnitSystem(const float Value, const FString& UnitSymbol, const boo
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	FString ValueInString = FString::SanitizeFloat(Value);
+
 	if (bConvertValueToInt)
 		ValueInString = FString::FromInt(Value);
 
-	if (LoggingOption == LO_Viewport)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + ValueInString + UnitSymbol + Suffix);
-	}
-	else if (LoggingOption == LO_Console)
-	{
-		UE_LOG(LogUnit, Warning, TEXT("%s%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *ValueInString, *UnitSymbol, *Suffix)
-	}
-	else if (LoggingOption == LO_Both)
-	{
-		UE_LOG(LogUnit, Warning, TEXT("%s%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *ValueInString, *UnitSymbol, *Suffix)
-		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + ValueInString + UnitSymbol + Suffix);
-	}
+	LogMessage_Internal(ValueInString + UnitSymbol, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay);
 #endif
 }
 
@@ -1751,26 +1504,15 @@ void ULog::LogCurrencyUnitSystem(const float Value, const FString& UnitSymbol, c
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	FString ValueInString = FString::SanitizeFloat(Value);
+
 	if (bConvertValueToInt)
 		ValueInString = FString::FromInt(Value);
 
-	if (LoggingOption == LO_Viewport)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + UnitSymbol + ValueInString + Suffix);
-	}
-	else if (LoggingOption == LO_Console)
-	{
-		UE_LOG(LogUnit, Warning, TEXT("%s%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *UnitSymbol, *ValueInString, *Suffix)
-	}
-	else if (LoggingOption == LO_Both)
-	{
-		UE_LOG(LogUnit, Warning, TEXT("%s%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *UnitSymbol, *ValueInString, *Suffix)
-		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + UnitSymbol + ValueInString + Suffix);
-	}
+	LogMessage_Internal(UnitSymbol + ValueInString, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay);
 #endif
 }
 
-void ULog::LogLongInt(const long Number, const FString& Prefix, const FString& Suffix, EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::LogLongInt(const long Number, const FString& Prefix, const FString& Suffix, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	FString FinalNumber;
@@ -1797,19 +1539,7 @@ void ULog::LogLongInt(const long Number, const FString& Prefix, const FString& S
 		break;
 	}
 
-	if (LoggingOption == LO_Viewport)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + FinalNumber + Suffix);
-	}
-	else if (LoggingOption == LO_Console)
-	{
-		UE_LOG(LogNumber, Warning, TEXT("%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *FinalNumber, *Suffix)
-	}
-	else if (LoggingOption == LO_Both)
-	{
-		UE_LOG(LogNumber, Warning, TEXT("%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *FinalNumber, *Suffix)
-		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + FinalNumber + Suffix);
-	}
+	LogMessage_Internal(FinalNumber, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay);
 #endif
 }
 

@@ -1,4 +1,4 @@
-﻿// Copyright Ali El Saleh 2019
+﻿// Copyright Ali El Saleh 2020
 
 #pragma once
 
@@ -245,11 +245,11 @@ class DEBUG_API ULog : public UBlueprintFunctionLibrary
 public:
 	// Log whether the object is valid or not
 	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
-		static void ObjectValidity(UObject* InObject, bool bSilenceOnError = false, ELoggingOptions LoggingOption = LO_Console);
+		static void ObjectValidity(UObject* InObject, bool bSilenceOnError = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
 	// Log the given object's name, if it's valid
 	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
-		static void ObjectName(UObject* InObject, bool bSilenceOnError = false, ELoggingOptions LoggingOption = LO_Console);
+		static void ObjectName(UObject* InObject, bool bSilenceOnError = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
 	// Log a debug message to the console or viewport
 	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
@@ -441,8 +441,8 @@ public:
 
 	// Log a FVector2D value to the console or viewport
 	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
-		static void Vector2D(const FVector2D& InVector, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
-		static void Vector2D(const FVector2D& InVector, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+		static void Vector2D(const FVector2D& InVector2D, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+		static void Vector2D(const FVector2D& InVector2D, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
 	// Log a FRotator value to the console or viewport
 	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
