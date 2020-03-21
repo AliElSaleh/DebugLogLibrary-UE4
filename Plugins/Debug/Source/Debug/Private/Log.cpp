@@ -20,11 +20,11 @@ void ULog::PostInitProperties()
 	Settings = GetDefault<UDebugLogLibrarySettings>();
 }
 
-void ULog::ObjectValidity(UObject* ObjectRef, const bool bSilenceOnError, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::ObjectValidity(UObject* InObject, const bool bSilenceOnError, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	if (ObjectRef)
-		LogMessage_Internal(ObjectRef->GetName() + " is valid", "", "", Settings->SuccessColor, LoggingOption, TimeToDisplay);
+	if (InObject)
+		LogMessage_Internal(InObject->GetName() + " is valid", "", "", Settings->SuccessColor, LoggingOption, TimeToDisplay);
 	else if (!bSilenceOnError)
 		LogMessage_Internal("None (Object is null)", "", "", Settings->ErrorColor, LoggingOption, TimeToDisplay);
 #endif
