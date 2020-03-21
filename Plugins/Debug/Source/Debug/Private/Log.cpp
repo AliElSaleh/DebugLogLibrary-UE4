@@ -5,6 +5,8 @@
 
 #include "Engine/Engine.h"
 
+#include "DrawDebugHelpers.h"
+
 #include "Math/Vector.h"
 
 #include "DebugLogLibrarySettings.h"
@@ -608,6 +610,19 @@ void ULog::DateTime(const FDateTime& InDateTime, const FString& Prefix, const FS
 void ULog::DateTime(const FDateTime& InDateTime, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 	DateTime(InDateTime, "", "", LoggingOption, TimeToDisplay);
+}
+
+void ULog::MessageInWorld(const FString& Message, const FVector& WorldLocation, const float FontScale, const FString& Prefix, const FString& Suffix, const float TimeToDisplay)
+{
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
+	if (GWorld)
+		DrawDebugString(GWorld, WorldLocation, Prefix + Message + Suffix, nullptr, FColor::White, TimeToDisplay, true, FontScale);
+#endif
+}
+
+void ULog::MessageInWorld(const FString& Message, const FVector& WorldLocation, const float FontScale, const float TimeToDisplay)
+{
+	MessageInWorld(Message, WorldLocation, FontScale, "", "", TimeToDisplay);
 }
 
 void ULog::Temperature(const float InTemperatureValue, const EDebugLogTemperatureUnit TemperatureUnit, const bool bConvertValueToInt, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)

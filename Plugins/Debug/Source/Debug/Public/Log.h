@@ -486,6 +486,11 @@ public:
 		static void DateTime(const FDateTime& InDateTime, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 		static void DateTime(const FDateTime& InDateTime, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 	
+	// Log a message in the world
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
+		static void MessageInWorld(const FString& Message, const FVector& WorldLocation, float FontScale = 1.0f, const FString& Prefix = "", const FString& Suffix = "", float TimeToDisplay = 5.0f);
+		static void MessageInWorld(const FString& Message, const FVector& WorldLocation, float FontScale = 1.0f, float TimeToDisplay = 5.0f);
+	
 	#pragma region Unit Systems
 	// Log a temperature value in degrees celsius to the console or viewport (Just adds the appropriate symbol at the end)
 	UFUNCTION(BlueprintCallable, Category = "Debug | Unit Systems", meta = (DevelopmentOnly))
