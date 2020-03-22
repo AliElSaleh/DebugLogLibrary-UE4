@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include <chrono>
 #include "Log.generated.h"
 
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
@@ -26,7 +27,7 @@
 
 // Development build only. Get the current class and line number where this is called
 #define CUR_CLASS_WITH_LINE (CUR_CLASS + "(" + CUR_LINE + ")")
-  
+
 // Development build only. Get the current function signature where this is called
 #define CUR_FUNC_SIG (FString(__FUNCSIG__))
 
@@ -246,6 +247,60 @@ enum EDebugLogComparisonMethod
 	CM_Less_Than				UMETA(DisplayName = "Less Than (<)")
 };
 
+class FDebugLogTimer
+{
+public:
+	FDebugLogTimer()
+	{
+		Start();
+	}
+
+	double GetDuration() const
+	{
+		return Duration;
+	}
+
+	double GetDurationInSeconds() const
+	{
+		return Duration / 1000000000;
+	}
+
+	double GetDurationInMilliseconds() const
+	{
+		return Duration / 1000000;
+	}
+	
+	double GetDurationInMicroseconds() const
+	{
+		return Duration / 1000;
+	}
+
+	FString GetDescription() const
+	{
+		return Description;
+	}
+
+	void Start(const FString& InDescription = "")
+	{
+		Duration = 0.0f;
+		Description = InDescription;
+		StartTimePoint = std::chrono::high_resolution_clock::now();
+	}
+
+	void Stop()
+	{
+		const auto& EndTimePoint = std::chrono::high_resolution_clock::now();
+
+		Duration = std::chrono::duration_cast<std::chrono::nanoseconds>(EndTimePoint - StartTimePoint).count();
+	}
+
+private:
+	std::chrono::time_point<std::chrono::high_resolution_clock> StartTimePoint;
+
+	FString Description;
+	double Duration = 0.0f;
+};
+
 /**
  * A library of log utility functions
  */
@@ -367,6 +422,12 @@ public:
 		static void No(const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console);
 	// Log a no message to the console or viewport
 		static void No(ELoggingOptions LoggingOption = LO_Console);
+
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
+		static void StartDebugTimer(const FString& Description);
+	
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
+		static void StopDebugTimer(bool bAutoDetermineTimeUnit = false, EDebugLogTimeUnit DisplayIn = DLTU_Seconds, ELoggingOptions LoggingOption = LO_Both);
 	
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	// Log a number to the console or viewport (int8 version)
@@ -739,6 +800,8 @@ private:
 	static bool PerformComparison(T LHS, T RHS, EDebugLogComparisonMethod ComparisonMethod);
 
 	static const class UDebugLogLibrarySettings* Settings;
+
+	static class FDebugLogTimer* Timer;
 };
 
 template <typename T>

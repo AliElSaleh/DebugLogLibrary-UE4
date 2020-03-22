@@ -14,6 +14,7 @@
 #define MAX_HEX_VALUES 16
 
 const UDebugLogLibrarySettings* ULog::Settings;
+FDebugLogTimer* ULog::Timer;
 
 void ULog::PostInitProperties()
 {
@@ -288,6 +289,106 @@ void ULog::No(const ELoggingOptions LoggingOption)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	LogMessage_Internal("No", "", "", Settings->InfoColor, LoggingOption, 5.0f);
+#endif
+}
+
+void ULog::StartDebugTimer(const FString& Description)
+{
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
+	Timer = new FDebugLogTimer();
+
+	Timer->Start(Description);
+#endif
+}
+
+void ULog::StopDebugTimer(const bool bAutoDetermineTimeUnit, const EDebugLogTimeUnit DisplayIn, const ELoggingOptions LoggingOption)
+{
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
+	if (!Timer)
+	{
+		Error("Failed to stop the timer! Call StartDebugTimer to begin the timer and call StopDebugTimer when you're finished.", LO_Both);
+		return;
+	}
+
+	Timer->Stop();
+
+	if (bAutoDetermineTimeUnit)
+	{
+		// < 1000 microseconds
+		if (Timer->GetDurationInMicroseconds() < 1000)
+			Time(Timer->GetDurationInMicroseconds(), DLTU_Microseconds, false, Timer->GetDescription() + " | Operation took: ", "", LoggingOption);
+		// > 1000 microseconds AND < 1000000 microseconds
+		else if (Timer->GetDurationInMicroseconds() > 1000 && Timer->GetDurationInMicroseconds() < 1000000)
+			Time(Timer->GetDurationInMilliseconds(), DLTU_Milliseconds, false, Timer->GetDescription() + " | Operation took: ", "", LoggingOption);
+		else
+			Time(Timer->GetDurationInSeconds(), DLTU_Seconds, false, Timer->GetDescription() + " | Operation took: ", "", LoggingOption);
+	}
+	else
+	{
+		float Duration = Timer->GetDuration();
+		switch (DisplayIn)
+		{
+			case DLTU_Nanoseconds:
+			Duration = Timer->GetDuration();
+			break;
+
+			case DLTU_Microseconds:
+			Duration = Timer->GetDurationInMicroseconds();
+			break;
+
+			case DLTU_Milliseconds:
+			Duration = Timer->GetDurationInMilliseconds();
+			break;
+			
+			case DLTU_Seconds:
+			Duration = Timer->GetDurationInSeconds();
+			break;
+			
+			case DLTU_Minutes:
+			Duration = Timer->GetDurationInSeconds() / 60;
+			break;
+			
+			case DLTU_Hours:
+			Duration = Timer->GetDurationInSeconds() / 3600;
+			break;
+			
+			case DLTU_Days:
+			Duration = Timer->GetDurationInSeconds() / 86400;
+			break;
+			
+			case DLTU_Weeks:
+			Duration = Timer->GetDurationInSeconds() / 604800;
+			break;
+			
+			case DLTU_Months:
+			Duration = Timer->GetDurationInSeconds() / 2.628e+6;
+			break;
+			
+			case DLTU_Years:
+			Duration = Timer->GetDurationInSeconds() / 3.154e+7;
+			break;
+
+			case DLTU_Decades:
+			Duration = Timer->GetDurationInSeconds() / 3.154e+8;
+			break;
+			
+			case DLTU_Centuries:
+			Duration = Timer->GetDurationInSeconds() / 3.154e+9;
+			break;
+
+			case DLTU_Millennium:
+			Duration = Timer->GetDurationInSeconds() / 3.154e+10;
+			break;
+
+			default:
+			break;
+		}
+
+		Time(Duration, DisplayIn, false, Timer->GetDescription() + " | Operation took: ", "", LoggingOption);
+	}
+
+	delete Timer;
+	Timer = nullptr;
 #endif
 }
 
@@ -1375,8 +1476,8 @@ void ULog::LogMessage_Internal(const FString& Message, const FString& Prefix, co
 		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, LogColor, NET_MODE_PREFIX + Prefix + Message + Suffix);
 	}
 #elif (UE_BUILD_SHIPPING)
-	if (bCrashGameInShippingConfiguration)
-		Crash("DebugLogLibrary does not work in a Shipping build. Disable the plugin or remove all ULog:: calls!");
+	if (Settings->bCrashGameInShippingConfiguration)
+		Crash("DebugLogLibrary plugin does not work in a Shipping build. Disable the plugin, remove all ULog:: calls or wrap them with a #if guard!");
 #endif
 }
 
