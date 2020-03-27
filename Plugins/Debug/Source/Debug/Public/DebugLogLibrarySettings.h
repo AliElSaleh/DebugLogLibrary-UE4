@@ -19,7 +19,7 @@ public:
 
 	// The color to use when logging a standard message
 	UPROPERTY(EditAnywhere, config, Category = "Viewport Log Colors", DisplayName = "Default Color")
-		FColor InfoColor = FColor::Cyan;
+		FColor InfoColor = FLinearColor(0.0f, 0.66f, 1.0f).ToFColor(true);
 	
 	// The color to use when logging a error message
 	UPROPERTY(EditAnywhere, config, Category = "Viewport Log Colors")
