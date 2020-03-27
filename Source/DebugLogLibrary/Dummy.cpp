@@ -16,7 +16,11 @@ void ADummy::BeginPlay()
 	Super::BeginPlay();
 
 #if !UE_BUILD_SHIPPING
-	ULog::Hello(LO_Both);
+	const FVector A(1.0f);
+	const FColor B(1.0f);
+
+	QUICK_LOG_VIEWPORT_VECTOR(A);
+	QUICK_LOG_CONSOLE_COLOR(B);
 #endif
 }
 

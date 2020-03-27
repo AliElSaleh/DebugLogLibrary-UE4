@@ -327,9 +327,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Debug", DisplayName = "Debug Message (Condition)", meta = (DevelopmentOnly))
 		static void DebugMessage_WithCondition(EDebugLogType LogSeverity, bool bCondition, const FString& Message, ELoggingOptions LoggingOption = LO_Console, bool bAddPrefix = false, float TimeToDisplay = 5.0f);
 
-	// Crash the game, and log the message to the console and log file
+	// Crash the game, and log the message to the console and log file. FromFunction means the function (as a string) that this 'Crash' function was called from. Ultimately, this is for better debug information and is optional
 	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
-		static void Crash(const FString& Message = "");
+		static void Crash(const FString& Message = "", const FString& FromFunction = "");
 		
 	// Log a fatal error message to the console and crash
 	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
@@ -759,8 +759,9 @@ protected:
 		static void UnImplemented();
 
 private:
-#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	static void LogMessage_Internal(const FString& Message, const FString& Prefix = "", const FString& Suffix = "", const FColor& LogColor = FColor::Cyan, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+	static void LogMessage_Internal(const FString& Message, const FString& Prefix = "", const FString& Suffix = "", const FColor& InLogColor = FColor::Cyan, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+
+	static void QuitApplication_Internal();
 
 	static void LogFloat(float Number, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 	static void LogInt(platform_int Number, const FString& Prefix = "", const FString& Suffix = "", EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
@@ -779,7 +780,6 @@ private:
 	static FString DecimalToHexDigit(platform_int DecimalNumber);
 
 	static void AssertFailed(const FString& Message, bool bCrashOnFailure);
-#endif
 
 	template<typename T>
 	static bool AssertEqual(T Actual, T Expected, FString AssertType, FString Message, bool bCrashOnFailure);
@@ -802,6 +802,8 @@ private:
 	static const class UDebugLogLibrarySettings* Settings;
 
 	static class FDebugLogTimer* Timer;
+
+	static bool bIsShippingBuild;
 };
 
 template <typename T>
@@ -819,6 +821,9 @@ bool ULog::AssertEqual(T Actual, T Expected, FString AssertType, FString Message
 	}
 
 	return true;
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration)
+		Crash("", FString(__FUNCTION__));
 #endif
 
 	return false;
@@ -839,6 +844,9 @@ bool ULog::AssertNotEqual(T Actual, T Expected, FString AssertType, FString Mess
 	}
 
 	return true;
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration)
+		Crash("", FString(__FUNCTION__));
 #endif
 
 	return false;
@@ -859,6 +867,9 @@ bool ULog::AssertEqual(T* Actual, T* Expected, FString AssertType, const FString
 	}
 
 	return true;	
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration)
+		Crash("", FString(__FUNCTION__));
 #endif
 
 	return false;
@@ -879,6 +890,9 @@ bool ULog::AssertNotEqual(T* Actual, T* Expected, FString AssertType, const FStr
 	}
 
 	return true;	
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration)
+		Crash("", FString(__FUNCTION__));
 #endif
 
 	return false;
@@ -899,6 +913,9 @@ bool ULog::AssertValue(T Actual, T Expected, const EDebugLogComparisonMethod Com
 	}
 	
 	return true;	
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration)
+		Crash("", FString(__FUNCTION__));
 #endif
 
 	return false;
@@ -931,6 +948,9 @@ bool ULog::PerformComparison(T LHS, T RHS, const EDebugLogComparisonMethod Compa
 
 	Error("Invalid comparison method", LO_Both, true);
 	return false;
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration)
+		Crash("", FString(__FUNCTION__));
 #endif
 
 	return false;

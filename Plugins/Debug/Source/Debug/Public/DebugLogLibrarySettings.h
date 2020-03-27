@@ -39,5 +39,5 @@ public:
 
 	// Should the game crash if any ULog functions are called in a shipping build configuration?
 	UPROPERTY(EditAnywhere, config, Category = "Settings")
-		uint8 bCrashGameInShippingConfiguration : 1;
+		uint8 bCrashGameInShippingBuildConfiguration : 1;
 };

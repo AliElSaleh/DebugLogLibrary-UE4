@@ -11,16 +11,30 @@
 
 #include "DebugLogLibrarySettings.h"
 
+#include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/GameplayStatics.h"
+
+#include "Misc/MessageDialog.h"
+
 #define MAX_HEX_VALUES 16
 
 const UDebugLogLibrarySettings* ULog::Settings;
 FDebugLogTimer* ULog::Timer;
+bool ULog::bIsShippingBuild;
 
 void ULog::PostInitProperties()
 {
 	Super::PostInitProperties();
 
 	Settings = GetDefault<UDebugLogLibrarySettings>();
+
+#if (!UE_BUILD_SHIPPING || UE_BUILD_TEST)
+	bIsShippingBuild = false;
+#elif UE_BUILD_SHIPPING
+	bIsShippingBuild = true;
+#else
+	bIsShippingBuild = false;
+#endif
 }
 
 void ULog::ObjectValidity(UObject* InObject, const bool bSilenceOnError, const ELoggingOptions LoggingOption, const float TimeToDisplay)
@@ -30,6 +44,9 @@ void ULog::ObjectValidity(UObject* InObject, const bool bSilenceOnError, const E
 		LogMessage_Internal(InObject->GetName() + " is valid", "", "", Settings->SuccessColor, LoggingOption, TimeToDisplay);
 	else if (!bSilenceOnError)
 		LogMessage_Internal("None (Object is null)", "", "", Settings->ErrorColor, LoggingOption, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -40,6 +57,9 @@ void ULog::ObjectName(UObject* InObject, const bool bSilenceOnError, const ELogg
 		LogMessage_Internal(InObject->GetName(), "", "", Settings->InfoColor, LoggingOption, TimeToDisplay);
 	else if (!bSilenceOnError)
 		LogMessage_Internal("None (Object is null)", "", "", Settings->ErrorColor, LoggingOption, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -65,12 +85,15 @@ void ULog::DebugMessage(const EDebugLogType LogSeverity, const FString& Message,
 	break;
 
 	case DL_Fatal:
-		UE_LOG(LogFatal, Fatal, TEXT("%s%s"), NET_MODE_PREFIX, *Message)
+		Fatal(Message);
 	break;
 
 	default:
-		break;
+	break;
 	}
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -96,12 +119,15 @@ void ULog::DebugMessage(const EDebugLogType LogSeverity, const FName& Message, c
 	break;
 
 	case DL_Fatal:
-		UE_LOG(LogFatal, Fatal, TEXT("%s"), *Message.ToString())
+		Fatal(Message.ToString());
 	break;
 
 	default:
 	break;
 	}
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -110,13 +136,34 @@ void ULog::DebugMessage_WithCondition(const EDebugLogType LogSeverity, const boo
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	if (bCondition)
 		DebugMessage(LogSeverity, Message, LoggingOption, bAddPrefix, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Crash(const FString& Message)
+void ULog::Crash(const FString& Message, const FString& FromFunction)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	UE_LOG(LogCrash, Fatal, TEXT("%s%s"), NET_MODE_PREFIX, *Message)
+	UE_LOG(LogCrash, Fatal, TEXT("%s%s | %s"), NET_MODE_PREFIX, *FromFunction, *Message)
+#elif (UE_BUILD_SHIPPING)
+	FString ErrorMessage = "";
+	if (Settings->bCrashGameInShippingBuildConfiguration && Message.IsEmpty())
+	{
+		ErrorMessage = FString("Runtime Error: A function from the DebugLogLibrary plugin was called from C++ or Blueprint! \n") + (FromFunction.IsEmpty() ? "" : FString("Function name:\n") + FromFunction + "\n") + FString("\nDebugLogLibrary plugin does not work in a Shipping build. \n\nFor C++ users: \nRemove all ULog:: calls or wrap them with a #if guard! \n\nFor Blueprint users: \nRemove or use the Disabled option for all nodes that use the DebugLogLibrary plugin from all blueprint graphs. \n\nAlternatively, you can disable this feature by going to Project Settings -> Debug Log Library and uncheck 'CrashGameInShippingBuildConfiguration'");
+	}
+	else
+	{
+		if (!FromFunction.IsEmpty())
+			ErrorMessage = FromFunction + " | " + Message;
+		else
+			ErrorMessage = Message;
+	}
+	
+	FMessageDialog ErrorDialogBox;
+	ErrorDialogBox.Open(EAppMsgType::Ok, FText::FromString(ErrorMessage));
+
+	QuitApplication_Internal();
 #endif
 }
 
@@ -124,6 +171,9 @@ void ULog::Fatal(const FString& Message)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	UE_LOG(LogFatal, Fatal, TEXT("%s%s"), NET_MODE_PREFIX, *Message)
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -132,6 +182,9 @@ void ULog::Fatal_WithCondition(const FString& Message, const bool bCondition)
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	if (bCondition)
 		Fatal(Message);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -146,6 +199,9 @@ void ULog::Error(const FString& Message, const ELoggingOptions LoggingOption, co
 		NewMessage = Message;
 
 	LogMessage_Internal(NewMessage, "", "", Settings->ErrorColor, LoggingOption, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -154,6 +210,9 @@ void ULog::Error_WithCondition(const FString& Message, const bool bCondition, co
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	if (bCondition)
 		Error(Message, LoggingOption, bAddPrefix, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -167,6 +226,9 @@ void ULog::Success(const FString& Message, const ELoggingOptions LoggingOption, 
 		NewMessage = Message;
 	
 	LogMessage_Internal(NewMessage, "", "", Settings->SuccessColor, LoggingOption, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -175,6 +237,9 @@ void ULog::Success_WithCondition(const FString& Message, const bool bCondition, 
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	if (bCondition)
 		Success(Message, LoggingOption, bAddPrefix, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -189,6 +254,9 @@ void ULog::Warning(const FString& Message, const ELoggingOptions LoggingOption, 
 		NewMessage = Message;
 	
 	LogMessage_Internal(NewMessage, "", "", Settings->WarningColor, LoggingOption, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -197,6 +265,9 @@ void ULog::Warning_WithCondition(const FString& Message, const bool bCondition, 
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	if (bCondition)
 		Warning(Message, LoggingOption, bAddPrefix, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -211,6 +282,9 @@ void ULog::Info(const FString& Message, const ELoggingOptions LoggingOption, con
 		NewMessage = Message;
 	
 	LogMessage_Internal(NewMessage, "", "", Settings->InfoColor, LoggingOption, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -219,6 +293,9 @@ void ULog::Info_WithCondition(const FString& Message, const bool bCondition, con
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	if (bCondition)
 		Info(Message, LoggingOption, bAddPrefix, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -226,6 +303,9 @@ void ULog::Hello(const ELoggingOptions LoggingOption)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	LogMessage_Internal("Hello", "", "", Settings->InfoColor, LoggingOption, 5.0f);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -233,6 +313,9 @@ void ULog::Hey(const ELoggingOptions LoggingOption)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	LogMessage_Internal("Hey", "", "", Settings->InfoColor, LoggingOption, 5.0f);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -240,6 +323,9 @@ void ULog::Bye(const ELoggingOptions LoggingOption)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	LogMessage_Internal("Bye", "", "", Settings->InfoColor, LoggingOption, 5.0f);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -247,6 +333,9 @@ void ULog::Goodbye(const ELoggingOptions LoggingOption)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	LogMessage_Internal("Goodbye", "", "", Settings->InfoColor, LoggingOption, 5.0f);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -254,6 +343,9 @@ void ULog::Cya(const ELoggingOptions LoggingOption)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	LogMessage_Internal("Cya", "", "", Settings->InfoColor, LoggingOption, 5.0f);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -261,6 +353,9 @@ void ULog::Wassup(const ELoggingOptions LoggingOption)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	LogMessage_Internal("Wassup", "", "", Settings->InfoColor, LoggingOption, 5.0f);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -268,6 +363,9 @@ void ULog::Yo(const ELoggingOptions LoggingOption)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	LogMessage_Internal("Yo", "", "", Settings->InfoColor, LoggingOption, 5.0f);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -275,6 +373,9 @@ void ULog::Yes(const ELoggingOptions LoggingOption)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	LogMessage_Internal("Yes", "", "", Settings->InfoColor, LoggingOption, 5.0f);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -282,6 +383,9 @@ void ULog::Yes(const FString& Prefix, const FString& Suffix, const ELoggingOptio
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	LogMessage_Internal("Yes", Prefix, Suffix, Settings->InfoColor, LoggingOption, 5.0f);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -289,15 +393,27 @@ void ULog::No(const ELoggingOptions LoggingOption)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	LogMessage_Internal("No", "", "", Settings->InfoColor, LoggingOption, 5.0f);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
 void ULog::StartDebugTimer(const FString& Description)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
+	if (Timer)
+	{
+		delete Timer;
+		Timer = nullptr;
+	}
+	
 	Timer = new FDebugLogTimer();
 
 	Timer->Start(Description);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -314,10 +430,10 @@ void ULog::StopDebugTimer(const bool bAutoDetermineTimeUnit, const EDebugLogTime
 
 	if (bAutoDetermineTimeUnit)
 	{
-		// < 1000 microseconds
+		// < 1,000 microseconds
 		if (Timer->GetDurationInMicroseconds() < 1000)
 			Time(Timer->GetDurationInMicroseconds(), DLTU_Microseconds, false, Timer->GetDescription() + " | Operation took: ", "", LoggingOption);
-		// > 1000 microseconds AND < 1000000 microseconds
+		// > 1,000 microseconds AND < 1,000,000 microseconds
 		else if (Timer->GetDurationInMicroseconds() > 1000 && Timer->GetDurationInMicroseconds() < 1000000)
 			Time(Timer->GetDurationInMilliseconds(), DLTU_Milliseconds, false, Timer->GetDescription() + " | Operation took: ", "", LoggingOption);
 		else
@@ -389,6 +505,9 @@ void ULog::StopDebugTimer(const bool bAutoDetermineTimeUnit, const EDebugLogTime
 
 	delete Timer;
 	Timer = nullptr;
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -396,6 +515,9 @@ void ULog::No(const FString& Prefix, const FString& Suffix, const ELoggingOption
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	LogMessage_Internal("No", Prefix, Suffix, Settings->ErrorColor, LoggingOption, 5.0f);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -403,6 +525,9 @@ void ULog::Valid(const ELoggingOptions LoggingOption)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	LogMessage_Internal("Valid", "", "", Settings->SuccessColor, LoggingOption, 5.0f);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -410,6 +535,9 @@ void ULog::Valid(const FString& Prefix, const FString& Suffix, const ELoggingOpt
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	LogMessage_Internal("Valid", Prefix, Suffix, Settings->SuccessColor, LoggingOption, 5.0f);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -417,6 +545,9 @@ void ULog::Invalid(const ELoggingOptions LoggingOption)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	LogMessage_Internal("Invalid", "", "", Settings->ErrorColor, LoggingOption, 5.0f);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -424,6 +555,9 @@ void ULog::Invalid(const FString& Prefix, const FString& Suffix, const ELoggingO
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	LogMessage_Internal("Invalid", Prefix, Suffix, Settings->ErrorColor, LoggingOption, 5.0f);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -543,6 +677,9 @@ void ULog::Percent(const float Number, const FString& Prefix, const FString& Suf
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	LogMessage_Internal(FString::SanitizeFloat(Number) + "%", Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -558,6 +695,9 @@ void ULog::Bool(const bool bBoolToTest, const FString& Prefix, const FString& Su
 		LogMessage_Internal("True", Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay);
 	else
 		LogMessage_Internal("False", Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -570,6 +710,9 @@ void ULog::Vector(const FVector& InVector, const FString& Prefix, const FString&
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	LogMessage_Internal(InVector.ToString(), Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -582,6 +725,9 @@ void ULog::Vector2D(const FVector2D& InVector2D, const FString& Prefix, const FS
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	LogMessage_Internal(InVector2D.ToString(), Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -594,6 +740,9 @@ void ULog::Rotator(const FRotator& InRotator, const FString& Prefix, const FStri
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	LogMessage_Internal(InRotator.ToString(), Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -657,6 +806,9 @@ void ULog::Transform(const FTransform& InTransform, const FString& Prefix, const
 			GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + InTransform.ToString());
 		}
 	}
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -669,6 +821,9 @@ void ULog::Quat(const FQuat& Quaternion, const FString& Prefix, const FString& S
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	LogMessage_Internal(Quaternion.ToString(), Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -681,6 +836,9 @@ void ULog::Matrix(const FMatrix& InMatrix, const FString& Prefix, const FString&
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	LogMessage_Internal(InMatrix.ToString(), Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -693,6 +851,9 @@ void ULog::Color(const FLinearColor& InColor, const FString& Prefix, const FStri
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	LogMessage_Internal(InColor.ToString(), Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -705,6 +866,9 @@ void ULog::DateTime(const FDateTime& InDateTime, const FString& Prefix, const FS
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	LogMessage_Internal(InDateTime.ToString(), Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -718,6 +882,9 @@ void ULog::MessageInWorld(const FString& Message, const FVector& WorldLocation, 
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	if (GWorld)
 		DrawDebugString(GWorld, WorldLocation, Prefix + Message + Suffix, nullptr, FColor::White, TimeToDisplay, true, FontScale);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -745,6 +912,9 @@ void ULog::Temperature(const float InTemperatureValue, const EDebugLogTemperatur
 	}
 
 	LogUnitSystem(InTemperatureValue, UnitSymbol, bConvertValueToInt, Prefix, Suffix, LoggingOption, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -777,6 +947,9 @@ void ULog::Volume(const float InVolumeValue, const EDebugLogVolumeUnit VolumeUni
 	}
 	
 	LogUnitSystem(InVolumeValue, UnitSymbol, bConvertValueToInt, Prefix, Suffix, LoggingOption, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -820,6 +993,9 @@ void ULog::Data(const float InDataValue, const EDebugLogDataUnit DataUnit, const
 	}
 	
 	LogUnitSystem(InDataValue, UnitSymbol, bConvertValueToInt, Prefix, Suffix, LoggingOption, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -864,6 +1040,9 @@ void ULog::Length(const float InLengthValue, const EDebugLogLengthUnit LengthUni
 	}
 
 	LogUnitSystem(InLengthValue, UnitSymbol, bConvertValueToInt, Prefix, Suffix, LoggingOption, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -905,6 +1084,9 @@ void ULog::Mass(const float InMassValue, const EDebugLogMassUnit MassUnit, const
 	}
 
 	LogUnitSystem(InMassValue, UnitSymbol, bConvertValueToInt, Prefix, Suffix, LoggingOption, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -973,6 +1155,9 @@ void ULog::Speed(const float InSpeedValue, const EDebugLogSpeedUnit SpeedUnit, c
 	}
 
 	LogUnitSystem(InSpeedValue, UnitSymbol, bConvertValueToInt, Prefix, Suffix, LoggingOption, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -1059,6 +1244,9 @@ void ULog::Time(const float InTimeValue, const EDebugLogTimeUnit TimeUnit, const
 	}
 	
 	LogUnitSystem(InTimeValue, UnitSymbol, bConvertValueToInt, Prefix, Suffix, LoggingOption, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -1071,6 +1259,9 @@ void ULog::Dollar(const float InDollarValue, const bool bConvertValueToInt, cons
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	LogCurrencyUnitSystem(InDollarValue, "$", bConvertValueToInt, Prefix, Suffix, LoggingOption, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -1091,23 +1282,26 @@ void ULog::Sphere(const FSphere& Sphere, const FString& Prefix, const FString& S
 	}
 	else if (LoggingOption == LO_Console)
 	{
-		UE_LOG(LogColor, Warning, TEXT("%s%s"), NET_MODE_PREFIX, *Prefix)
-		UE_LOG(LogColor, Warning, TEXT("%sLocation: %s"), NET_MODE_PREFIX, *Sphere.Center.ToString())
-		UE_LOG(LogColor, Warning, TEXT("%sRadius: %s"), NET_MODE_PREFIX, *FString::SanitizeFloat(Sphere.W))
-		UE_LOG(LogColor, Warning, TEXT("%s%s"), NET_MODE_PREFIX, *Suffix)
+		UE_LOG(LogSphere, Warning, TEXT("%s%s"), NET_MODE_PREFIX, *Prefix)
+		UE_LOG(LogSphere, Warning, TEXT("%sLocation: %s"), NET_MODE_PREFIX, *Sphere.Center.ToString())
+		UE_LOG(LogSphere, Warning, TEXT("%sRadius: %s"), NET_MODE_PREFIX, *FString::SanitizeFloat(Sphere.W))
+		UE_LOG(LogSphere, Warning, TEXT("%s%s"), NET_MODE_PREFIX, *Suffix)
 	}
 	else if (LoggingOption == LO_Both)
 	{
-		UE_LOG(LogColor, Warning, TEXT("%s%s"), NET_MODE_PREFIX, *Prefix)
-		UE_LOG(LogColor, Warning, TEXT("%sLocation: %s"), NET_MODE_PREFIX, *Sphere.Center.ToString())
-		UE_LOG(LogColor, Warning, TEXT("%sRadius: %s"), NET_MODE_PREFIX, *FString::SanitizeFloat(Sphere.W))
-		UE_LOG(LogColor, Warning, TEXT("%s%s"), NET_MODE_PREFIX, *Suffix)
+		UE_LOG(LogSphere, Warning, TEXT("%s%s"), NET_MODE_PREFIX, *Prefix)
+		UE_LOG(LogSphere, Warning, TEXT("%sLocation: %s"), NET_MODE_PREFIX, *Sphere.Center.ToString())
+		UE_LOG(LogSphere, Warning, TEXT("%sRadius: %s"), NET_MODE_PREFIX, *FString::SanitizeFloat(Sphere.W))
+		UE_LOG(LogSphere, Warning, TEXT("%s%s"), NET_MODE_PREFIX, *Suffix)
 		
 		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Suffix);
 		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + FString("Radius: ") + FString::SanitizeFloat(Sphere.W));
 		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + FString("Location: ") + Sphere.Center.ToString());
 		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix);
 	}
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -1123,23 +1317,26 @@ void ULog::Box(const FBox& Box, const FString& Prefix, const FString& Suffix, co
 	}
 	else if (LoggingOption == LO_Console)
 	{
-		UE_LOG(LogColor, Warning, TEXT("%s%s"), NET_MODE_PREFIX, *Prefix)
-		UE_LOG(LogColor, Warning, TEXT("%sMin: %s"), NET_MODE_PREFIX, *Box.Min.ToString())
-		UE_LOG(LogColor, Warning, TEXT("%sMax: %s"), NET_MODE_PREFIX, *Box.Max.ToString())
-		UE_LOG(LogColor, Warning, TEXT("%s%s"), NET_MODE_PREFIX, *Suffix)
+		UE_LOG(LogBox, Warning, TEXT("%s%s"), NET_MODE_PREFIX, *Prefix)
+		UE_LOG(LogBox, Warning, TEXT("%sMin: %s"), NET_MODE_PREFIX, *Box.Min.ToString())
+		UE_LOG(LogBox, Warning, TEXT("%sMax: %s"), NET_MODE_PREFIX, *Box.Max.ToString())
+		UE_LOG(LogBox, Warning, TEXT("%s%s"), NET_MODE_PREFIX, *Suffix)
 	}
 	else if (LoggingOption == LO_Both)
 	{
-		UE_LOG(LogColor, Warning, TEXT("%s%s"), NET_MODE_PREFIX, *Prefix)
-		UE_LOG(LogColor, Warning, TEXT("%sMin: %s"), NET_MODE_PREFIX, *Box.Min.ToString())
-		UE_LOG(LogColor, Warning, TEXT("%sMax: %s"), NET_MODE_PREFIX, *Box.Max.ToString())
-		UE_LOG(LogColor, Warning, TEXT("%s%s"), NET_MODE_PREFIX, *Suffix)
+		UE_LOG(LogBox, Warning, TEXT("%s%s"), NET_MODE_PREFIX, *Prefix)
+		UE_LOG(LogBox, Warning, TEXT("%sMin: %s"), NET_MODE_PREFIX, *Box.Min.ToString())
+		UE_LOG(LogBox, Warning, TEXT("%sMax: %s"), NET_MODE_PREFIX, *Box.Max.ToString())
+		UE_LOG(LogBox, Warning, TEXT("%s%s"), NET_MODE_PREFIX, *Suffix)
 		
 		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Suffix);
 		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + FString("Max: ") + Box.Max.ToString());
 		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + FString("Min: ") + Box.Min.ToString());
 		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix);
 	}
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -1157,21 +1354,21 @@ void ULog::Capsule(const FCapsuleShape& Capsule, const FString& Prefix, const FS
 	}
 	else if (LoggingOption == LO_Console)
 	{
-		UE_LOG(LogColor, Warning, TEXT("%s%s"), NET_MODE_PREFIX, *Prefix)
-		UE_LOG(LogColor, Warning, TEXT("%sLocation: %s"), NET_MODE_PREFIX, *Capsule.Center.ToString())
-		UE_LOG(LogColor, Warning, TEXT("%sRadius: %s"), NET_MODE_PREFIX, *FString::SanitizeFloat(Capsule.Radius))
-		UE_LOG(LogColor, Warning, TEXT("%sLength: %s"), NET_MODE_PREFIX, *FString::SanitizeFloat(Capsule.Length))
-		UE_LOG(LogColor, Warning, TEXT("%sOrientation: %s"), NET_MODE_PREFIX, *Capsule.Orientation.ToString())
-		UE_LOG(LogColor, Warning, TEXT("%s%s"), NET_MODE_PREFIX, *Suffix)
+		UE_LOG(LogMessage, Warning, TEXT("%s%s"), NET_MODE_PREFIX, *Prefix)
+		UE_LOG(LogMessage, Warning, TEXT("%sLocation: %s"), NET_MODE_PREFIX, *Capsule.Center.ToString())
+		UE_LOG(LogMessage, Warning, TEXT("%sRadius: %s"), NET_MODE_PREFIX, *FString::SanitizeFloat(Capsule.Radius))
+		UE_LOG(LogMessage, Warning, TEXT("%sLength: %s"), NET_MODE_PREFIX, *FString::SanitizeFloat(Capsule.Length))
+		UE_LOG(LogMessage, Warning, TEXT("%sOrientation: %s"), NET_MODE_PREFIX, *Capsule.Orientation.ToString())
+		UE_LOG(LogMessage, Warning, TEXT("%s%s"), NET_MODE_PREFIX, *Suffix)
 	}
 	else if (LoggingOption == LO_Both)
 	{
-		UE_LOG(LogColor, Warning, TEXT("%s%s"), NET_MODE_PREFIX, *Prefix)
-		UE_LOG(LogColor, Warning, TEXT("%sLocation: %s"), NET_MODE_PREFIX, *Capsule.Center.ToString())
-		UE_LOG(LogColor, Warning, TEXT("%sRadius: %s"), NET_MODE_PREFIX, *FString::SanitizeFloat(Capsule.Radius))
-		UE_LOG(LogColor, Warning, TEXT("%sLength: %s"), NET_MODE_PREFIX, *FString::SanitizeFloat(Capsule.Length))
-		UE_LOG(LogColor, Warning, TEXT("%sOrientation: %s"), NET_MODE_PREFIX, *Capsule.Orientation.ToString())
-		UE_LOG(LogColor, Warning, TEXT("%s%s"), NET_MODE_PREFIX, *Suffix)
+		UE_LOG(LogCapsule, Warning, TEXT("%s%s"), NET_MODE_PREFIX, *Prefix)
+		UE_LOG(LogCapsule, Warning, TEXT("%sLocation: %s"), NET_MODE_PREFIX, *Capsule.Center.ToString())
+		UE_LOG(LogCapsule, Warning, TEXT("%sRadius: %s"), NET_MODE_PREFIX, *FString::SanitizeFloat(Capsule.Radius))
+		UE_LOG(LogCapsule, Warning, TEXT("%sLength: %s"), NET_MODE_PREFIX, *FString::SanitizeFloat(Capsule.Length))
+		UE_LOG(LogCapsule, Warning, TEXT("%sOrientation: %s"), NET_MODE_PREFIX, *Capsule.Orientation.ToString())
+		UE_LOG(LogCapsule, Warning, TEXT("%s%s"), NET_MODE_PREFIX, *Suffix)
 		
 		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Suffix);
 		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + FString("Orientation: ") + Capsule.Orientation.ToString());
@@ -1180,6 +1377,9 @@ void ULog::Capsule(const FCapsuleShape& Capsule, const FString& Prefix, const FS
 		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + FString("Location: ") + Capsule.Center.ToString());
 		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix);
 	}
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -1296,6 +1496,9 @@ bool ULog::AssertEqual_Transform(const FTransform Actual, const FTransform Expec
 	}
 
 	return true;
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration)
+		Crash("", FString(__FUNCTION__));
 #endif
 
 	return false;
@@ -1319,6 +1522,9 @@ bool ULog::AssertNotEqual_Transform(const FTransform Actual, const FTransform Ex
 	}
 
 	return true;
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration)
+		Crash("", FString(__FUNCTION__));
 #endif
 
 	return false;
@@ -1358,6 +1564,9 @@ bool ULog::Assert_True(const bool bCondition, const FString Message, const bool 
 	}
 
 	return true;
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration)
+		Crash("", FString(__FUNCTION__));
 #endif
 
 	return false;
@@ -1377,6 +1586,9 @@ bool ULog::Assert_False(const bool bCondition, const FString Message, const bool
 	}
 
 	return true;
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration)
+		Crash("", FString(__FUNCTION__));
 #endif
 
 	return false;
@@ -1396,6 +1608,9 @@ bool ULog::Assert_IsValid(UObject* Object, const FString Message, const bool bCr
 	}
 
 	return true;
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration)
+		Crash("", FString(__FUNCTION__));
 #endif
 
 	return false;
@@ -1405,6 +1620,9 @@ void ULog::Number_Int_Blueprint(const int32 Number, const FString& Prefix, const
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	LogInt(Number, Prefix, Suffix, NumberSystem, LoggingOption, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -1412,6 +1630,9 @@ void ULog::Number_Float_Blueprint(const float Number, const FString& Prefix, con
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	LogFloat(Number, Prefix, Suffix, LoggingOption, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -1420,6 +1641,9 @@ void ULog::CheckObject(UObject* Object, const FString& Message)
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	if (!Object)
 		ASSERT(Object, Message);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -1428,6 +1652,9 @@ void ULog::CheckCondition(const bool bCondition, const FString& Message)
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	if (!bCondition)
 		ASSERT(bCondition, Message);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -1435,6 +1662,9 @@ void ULog::CheckNoEntry()
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	checkNoEntry();
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -1442,6 +1672,9 @@ void ULog::CheckNoReEntry()
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	checkNoReentry();
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -1449,6 +1682,9 @@ void ULog::CheckNoRecursion()
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	checkNoRecursion();
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -1456,28 +1692,9 @@ void ULog::UnImplemented()
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	unimplemented();
-#endif
-}
-
-void ULog::LogMessage_Internal(const FString& Message, const FString& Prefix, const FString& Suffix, const FColor& LogColor, const ELoggingOptions LoggingOption, const float TimeToDisplay)
-{
-#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	if (LoggingOption == LO_Viewport)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, LogColor, NET_MODE_PREFIX + Prefix + Message + Suffix);
-	}
-	else if (LoggingOption == LO_Console)
-	{
-		UE_LOG(LogMessage, Warning, TEXT("%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *Message, *Suffix)
-	}
-	else if (LoggingOption == LO_Both)
-	{
-		UE_LOG(LogMessage, Warning, TEXT("%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *Message, *Suffix)
-		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, LogColor, NET_MODE_PREFIX + Prefix + Message + Suffix);
-	}
 #elif (UE_BUILD_SHIPPING)
-	if (Settings->bCrashGameInShippingConfiguration)
-		Crash("DebugLogLibrary plugin does not work in a Shipping build. Disable the plugin, remove all ULog:: calls or wrap them with a #if guard!");
+	if (Settings->bCrashGameInShippingBuildConfiguration)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -1506,6 +1723,9 @@ void ULog::EnsureObject(UObject* Object, const bool bAlwaysEnsure, const FString
 			ensureMsgf(Object != nullptr, TEXT("Ensure (Object): %s"), *Message);
 		}
 	}
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -1534,10 +1754,39 @@ void ULog::EnsureCondition(const bool bCondition, const bool bAlwaysEnsure, cons
 			ensureMsgf(bCondition, TEXT("Ensure (Bool): %s"), *Message);
 		}
 	}
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
+void ULog::LogMessage_Internal(const FString& Message, const FString& Prefix, const FString& Suffix, const FColor& InLogColor, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+{
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
+	if (LoggingOption == LO_Viewport)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, InLogColor, NET_MODE_PREFIX + Prefix + Message + Suffix);
+	}
+	else if (LoggingOption == LO_Console)
+	{
+		UE_LOG(LogMessage, Warning, TEXT("%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *Message, *Suffix)
+	}
+	else if (LoggingOption == LO_Both)
+	{
+		UE_LOG(LogMessage, Warning, TEXT("%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *Message, *Suffix)
+		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, InLogColor, NET_MODE_PREFIX + Prefix + Message + Suffix);
+	}
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
+#endif
+}
+
+void ULog::QuitApplication_Internal()
+{
+	UKismetSystemLibrary::QuitGame(GWorld, UGameplayStatics::GetPlayerController(GWorld, 0), EQuitPreference::Quit, true);
+}
+
 void ULog::LogInt(const platform_int Number, const FString& Prefix, const FString& Suffix, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
@@ -1566,6 +1815,9 @@ void ULog::LogInt(const platform_int Number, const FString& Prefix, const FStrin
 	}
 	
 	LogMessage_Internal(FinalNumber, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -1597,6 +1849,9 @@ void ULog::LogUInt(const platform_uint Number, const FString& Prefix, const FStr
 	}
 
 	LogMessage_Internal(FinalNumber, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -1604,6 +1859,9 @@ void ULog::LogFloat(const float Number, const FString& Prefix, const FString& Su
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	LogMessage_Internal(FString::SanitizeFloat(Number), Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -1616,6 +1874,9 @@ void ULog::LogUnitSystem(const float Value, const FString& UnitSymbol, const boo
 		ValueInString = FString::FromInt(Value);
 
 	LogMessage_Internal(ValueInString + UnitSymbol, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -1628,6 +1889,9 @@ void ULog::LogCurrencyUnitSystem(const float Value, const FString& UnitSymbol, c
 		ValueInString = FString::FromInt(Value);
 
 	LogMessage_Internal(UnitSymbol + ValueInString, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -1659,6 +1923,9 @@ void ULog::LogLongInt(const long Number, const FString& Prefix, const FString& S
 	}
 
 	LogMessage_Internal(FinalNumber, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
 #endif
 }
 
@@ -1728,6 +1995,8 @@ FString ULog::DecimalToHex(const platform_int DecimalNumber)
 
 	return HexadecimalAsString;
 #endif
+
+	return FString("");
 }
 
 FString ULog::DecimalToBinary(const platform_int DecimalNumber)
@@ -1809,6 +2078,8 @@ FString ULog::DecimalToOctal(const platform_int DecimalNumber)
 
 	return Result;
 #endif
+
+	return FString("");
 }
 
 FString ULog::DecimalToRomanNumeral(platform_int DecimalNumber)
@@ -1848,6 +2119,8 @@ FString ULog::DecimalToRomanNumeral(platform_int DecimalNumber)
 	
 	return Result;
 #endif
+
+	return FString("");
 }
 
 platform_int ULog::HexDigitToDecimal(FString HexDigit)
@@ -1873,6 +2146,8 @@ platform_int ULog::HexDigitToDecimal(FString HexDigit)
 
 	return platform_int(0);
 #endif
+
+	return -1;
 }
 
 FString ULog::DecimalToHexDigit(platform_int DecimalNumber)
@@ -1897,13 +2172,19 @@ FString ULog::DecimalToHexDigit(platform_int DecimalNumber)
 
 	return FString("0");
 #endif
+
+	return FString("-1");
 }
 
 void ULog::AssertFailed(const FString& Message, const bool bCrashOnFailure)
 {
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	if (bCrashOnFailure)
 		Crash("Assert Failed: " + Message);
 	else
 		Error("Assert Failed: " + Message, LO_Both, false);
-}
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration)
+		Crash("", FString(__FUNCTION__));
 #endif
+}
