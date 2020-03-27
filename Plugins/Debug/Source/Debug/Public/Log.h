@@ -4,6 +4,7 @@
 
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include <chrono>
+#include "UObject/TextProperty.h" // <-- Fixes compile error when using FText as a parameter for blueprint functions
 #include "Log.generated.h"
 
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
@@ -423,11 +424,22 @@ public:
 	// Log a no message to the console or viewport
 		static void No(ELoggingOptions LoggingOption = LO_Console);
 
+	// Creates and starts a debug timer
 	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
 		static void StartDebugTimer(const FString& Description);
 	
+	// Stops and destroys the active debug timer, outputting how long the operation took since StartDebugTimer was called
 	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
 		static void StopDebugTimer(bool bAutoDetermineTimeUnit = false, EDebugLogTimeUnit DisplayIn = DLTU_Seconds, ELoggingOptions LoggingOption = LO_Both);
+
+	// Return the string with brackets () around it
+	static FString InBrackets(const FString& String);
+
+	// Return the name with brackets () around it
+	static FName InBrackets(const FName& Name);
+
+	// Return the text with brackets () around it
+	static FText InBrackets(const FText& Text);
 	
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	// Log a number to the console or viewport (int8 version)
@@ -725,6 +737,18 @@ protected:
 	// Log a number to the console or viewport (float version)
 	UFUNCTION(BlueprintCallable, Category = "Debug", DisplayName = "Number (float)", meta = (DevelopmentOnly))
 		static void Number_Float_Blueprint(float Number, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+
+	// Return the string with brackets () around it
+	UFUNCTION(BlueprintPure, Category = "Debug", DisplayName = "In Brackets (String)")
+		static FString InBrackets_String_Blueprint(const FString& String);
+
+	// Return the name with brackets () around it
+	UFUNCTION(BlueprintPure, Category = "Debug", DisplayName = "In Brackets (Name)")
+		static FName InBrackets_Name_Blueprint(FName Name);
+		
+	// Return the text with brackets () around it
+	UFUNCTION(BlueprintPure, Category = "Debug", DisplayName = "In Brackets (Text)")
+		static FText InBrackets_Text_Blueprint(FText Text);
 
 	// Verifies the object and if it fails generates a callstack leading to that point to the Output Log window. (With an optional message parameter)
 	UFUNCTION(BlueprintCallable, Category = "Debug", DisplayName = "Ensure (Object)", meta = (DevelopmentOnly))

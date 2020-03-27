@@ -511,6 +511,21 @@ void ULog::StopDebugTimer(const bool bAutoDetermineTimeUnit, const EDebugLogTime
 #endif
 }
 
+FString ULog::InBrackets(const FString& String)
+{
+	return "(" + String + ")";
+}
+
+FName ULog::InBrackets(const FName& Name)
+{
+	return *("(" + Name.ToString() + ")");
+}
+
+FText ULog::InBrackets(const FText& Text)
+{
+	return FText::FromString("(" + Text.ToString() + ")");
+}
+
 void ULog::No(const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
@@ -903,9 +918,11 @@ void ULog::Temperature(const float InTemperatureValue, const EDebugLogTemperatur
 	case DLTU_Celsius:
 		UnitSymbol = "C";
 	break;
+
 	case DLTU_Fahrenheit:
 		UnitSymbol = "F";
 	break;
+
 	case DLTU_Kelvin:
 		UnitSymbol = "K";
 	break;
@@ -1636,6 +1653,21 @@ void ULog::Number_Float_Blueprint(const float Number, const FString& Prefix, con
 #endif
 }
 
+FString ULog::InBrackets_String_Blueprint(const FString& String)
+{
+	return "(" + String + ")";
+}
+
+FName ULog::InBrackets_Name_Blueprint(const FName Name)
+{
+	return *("(" + Name.ToString() + ")");
+}
+
+FText ULog::InBrackets_Text_Blueprint(const FText Text)
+{
+	return FText::FromString("(" + Text.ToString() + ")");
+}
+
 void ULog::CheckObject(UObject* Object, const FString& Message)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
@@ -1769,11 +1801,22 @@ void ULog::LogMessage_Internal(const FString& Message, const FString& Prefix, co
 	}
 	else if (LoggingOption == LO_Console)
 	{
-		UE_LOG(LogMessage, Warning, TEXT("%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *Message, *Suffix)
+		if (InLogColor == Settings->ErrorColor)
+			UE_LOG(LogMessage, Error, TEXT("%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *Message, *Suffix)
+		else if (InLogColor == Settings->WarningColor)
+			UE_LOG(LogMessage, Warning, TEXT("%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *Message, *Suffix)
+		else
+			UE_LOG(LogMessage, Display, TEXT("%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *Message, *Suffix)
 	}
 	else if (LoggingOption == LO_Both)
 	{
-		UE_LOG(LogMessage, Warning, TEXT("%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *Message, *Suffix)
+		if (InLogColor == Settings->ErrorColor)
+			UE_LOG(LogMessage, Error, TEXT("%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *Message, *Suffix)
+		else if (InLogColor == Settings->WarningColor)
+			UE_LOG(LogMessage, Warning, TEXT("%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *Message, *Suffix)
+		else
+			UE_LOG(LogMessage, Display, TEXT("%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *Message, *Suffix)
+
 		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, InLogColor, NET_MODE_PREFIX + Prefix + Message + Suffix);
 	}
 #elif (UE_BUILD_SHIPPING)
