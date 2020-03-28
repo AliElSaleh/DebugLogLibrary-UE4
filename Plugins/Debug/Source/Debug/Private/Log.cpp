@@ -163,7 +163,6 @@ void ULog::Crash(const FString& Message, const FString& FromFunction)
 
 	if (Settings->bCrashGameInShippingBuildConfiguration && Message.IsEmpty())
 	{
-		//ErrorMessage = FString("A function from the DebugLogLibrary plugin was called from C++ or Blueprint!\n") + (FromFunction.IsEmpty() ? "" : FString("Function name:\n") + FromFunction + "\n") + "------Stack start\n" + FString("\nDebugLogLibrary plugin does not work in a Shipping build. \n\nFor C++ users: \nRemove all ULog:: calls or wrap them with a #if guard! \n\nFor Blueprint users: \nRemove or use the Disabled option for all nodes that use the DebugLogLibrary plugin from all blueprint graphs. \n\nAlternatively, you can disable this feature by going to Project Settings -> Debug Log Library and uncheck 'CrashGameInShippingBuildConfiguration'");
 		ErrorMessage = Line1 + Line2 + Line3 + Line4 + Line5 + Line6;
 	}
 	else
