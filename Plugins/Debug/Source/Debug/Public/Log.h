@@ -5,6 +5,7 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include <chrono>
 #include "UObject/TextProperty.h" // <-- Fixes compile error when using FText as a parameter for blueprint functions
+#include "DebugLogLibrarySettings.h"
 #include "Log.generated.h"
 
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
@@ -729,6 +730,7 @@ public:
 
 protected:
 	void PostInitProperties() override;
+	void FinishDestroy() override;
 
 	// Log a number to the console or viewport
 	UFUNCTION(BlueprintCallable, Category = "Debug", DisplayName = "Number (int)", meta = (DevelopmentOnly))
@@ -823,7 +825,7 @@ private:
 	template<typename T>
 	static bool PerformComparison(T LHS, T RHS, EDebugLogComparisonMethod ComparisonMethod);
 
-	static const class UDebugLogLibrarySettings* Settings;
+	static class UDebugLogLibrarySettings* Settings;
 
 	static class FDebugLogTimer* Timer;
 

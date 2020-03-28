@@ -9,8 +9,6 @@
 
 #include "Math/Vector.h"
 
-#include "DebugLogLibrarySettings.h"
-
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -18,7 +16,7 @@
 
 #define MAX_HEX_VALUES 16
 
-const UDebugLogLibrarySettings* ULog::Settings;
+UDebugLogLibrarySettings* ULog::Settings;
 FDebugLogTimer* ULog::Timer;
 bool ULog::bIsShippingBuild;
 
@@ -26,7 +24,8 @@ void ULog::PostInitProperties()
 {
 	Super::PostInitProperties();
 
-	Settings = GetDefault<UDebugLogLibrarySettings>();
+	Settings = GetMutableDefault<UDebugLogLibrarySettings>();
+	Settings->AddToRoot();
 
 #if (!UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	bIsShippingBuild = false;
@@ -35,6 +34,13 @@ void ULog::PostInitProperties()
 #else
 	bIsShippingBuild = false;
 #endif
+}
+
+void ULog::FinishDestroy()
+{
+	Settings->RemoveFromRoot();
+	
+	Super::FinishDestroy();
 }
 
 void ULog::ObjectValidity(UObject* InObject, const bool bSilenceOnError, const ELoggingOptions LoggingOption, const float TimeToDisplay)
@@ -148,9 +154,17 @@ void ULog::Crash(const FString& Message, const FString& FromFunction)
 	UE_LOG(LogCrash, Fatal, TEXT("%s%s | %s"), NET_MODE_PREFIX, *FromFunction, *Message)
 #elif (UE_BUILD_SHIPPING)
 	FString ErrorMessage = "";
+	FString Line1 = "A function from the DebugLogLibrary plugin was called from C++ or Blueprint!\n";
+	FString Line2 = FromFunction.IsEmpty() ? "" : FString("Function name:\n") + FromFunction + "\n";
+	FString Line3 = FString("\nDebugLogLibrary plugin does not work in a Shipping build.");
+	FString Line4 = FString(" \n\nFor C++ users: \nRemove all ULog:: calls or wrap them with a #if guard!");
+	FString Line5 = FString(" \n\nFor Blueprint users: \nRemove or use the Disabled option for all nodes that use the DebugLogLibrary plugin from all blueprint graphs.");
+	FString Line6 = FString("\n\nAlternatively, you can disable this feature by going to Project Settings -> Debug Log Library and uncheck 'CrashGameInShippingBuildConfiguration'");
+
 	if (Settings->bCrashGameInShippingBuildConfiguration && Message.IsEmpty())
 	{
-		ErrorMessage = FString("Runtime Error: A function from the DebugLogLibrary plugin was called from C++ or Blueprint! \n") + (FromFunction.IsEmpty() ? "" : FString("Function name:\n") + FromFunction + "\n") + FString("\nDebugLogLibrary plugin does not work in a Shipping build. \n\nFor C++ users: \nRemove all ULog:: calls or wrap them with a #if guard! \n\nFor Blueprint users: \nRemove or use the Disabled option for all nodes that use the DebugLogLibrary plugin from all blueprint graphs. \n\nAlternatively, you can disable this feature by going to Project Settings -> Debug Log Library and uncheck 'CrashGameInShippingBuildConfiguration'");
+		//ErrorMessage = FString("A function from the DebugLogLibrary plugin was called from C++ or Blueprint!\n") + (FromFunction.IsEmpty() ? "" : FString("Function name:\n") + FromFunction + "\n") + "------Stack start\n" + FString("\nDebugLogLibrary plugin does not work in a Shipping build. \n\nFor C++ users: \nRemove all ULog:: calls or wrap them with a #if guard! \n\nFor Blueprint users: \nRemove or use the Disabled option for all nodes that use the DebugLogLibrary plugin from all blueprint graphs. \n\nAlternatively, you can disable this feature by going to Project Settings -> Debug Log Library and uncheck 'CrashGameInShippingBuildConfiguration'");
+		ErrorMessage = Line1 + Line2 + Line3 + Line4 + Line5 + Line6;
 	}
 	else
 	{
@@ -161,7 +175,8 @@ void ULog::Crash(const FString& Message, const FString& FromFunction)
 	}
 	
 	FMessageDialog ErrorDialogBox;
-	ErrorDialogBox.Open(EAppMsgType::Ok, FText::FromString(ErrorMessage));
+	FText Title = FText::FromString("Runtime Error");
+	ErrorDialogBox.Open(EAppMsgType::Ok, FText::FromString(ErrorMessage), &Title);
 
 	QuitApplication_Internal();
 #endif
