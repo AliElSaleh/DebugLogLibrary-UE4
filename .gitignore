@@ -68,10 +68,12 @@ Saved/*
 
 # ReSharper caches files
 _ReSharper.Caches/*
+.idea/*
 
 # Compiled source files for the engine to use
 Intermediate/*
 Plugins/*/Intermediate/*
+Plugins/Developer/RiderLink/*
 
 # Cache files for the editor to use
 DerivedDataCache/*
