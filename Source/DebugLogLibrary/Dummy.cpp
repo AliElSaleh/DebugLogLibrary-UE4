@@ -15,13 +15,12 @@ void ADummy::BeginPlay()
 {
 	Super::BeginPlay();
 
-#if !UE_BUILD_SHIPPING
 	const FVector A(1.0f);
 	const FColor B(1.0f);
 
-	QUICK_LOG_VIEWPORT_VECTOR(A);
-	QUICK_LOG_CONSOLE_COLOR(B);
-#endif
+	LOG_VECTOR(A);
+	LOG_VECTOR(A, "Vector: ", "");
+	LOG_COLOR(B);
 }
 
 void ADummy::Tick(float DeltaTime)

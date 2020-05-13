@@ -53,33 +53,33 @@
 	3define LOG_##FunctionName##_VIEWPORT(Variable) ULog::FunctionName(Variable, "", "", LO_Viewport, 5.0f) \
 
 // Quick debug logging macros
-#define LOG_VECTOR(Variable) ULog::Vector(Variable, "", "", LO_Both, 5.0f)
-#define LOG_VECTOR_CONSOLE(Variable) ULog::Vector(Variable, "", "", LO_Console, 5.0f)
-#define LOG_VECTOR_VIEWPORT(Variable) ULog::Vector(Variable, "", "", LO_Viewport, 5.0f)
+#define LOG_VECTOR(Variable, ...) ULog::Vector(Variable, __VA_ARGS__, LO_Both, 5.0f)
+#define LOG_VECTOR_CONSOLE(Variable, ...) ULog::Vector(Variable, __VA_ARGS__, LO_Console, 5.0f)
+#define LOG_VECTOR_VIEWPORT(Variable, ...) ULog::Vector(Variable, __VA_ARGS__, LO_Viewport, 5.0f)
 
-#define LOG_VECTOR2D(Variable) ULog::Vector2D(Variable, "", "", LO_Both, 5.0f)
-#define LOG_VECTOR2D_CONSOLE(Variable) ULog::Vector2D(Variable, "", "", LO_Console, 5.0f)
-#define LOG_VECTOR2D_VIEWPORT(Variable) ULog::Vector2D(Variable, "", "", LO_Viewport, 5.0f)
+#define LOG_VECTOR2D(Variable, ...) ULog::Vector2D(Variable, __VA_ARGS__, LO_Both, 5.0f)
+#define LOG_VECTOR2D_CONSOLE(Variable, ...) ULog::Vector2D(Variable, __VA_ARGS__, LO_Console, 5.0f)
+#define LOG_VECTOR2D_VIEWPORT(Variable, ...) ULog::Vector2D(Variable, __VA_ARGS__, LO_Viewport, 5.0f)
 
-#define LOG_ROTATOR(Variable) ULog::Rotator(Variable, "", "", LO_Both, 5.0f)
-#define LOG_ROTATOR_CONSOLE(Variable) ULog::Rotator(Variable, "", "", LO_Console, 5.0f)
-#define LOG_ROTATOR_VIEWPORT(Variable) ULog::Rotator(Variable, "", "", LO_Viewport, 5.0f)
+#define LOG_ROTATOR(Variable, ...) ULog::Rotator(Variable, __VA_ARGS__, LO_Both, 5.0f)
+#define LOG_ROTATOR_CONSOLE(Variable, ...) ULog::Rotator(Variable, __VA_ARGS__, LO_Console, 5.0f)
+#define LOG_ROTATOR_VIEWPORT(Variable, ...) ULog::Rotator(Variable, __VA_ARGS__, LO_Viewport, 5.0f)
 
-#define LOG_TRANSFORM(Variable) ULog::Transform(Variable, "", "", LO_Both, 5.0f)
-#define LOG_TRANSFORM_CONSOLE(Variable) ULog::Transform(Variable, "", "", LO_Console, 5.0f)
-#define LOG_TRANSFORM_VIEWPORT(Variable) ULog::Transform(Variable, "", "", LO_Viewport, 5.0f)
+#define LOG_TRANSFORM(Variable, ...) ULog::Transform(Variable, __VA_ARGS__, LO_Both, 5.0f)
+#define LOG_TRANSFORM_CONSOLE(Variable, ...) ULog::Transform(Variable, __VA_ARGS__, LO_Console, 5.0f)
+#define LOG_TRANSFORM_VIEWPORT(Variable, ...) ULog::Transform(Variable, __VA_ARGS__, LO_Viewport, 5.0f)
 
-#define LOG_QUAT(Variable) ULog::Quat(Variable, "", "", LO_Both, 5.0f)
-#define LOG_QUAT_CONSOLE(Variable) ULog::Quat(Variable, "", "", LO_Console, 5.0f)
-#define LOG_QUAT_VIEWPORT(Variable) ULog::Quat(Variable, "", "", LO_Viewport, 5.0f)
+#define LOG_QUAT(Variable, ...) ULog::Quat(Variable, __VA_ARGS__, LO_Both, 5.0f)
+#define LOG_QUAT_CONSOLE(Variable, ...) ULog::Quat(Variable, __VA_ARGS__, LO_Console, 5.0f)
+#define LOG_QUAT_VIEWPORT(Variable, ...) ULog::Quat(Variable, __VA_ARGS__, LO_Viewport, 5.0f)
 
-#define LOG_MATRIX(Variable) ULog::Matrix(Variable, "", "", LO_Both, 5.0f)
-#define LOG_MATRIX_CONSOLE(Variable) ULog::Matrix(Variable, "", "", LO_Console, 5.0f)
-#define LOG_MATRIX_VIEWPORT(Variable) ULog::Matrix(Variable, "", "", LO_Viewport, 5.0f)
+#define LOG_MATRIX(Variable, ...) ULog::Matrix(Variable, __VA_ARGS__, LO_Both, 5.0f)
+#define LOG_MATRIX_CONSOLE(Variable, ...) ULog::Matrix(Variable, __VA_ARGS__, LO_Console, 5.0f)
+#define LOG_MATRIX_VIEWPORT(Variable, ...) ULog::Matrix(Variable, __VA_ARGS__, LO_Viewport, 5.0f)
 
-#define LOG_COLOR(Variable) ULog::Color(Variable, "", "", LO_Both, 5.0f)
-#define LOG_COLOR_CONSOLE(Variable) ULog::Color(Variable, "", "", LO_Console, 5.0f)
-#define LOG_COLOR_VIEWPORT(Variable) ULog::Color(Variable, "", "", LO_Viewport, 5.0f)
+#define LOG_COLOR(Variable, ...) ULog::Color(Variable, __VA_ARGS__, LO_Both, 5.0f)
+#define LOG_COLOR_CONSOLE(Variable, ...) ULog::Color(Variable, __VA_ARGS__, LO_Console, 5.0f)
+#define LOG_COLOR_VIEWPORT(Variable, ...) ULog::Color(Variable, __VA_ARGS__, LO_Viewport, 5.0f)
 
 #define LOG_TRUE() ULog::Warning("True", LO_Both, false, 5.0f)
 #define LOG_TRUE_CONSOLE() ULog::Warning("True", LO_Console, false, 5.0f)
@@ -89,21 +89,13 @@
 #define LOG_FALSE_CONSOLE() ULog::Warning("False", LO_Console, false, 5.0f)
 #define LOG_FALSE_VIEWPORT() ULog::Warning("False", LO_Viewport, false, 5.0f)
 
-#define LOG_NUMBER(Variable) ULog::Number(Variable, "", "", DLNS_Decimal, LO_Both, 5.0f)
-#define LOG_NUMBER_CONSOLE(Variable) ULog::Number(Variable, "", "", DLNS_Decimal, LO_Console, 5.0f)
-#define LOG_NUMBER_VIEWPORT(Variable) ULog::Number(Variable, "", "", DLNS_Decimal, LO_Viewport, 5.0f)
+#define LOG_NUMBER(Variable, ...) ULog::Number(Variable, __VA_ARGS__, DLNS_Decimal, LO_Both, 5.0f)
+#define LOG_NUMBER_CONSOLE(Variable, ...) ULog::Number(Variable, __VA_ARGS__, DLNS_Decimal, LO_Console, 5.0f)
+#define LOG_NUMBER_VIEWPORT(Variable, ...) ULog::Number(Variable, __VA_ARGS__, DLNS_Decimal, LO_Viewport, 5.0f)
 
-#define LOG_BOOL(Variable) ULog::Bool(Variable, "", "", LO_Both, 5.0f)
-#define LOG_BOOL_CONSOLE(Variable) ULog::Bool(Variable, "", "", LO_Both, 5.0f)
-#define LOG_BOOL_VIEWPORT(Variable) ULog::Bool(Variable, "", "", LO_Both, 5.0f)
-
-#define LOG_HEY(Variable) ULog::Hey(Variable, "", "", LO_Both, 5.0f)
-#define LOG_HEY_CONSOLE(Variable) ULog::Hey(Variable, "", "", LO_Console, 5.0f)
-#define LOG_HEY_VIEWPORT(Variable) ULog::Hey(Variable, "", "", LO_Viewport, 5.0f)
-
-#define LOG_HELLO(Variable) ULog::Hello(Variable, "", "", LO_Both, 5.0f)
-#define LOG_HELLO_CONSOLE(Variable) ULog::Hello(Variable, "", "", LO_Console, 5.0f)
-#define LOG_HELLO_VIEWPORT(Variable) ULog::Hello(Variable, "", "", LO_Viewport, 5.0f)
+#define LOG_BOOL(Variable, ...) ULog::Bool(Variable, __VA_ARGS__, LO_Both, 5.0f)
+#define LOG_BOOL_CONSOLE(Variable, ...) ULog::Bool(Variable, __VA_ARGS__, LO_Both, 5.0f)
+#define LOG_BOOL_VIEWPORT(Variable, ...) ULog::Bool(Variable, __VA_ARGS__, LO_Both, 5.0f)
 
 #if PLATFORM_64BITS
 	typedef int64 platform_int;
