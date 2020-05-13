@@ -1,9 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Dummy.h"
-#if !UE_BUILD_SHIPPING
 #include "Log.h"
-#endif
 
 ADummy::ADummy()
 {
