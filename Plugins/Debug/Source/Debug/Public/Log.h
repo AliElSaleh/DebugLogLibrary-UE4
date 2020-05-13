@@ -284,9 +284,7 @@ public:
 
 	void Stop()
 	{
-		const auto& EndTimePoint = std::chrono::high_resolution_clock::now();
-
-		Duration = std::chrono::duration_cast<std::chrono::nanoseconds>(EndTimePoint - StartTimePoint).count();
+		Duration = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now() - StartTimePoint).count();
 	}
 
 private:
