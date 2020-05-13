@@ -1815,19 +1815,15 @@ void ULog::LogMessage_Internal(const FString& Message, const FString& Prefix, co
 	{
 		if (InLogColor == Settings->ErrorColor)
 			UE_LOG(LogMessage, Error, TEXT("%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *Message, *Suffix)
-		else if (InLogColor == Settings->WarningColor)
-			UE_LOG(LogMessage, Warning, TEXT("%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *Message, *Suffix)
 		else
-			UE_LOG(LogMessage, Display, TEXT("%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *Message, *Suffix)
+			UE_LOG(LogMessage, Warning, TEXT("%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *Message, *Suffix)
 	}
 	else if (LoggingOption == LO_Both)
 	{
 		if (InLogColor == Settings->ErrorColor)
 			UE_LOG(LogMessage, Error, TEXT("%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *Message, *Suffix)
-		else if (InLogColor == Settings->WarningColor)
-			UE_LOG(LogMessage, Warning, TEXT("%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *Message, *Suffix)
 		else
-			UE_LOG(LogMessage, Display, TEXT("%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *Message, *Suffix)
+			UE_LOG(LogMessage, Warning, TEXT("%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *Message, *Suffix)
 
 		GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, InLogColor, NET_MODE_PREFIX + Prefix + Message + Suffix);
 	}
