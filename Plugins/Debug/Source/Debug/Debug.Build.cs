@@ -7,7 +7,7 @@ public class Debug : ModuleRules
 	public Debug(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
-		bFasterWithoutUnity = true;
+		bUseUnity = true;
 		MinFilesUsingPrecompiledHeaderOverride = 1;
 		PrivatePCHHeaderFile = "Public/Debug.h";
 		
