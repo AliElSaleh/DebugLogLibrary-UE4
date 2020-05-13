@@ -8,89 +8,102 @@
 #include "DebugLogLibrarySettings.h"
 #include "Log.generated.h"
 
-#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-// Development build only. Get the current class name and function name where this is called
+// Get the current class name and function name where this is called
 #define CUR_CLASS_FUNC (FString(__FUNCTION__))
 
-// Development build only. Get the current class name, function name and line number where this is called
+// Get the current class name, function name and line number where this is called
 #define CUR_CLASS_FUNC_WITH_LINE (CUR_CLASS_FUNC + ": " + CUR_LINE)
 
-// Development build only. Get the current class where this is called
+// Get the current class where this is called
 #define CUR_CLASS (FString(__FUNCTION__).Left(FString(__FUNCTION__).Find(TEXT(":"))) )
 
-// Development build only. Get the current function name where this is called
+// Get the current function name where this is called
 #define CUR_FUNC (FString(__FUNCTION__).Right(FString(__FUNCTION__).Len() - FString(__FUNCTION__).Find(TEXT("::")) - 2 ))
   
-// Development build only. Get the current line number in the code where this is called
+// Get the current line number in the code where this is called
 #define CUR_LINE ("Line " + FString::FromInt(__LINE__))
 
-// Development build only. Get the current function name and the line number in the code where this is called
+// Get the current function name and the line number in the code where this is called
 #define CUR_FUNC_WITH_LINE  (CUR_FUNC + ": " + CUR_LINE)
 
-// Development build only. Get the current class and line number where this is called
+// Get the current class and line number where this is called
 #define CUR_CLASS_WITH_LINE (CUR_CLASS + "(" + CUR_LINE + ")")
 
-// Development build only. Get the current function signature where this is called
+// Get the current function signature where this is called
 #define CUR_FUNC_SIG (FString(__FUNCSIG__))
 
-// Development build only. Get the current function signature with the number where this is called
+// Get the current function signature with the number where this is called
 #define CUR_FUNC_SIG_WITH_LINE (FString(__FUNCSIG__) + ": " + CUR_LINE)
 
-// Development build only. Returns the net mode as a string, possible outputs are, Empty String, [Client], [Server] or [Dedicated Server]
+// Returns the net mode as a string, possible outputs are, Empty String, [Client], [Server] or [Dedicated Server]
 #define NET_MODE_PREFIX *(!GWorld ? FString("") \
 	: GWorld->GetNetMode() == NM_Client ? FString("[Client] ") + FString::FromInt(GPlayInEditorID - 1) + FString(": ") \
 	: GWorld->GetNetMode() == NM_ListenServer ? FString("[Server]: ") \
 	: GWorld->GetNetMode() == NM_DedicatedServer ? FString("[Dedicated Server]: ") \
 	: FString(""))
 
-// Development build only. Logs an assert message and crashes the program
+// Logs an assert message and crashes the program
 #define ASSERT(expr, message) FDebug::AssertFailed(#expr, UE_LOG_SOURCE_FILE(__FILE__), __LINE__, TEXT("%s"), *message);
 
-// Development build only. Quick debug logging macros
-#define QUICK_LOG_VECTOR(Variable) ULog::Vector(Variable, "", "", LO_Both, 5.0f)
-#define QUICK_LOG_CONSOLE_VECTOR(Variable) ULog::Vector(Variable, "", "", LO_Console, 5.0f)
-#define QUICK_LOG_VIEWPORT_VECTOR(Variable) ULog::Vector(Variable, "", "", LO_Viewport, 5.0f)
+#define DECLARE_QUICK_LOG_MACROS(FunctionName) \
+	3define LOG_##FunctionName##(Variable) ULog::FunctionName(Variable, "", "", LO_Both, 5.0f) \
+	\
+	3define LOG_##FunctionName##_CONSOLE(Variable) ULog::FunctionName(Variable, "", "", LO_Console, 5.0f) \
+	\
+	3define LOG_##FunctionName##_VIEWPORT(Variable) ULog::FunctionName(Variable, "", "", LO_Viewport, 5.0f) \
 
-#define QUICK_LOG_VECTOR2D(Variable) ULog::Vector2D(Variable, "", "", LO_Both, 5.0f)
-#define QUICK_LOG_CONSOLE_VECTOR2D(Variable) ULog::Vector2D(Variable, "", "", LO_Console, 5.0f)
-#define QUICK_LOG_VIEWPORT_VECTOR2D(Variable) ULog::Vector2D(Variable, "", "", LO_Viewport, 5.0f)
+// Quick debug logging macros
+#define LOG_VECTOR(Variable) ULog::Vector(Variable, "", "", LO_Both, 5.0f)
+#define LOG_VECTOR_CONSOLE(Variable) ULog::Vector(Variable, "", "", LO_Console, 5.0f)
+#define LOG_VECTOR_VIEWPORT(Variable) ULog::Vector(Variable, "", "", LO_Viewport, 5.0f)
 
-#define QUICK_LOG_ROTATOR(Variable) ULog::Rotator(Variable, "", "", LO_Both, 5.0f)
-#define QUICK_LOG_CONSOLE_ROTATOR(Variable) ULog::Rotator(Variable, "", "", LO_Console, 5.0f)
-#define QUICK_LOG_VIEWPORT_ROTATOR(Variable) ULog::Rotator(Variable, "", "", LO_Viewport, 5.0f)
+#define LOG_VECTOR2D(Variable) ULog::Vector2D(Variable, "", "", LO_Both, 5.0f)
+#define LOG_VECTOR2D_CONSOLE(Variable) ULog::Vector2D(Variable, "", "", LO_Console, 5.0f)
+#define LOG_VECTOR2D_VIEWPORT(Variable) ULog::Vector2D(Variable, "", "", LO_Viewport, 5.0f)
 
-#define QUICK_LOG_TRANSFORM(Variable) ULog::Transform(Variable, "", "", LO_Both, 5.0f)
-#define QUICK_LOG_CONSOLE_TRANSFORM(Variable) ULog::Transform(Variable, "", "", LO_Console, 5.0f)
-#define QUICK_LOG_VIEWPORT_TRANSFORM(Variable) ULog::Transform(Variable, "", "", LO_Viewport, 5.0f)
+#define LOG_ROTATOR(Variable) ULog::Rotator(Variable, "", "", LO_Both, 5.0f)
+#define LOG_ROTATOR_CONSOLE(Variable) ULog::Rotator(Variable, "", "", LO_Console, 5.0f)
+#define LOG_ROTATOR_VIEWPORT(Variable) ULog::Rotator(Variable, "", "", LO_Viewport, 5.0f)
 
-#define QUICK_LOG_QUAT(Variable) ULog::Quat(Variable, "", "", LO_Both, 5.0f)
-#define QUICK_LOG_CONSOLE_QUAT(Variable) ULog::Quat(Variable, "", "", LO_Console, 5.0f)
-#define QUICK_LOG_VIEWPORT_QUAT(Variable) ULog::Quat(Variable, "", "", LO_Viewport, 5.0f)
+#define LOG_TRANSFORM(Variable) ULog::Transform(Variable, "", "", LO_Both, 5.0f)
+#define LOG_TRANSFORM_CONSOLE(Variable) ULog::Transform(Variable, "", "", LO_Console, 5.0f)
+#define LOG_TRANSFORM_VIEWPORT(Variable) ULog::Transform(Variable, "", "", LO_Viewport, 5.0f)
 
-#define QUICK_LOG_MATRIX(Variable) ULog::Matrix(Variable, "", "", LO_Both, 5.0f)
-#define QUICK_LOG_CONSOLE_MATRIX(Variable) ULog::Matrix(Variable, "", "", LO_Console, 5.0f)
-#define QUICK_LOG_VIEWPORT_MATRIX(Variable) ULog::Matrix(Variable, "", "", LO_Viewport, 5.0f)
+#define LOG_QUAT(Variable) ULog::Quat(Variable, "", "", LO_Both, 5.0f)
+#define LOG_QUAT_CONSOLE(Variable) ULog::Quat(Variable, "", "", LO_Console, 5.0f)
+#define LOG_QUAT_VIEWPORT(Variable) ULog::Quat(Variable, "", "", LO_Viewport, 5.0f)
 
-#define QUICK_LOG_COLOR(Variable) ULog::Color(Variable, "", "", LO_Both, 5.0f)
-#define QUICK_LOG_CONSOLE_COLOR(Variable) ULog::Color(Variable, "", "", LO_Console, 5.0f)
-#define QUICK_LOG_VIEWPORT_COLOR(Variable) ULog::Color(Variable, "", "", LO_Viewport, 5.0f)
+#define LOG_MATRIX(Variable) ULog::Matrix(Variable, "", "", LO_Both, 5.0f)
+#define LOG_MATRIX_CONSOLE(Variable) ULog::Matrix(Variable, "", "", LO_Console, 5.0f)
+#define LOG_MATRIX_VIEWPORT(Variable) ULog::Matrix(Variable, "", "", LO_Viewport, 5.0f)
 
-#define QUICK_LOG_TRUE() ULog::Warning("True", LO_Both, false, 5.0f)
-#define QUICK_LOG_CONSOLE_TRUE() ULog::Warning("True", LO_Console, false, 5.0f)
-#define QUICK_LOG_VIEWPORT_TRUE() ULog::Warning("True", LO_Viewport, false, 5.0f)
+#define LOG_COLOR(Variable) ULog::Color(Variable, "", "", LO_Both, 5.0f)
+#define LOG_COLOR_CONSOLE(Variable) ULog::Color(Variable, "", "", LO_Console, 5.0f)
+#define LOG_COLOR_VIEWPORT(Variable) ULog::Color(Variable, "", "", LO_Viewport, 5.0f)
 
-#define QUICK_LOG_FALSE() ULog::Warning("False", LO_Both, false, 5.0f)
-#define QUICK_LOG_CONSOLE_FALSE() ULog::Warning("False", LO_Console, false, 5.0f)
-#define QUICK_LOG_VIEWPORT_FALSE() ULog::Warning("False", LO_Viewport, false, 5.0f)
+#define LOG_TRUE() ULog::Warning("True", LO_Both, false, 5.0f)
+#define LOG_TRUE_CONSOLE() ULog::Warning("True", LO_Console, false, 5.0f)
+#define LOG_TRUE_VIEWPORT() ULog::Warning("True", LO_Viewport, false, 5.0f)
 
-#define QUICK_LOG_NUMBER(Variable) ULog::Number(Variable, "", "", DLNS_Decimal, LO_Both, 5.0f)
-#define QUICK_LOG_CONSOLE_NUMBER(Variable) ULog::Number(Variable, "", "", DLNS_Decimal, LO_Console, 5.0f)
-#define QUICK_LOG_VIEWPORT_NUMBER(Variable) ULog::Number(Variable, "", "", DLNS_Decimal, LO_Viewport, 5.0f)
+#define LOG_FALSE() ULog::Warning("False", LO_Both, false, 5.0f)
+#define LOG_FALSE_CONSOLE() ULog::Warning("False", LO_Console, false, 5.0f)
+#define LOG_FALSE_VIEWPORT() ULog::Warning("False", LO_Viewport, false, 5.0f)
 
-#define QUICK_LOG_BOOL(Variable) ULog::Bool(Variable, "", "", LO_Both, 5.0f)
-#define QUICK_LOG_CONSOLE_BOOL(Variable) ULog::Bool(Variable, "", "", LO_Both, 5.0f)
-#define QUICK_LOG_VIEWPORT_BOOL(Variable) ULog::Bool(Variable, "", "", LO_Both, 5.0f)
-#endif
+#define LOG_NUMBER(Variable) ULog::Number(Variable, "", "", DLNS_Decimal, LO_Both, 5.0f)
+#define LOG_NUMBER_CONSOLE(Variable) ULog::Number(Variable, "", "", DLNS_Decimal, LO_Console, 5.0f)
+#define LOG_NUMBER_VIEWPORT(Variable) ULog::Number(Variable, "", "", DLNS_Decimal, LO_Viewport, 5.0f)
+
+#define LOG_BOOL(Variable) ULog::Bool(Variable, "", "", LO_Both, 5.0f)
+#define LOG_BOOL_CONSOLE(Variable) ULog::Bool(Variable, "", "", LO_Both, 5.0f)
+#define LOG_BOOL_VIEWPORT(Variable) ULog::Bool(Variable, "", "", LO_Both, 5.0f)
+
+#define LOG_HEY(Variable) ULog::Hey(Variable, "", "", LO_Both, 5.0f)
+#define LOG_HEY_CONSOLE(Variable) ULog::Hey(Variable, "", "", LO_Console, 5.0f)
+#define LOG_HEY_VIEWPORT(Variable) ULog::Hey(Variable, "", "", LO_Viewport, 5.0f)
+
+#define LOG_HELLO(Variable) ULog::Hello(Variable, "", "", LO_Both, 5.0f)
+#define LOG_HELLO_CONSOLE(Variable) ULog::Hello(Variable, "", "", LO_Console, 5.0f)
+#define LOG_HELLO_VIEWPORT(Variable) ULog::Hello(Variable, "", "", LO_Viewport, 5.0f)
 
 #if PLATFORM_64BITS
 	typedef int64 platform_int;
@@ -225,18 +238,6 @@ enum EDebugLogTimeUnit
 	DLTU_Centuries				UMETA(DisplayName = "Centuries (century)"),
 	DLTU_Millennium				UMETA(DisplayName = "Millennuim"),
 };
-
-//UENUM(BlueprintType)
-//enum EDebugLogCurrencyUnit
-//{
-//	DLCU_Dollar					UMETA(DisplayName = "Dollar ($)"),
-//	DLCU_Pound					UMETA(DisplayName = "Pound (£)"),
-//	DLCU_Euro					UMETA(DisplayName = "Euro (€)"),
-//	DLCU_ChineseYuan			UMETA(DisplayName = "Chinese Yuan (元)"),
-//	DLCU_JapaneseYen 			UMETA(DisplayName = "Japanese Yen (¥)"),
-//	DLCU_IndianRupee			UMETA(DisplayName = "Indian Rupee (₹)"),
-//	DLCU_TurkishLira 			UMETA(DisplayName = "Turkish Lira (₺)"),
-//};
 
 UENUM(BlueprintType)
 enum EDebugLogComparisonMethod
@@ -442,7 +443,6 @@ public:
 	// Return the text with brackets () around it
 	static FText InBrackets(const FText& Text);
 	
-#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	// Log a number to the console or viewport (int8 version)
 	static void Number(int8 Number, const FString& Prefix = "", const FString& Suffix = "", EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
@@ -508,7 +508,6 @@ public:
 
 	// Log a number to the console or viewport (long version, no prefix and suffix)
 	static void Number(long Number, EDebugLogNumberSystems NumberSystem, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
-#endif
 	
 	// Log the a percentage value to the console or viewport (Just appends a % symbol)
 	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))

@@ -590,7 +590,6 @@ void ULog::Invalid(const FString& Prefix, const FString& Suffix, const ELoggingO
 #endif
 }
 
-#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 void ULog::Number(const int8 Number, const FString& Prefix, const FString& Suffix, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 	LogInt(Number, Prefix, Suffix, NumberSystem, LoggingOption, TimeToDisplay);
@@ -700,7 +699,6 @@ void ULog::Number(const long Number, const EDebugLogNumberSystems NumberSystem, 
 {
 	LogLongInt(Number, "", "", NumberSystem, LoggingOption, TimeToDisplay);
 }
-#endif
 
 void ULog::Percent(const float Number, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {

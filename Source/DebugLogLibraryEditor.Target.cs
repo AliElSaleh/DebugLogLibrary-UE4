@@ -10,5 +10,6 @@ public class DebugLogLibraryEditorTarget : TargetRules
 		Type = TargetType.Editor;
 
 		ExtraModuleNames.AddRange( new string[] { "DebugLogLibrary" } );
+		DefaultBuildSettings = BuildSettingsVersion.Latest;
 	}
 }
