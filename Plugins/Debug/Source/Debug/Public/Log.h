@@ -499,6 +499,8 @@ public:
 	// Log a number to the console or viewport (long version, no prefix and suffix)
 	static void Number(long Number, EDebugLogNumberSystems NumberSystem, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
+	// Log a enum value to the console or viewport.
+	// Enum classes must be marked with a UENUM() macro
 	template<typename EnumType>
     static void Enum(const EnumType& EnumValue, bool bFriendlyName = false, const FString& Prefix = "", const FString& Suffix = "", const ELoggingOptions& LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 	
