@@ -3,9 +3,9 @@
 #pragma once
 
 #include "Kismet/BlueprintFunctionLibrary.h"
-#include <chrono>
 #include "UObject/TextProperty.h" // <-- Fixes compile error when using FText as a parameter for blueprint functions
 #include "DebugLogLibrarySettings.h"
+#include <chrono>
 #include "Log.generated.h"
 
 // Get the current class name and function name where this is called
@@ -498,6 +498,9 @@ public:
 
 	// Log a number to the console or viewport (long version, no prefix and suffix)
 	static void Number(long Number, EDebugLogNumberSystems NumberSystem, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+
+	template<typename EnumType>
+    static void Enum(const EnumType& EnumValue, bool bFriendlyName = false, const FString& Prefix = "", const FString& Suffix = "", const ELoggingOptions& LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 	
 	// Log the a percentage value to the console or viewport (Just appends a % symbol)
 	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
@@ -942,22 +945,22 @@ bool ULog::PerformComparison(T LHS, T RHS, const EDebugLogComparisonMethod Compa
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	switch (ComparisonMethod)
 	{
-	case CM_Equal_To:
+		case CM_Equal_To:
 		return LHS == RHS;
 
-	case CM_Not_Equal_To:
+		case CM_Not_Equal_To:
 		return LHS != RHS;
 
-	case CM_Greater_Than_Or_Equal_To:
+		case CM_Greater_Than_Or_Equal_To:
 		return LHS >= RHS;
 
-	case CM_Less_Than_Or_Equal_To:
+		case CM_Less_Than_Or_Equal_To:
 		return LHS <= RHS;
 
-	case CM_Greater_Than:
+		case CM_Greater_Than:
 		return LHS > RHS;
 
-	case CM_Less_Than:
+		case CM_Less_Than:
 		return LHS < RHS;
 	}
 
@@ -969,4 +972,36 @@ bool ULog::PerformComparison(T LHS, T RHS, const EDebugLogComparisonMethod Compa
 #endif
 
 	return false;
+}
+
+template <typename EnumType>
+void ULog::Enum(const EnumType& EnumValue, const bool bFriendlyName, const FString& Prefix, const FString& Suffix, const ELoggingOptions& LoggingOption, const float TimeToDisplay)
+{
+	FString EnumTypeString = typeid(EnumType).name();
+
+	// Remove the "enum " prefix
+	EnumTypeString.RemoveAt(0, 5);
+
+	// Remove "::Type" suffix, if it exists
+	if (EnumTypeString.Contains("::Type"))
+	{
+		EnumTypeString.RemoveAt(EnumTypeString.Find("::Type"), 6);
+	}
+
+	UEnum* EnumObject = FindObject<UEnum>(ANY_PACKAGE, *EnumTypeString, true);
+	if (EnumObject)
+	{
+		if (bFriendlyName)
+		{
+			LogMessage_Internal(EnumObject->GetDisplayNameTextByIndex(uint8(EnumValue)).ToString(), Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay);
+		}
+		else
+		{
+			LogMessage_Internal(EnumObject->GetNameStringByIndex(uint8(EnumValue)), Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay);
+		}
+	}
+	else
+	{
+		Error(CUR_CLASS_FUNC + " | The given enum type '" + EnumTypeString + "' does not exist! Is '" + EnumTypeString + "' marked with a UENUM() macro?", LoggingOption, true);
+	}
 }

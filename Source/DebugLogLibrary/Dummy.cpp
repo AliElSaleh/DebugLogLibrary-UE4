@@ -19,6 +19,10 @@ void ADummy::BeginPlay()
 	LOG_VECTOR(A);
 	LOG_VECTOR(A, "Vector: ", "");
 	LOG_COLOR(B);
+	
+	ULog::Enum<EAxis::Type>(EAxis::X, true, "Axis: ", "", LO_Both);
+	ULog::Enum<ELoggingOptions>(LO_Both, true, "Logging Option: ", "", LO_Both);
+	ULog::Enum<ETestEnum>(Test1, true, "Test enum: ", "", LO_Both);
 }
 
 void ADummy::Tick(float DeltaTime)

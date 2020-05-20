@@ -6,6 +6,14 @@
 #include "GameFramework/Actor.h"
 #include "Dummy.generated.h"
 
+enum ETestEnum
+{
+	Test1,
+    Test2,
+    Test3,
+    Test4,
+};
+
 UCLASS()
 class DEBUGLOGLIBRARY_API ADummy : public AActor
 {
