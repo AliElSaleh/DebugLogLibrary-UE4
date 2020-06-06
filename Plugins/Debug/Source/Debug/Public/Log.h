@@ -46,33 +46,53 @@
 #define ASSERT(expr, message) FDebug::AssertFailed(#expr, UE_LOG_SOURCE_FILE(__FILE__), __LINE__, TEXT("%s"), *message);
 
 // Quick debug logging macros
-#define LOG_VECTOR(Variable, ...) ULog::Vector(Variable, __VA_ARGS__, LO_Both, 5.0f)
-#define LOG_VECTOR_CONSOLE(Variable, ...) ULog::Vector(Variable, __VA_ARGS__, LO_Console, 5.0f)
-#define LOG_VECTOR_VIEWPORT(Variable, ...) ULog::Vector(Variable, __VA_ARGS__, LO_Viewport, 5.0f)
+#define LOG_VECTOR(Variable, ...) ULog::Vector(Variable, false, __VA_ARGS__, LO_Both, 5.0f)
+#define LOG_VECTOR_CONSOLE(Variable, ...) ULog::Vector(Variable, false, __VA_ARGS__, LO_Console, 5.0f)
+#define LOG_VECTOR_VIEWPORT(Variable, ...) ULog::Vector(Variable, false, __VA_ARGS__, LO_Viewport, 5.0f)
 
-#define LOG_VECTOR2D(Variable, ...) ULog::Vector2D(Variable, __VA_ARGS__, LO_Both, 5.0f)
-#define LOG_VECTOR2D_CONSOLE(Variable, ...) ULog::Vector2D(Variable, __VA_ARGS__, LO_Console, 5.0f)
-#define LOG_VECTOR2D_VIEWPORT(Variable, ...) ULog::Vector2D(Variable, __VA_ARGS__, LO_Viewport, 5.0f)
+#define LOG_VECTOR_COMPACT(Variable, ...) ULog::Vector(Variable, true, __VA_ARGS__, LO_Both, 5.0f)
+#define LOG_VECTOR_COMPACT_CONSOLE(Variable, ...) ULog::Vector(Variable, true, __VA_ARGS__, LO_Console, 5.0f)
+#define LOG_VECTOR_COMPACT_VIEWPORT(Variable, ...) ULog::Vector(Variable, true, __VA_ARGS__, LO_Viewport, 5.0f)
 
-#define LOG_ROTATOR(Variable, ...) ULog::Rotator(Variable, __VA_ARGS__, LO_Both, 5.0f)
-#define LOG_ROTATOR_CONSOLE(Variable, ...) ULog::Rotator(Variable, __VA_ARGS__, LO_Console, 5.0f)
-#define LOG_ROTATOR_VIEWPORT(Variable, ...) ULog::Rotator(Variable, __VA_ARGS__, LO_Viewport, 5.0f)
+#define LOG_VECTOR2D(Variable, ...) ULog::Vector2D(Variable, false,__VA_ARGS__, LO_Both, 5.0f)
+#define LOG_VECTOR2D_CONSOLE(Variable, ...) ULog::Vector2D(Variable, false, __VA_ARGS__, LO_Console, 5.0f)
+#define LOG_VECTOR2D_VIEWPORT(Variable, ...) ULog::Vector2D(Variable, false,__VA_ARGS__, LO_Viewport, 5.0f)
+
+#define LOG_VECTOR2D_COMPACT(Variable, ...) ULog::Vector2D(Variable, true,__VA_ARGS__, LO_Both, 5.0f)
+#define LOG_VECTOR2D_COMPACT_CONSOLE(Variable, ...) ULog::Vector2D(Variable, true, __VA_ARGS__, LO_Console, 5.0f)
+#define LOG_VECTOR2D_COMPACT_VIEWPORT(Variable, ...) ULog::Vector2D(Variable, true,__VA_ARGS__, LO_Viewport, 5.0f)
+
+#define LOG_ROTATOR(Variable, ...) ULog::Rotator(Variable, false, __VA_ARGS__, LO_Both, 5.0f)
+#define LOG_ROTATOR_CONSOLE(Variable, ...) ULog::Rotator(Variable, false, __VA_ARGS__, LO_Console, 5.0f)
+#define LOG_ROTATOR_VIEWPORT(Variable, ...) ULog::Rotator(Variable, false, __VA_ARGS__, LO_Viewport, 5.0f)
+
+#define LOG_ROTATOR_COMPACT(Variable, ...) ULog::Rotator(Variable, true, __VA_ARGS__, LO_Both, 5.0f)
+#define LOG_ROTATOR_COMPACT_CONSOLE(Variable, ...) ULog::Rotator(Variable, true, __VA_ARGS__, LO_Console, 5.0f)
+#define LOG_ROTATOR_COMPACT_VIEWPORT(Variable, ...) ULog::Rotator(Variable, true, __VA_ARGS__, LO_Viewport, 5.0f)
 
 #define LOG_TRANSFORM(Variable, ...) ULog::Transform(Variable, __VA_ARGS__, LO_Both, 5.0f)
 #define LOG_TRANSFORM_CONSOLE(Variable, ...) ULog::Transform(Variable, __VA_ARGS__, LO_Console, 5.0f)
 #define LOG_TRANSFORM_VIEWPORT(Variable, ...) ULog::Transform(Variable, __VA_ARGS__, LO_Viewport, 5.0f)
 
-#define LOG_QUAT(Variable, ...) ULog::Quat(Variable, __VA_ARGS__, LO_Both, 5.0f)
-#define LOG_QUAT_CONSOLE(Variable, ...) ULog::Quat(Variable, __VA_ARGS__, LO_Console, 5.0f)
-#define LOG_QUAT_VIEWPORT(Variable, ...) ULog::Quat(Variable, __VA_ARGS__, LO_Viewport, 5.0f)
+#define LOG_QUAT(Variable, ...) ULog::Quat(Variable, false, __VA_ARGS__, LO_Both, 5.0f)
+#define LOG_QUAT_CONSOLE(Variable, ...) ULog::Quat(Variable, false, __VA_ARGS__, LO_Console, 5.0f)
+#define LOG_QUAT_VIEWPORT(Variable, ...) ULog::Quat(Variable, false, __VA_ARGS__, LO_Viewport, 5.0f)
+
+#define LOG_QUAT_COMPACT(Variable, ...) ULog::Quat(Variable, true, __VA_ARGS__, LO_Both, 5.0f)
+#define LOG_QUAT_COMPACT_CONSOLE(Variable, ...) ULog::Quat(Variable, true, __VA_ARGS__, LO_Console, 5.0f)
+#define LOG_QUAT_COMPACT_VIEWPORT(Variable, ...) ULog::Quat(Variable, true, __VA_ARGS__, LO_Viewport, 5.0f)
 
 #define LOG_MATRIX(Variable, ...) ULog::Matrix(Variable, __VA_ARGS__, LO_Both, 5.0f)
 #define LOG_MATRIX_CONSOLE(Variable, ...) ULog::Matrix(Variable, __VA_ARGS__, LO_Console, 5.0f)
 #define LOG_MATRIX_VIEWPORT(Variable, ...) ULog::Matrix(Variable, __VA_ARGS__, LO_Viewport, 5.0f)
 
-#define LOG_COLOR(Variable, ...) ULog::Color(Variable, __VA_ARGS__, LO_Both, 5.0f)
-#define LOG_COLOR_CONSOLE(Variable, ...) ULog::Color(Variable, __VA_ARGS__, LO_Console, 5.0f)
-#define LOG_COLOR_VIEWPORT(Variable, ...) ULog::Color(Variable, __VA_ARGS__, LO_Viewport, 5.0f)
+#define LOG_COLOR(Variable, ...) ULog::Color(Variable, false, __VA_ARGS__, LO_Both, 5.0f)
+#define LOG_COLOR_CONSOLE(Variable, ...) ULog::Color(Variable, false, __VA_ARGS__, LO_Console, 5.0f)
+#define LOG_COLOR_VIEWPORT(Variable, ...) ULog::Color(Variable, false, __VA_ARGS__, LO_Viewport, 5.0f)
+
+#define LOG_COLOR_COMPACT(Variable, ...) ULog::Color(Variable, true, __VA_ARGS__, LO_Both, 5.0f)
+#define LOG_COLOR_COMPACT_CONSOLE(Variable, ...) ULog::Color(Variable, true, __VA_ARGS__, LO_Console, 5.0f)
+#define LOG_COLOR_COMPACT_VIEWPORT(Variable, ...) ULog::Color(Variable, true, __VA_ARGS__, LO_Viewport, 5.0f)
 
 #define LOG_TRUE() ULog::Warning("True", LO_Both, false, 5.0f)
 #define LOG_TRUE_CONSOLE() ULog::Warning("True", LO_Console, false, 5.0f)
@@ -570,20 +590,20 @@ public:
 	static void Bool(bool bBoolToTest, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 	static void Bool(bool bBoolToTest, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
-	// Log a FVector value to the console or viewport
+	// Log a FVector to the console or viewport
 	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
-	static void Vector(const FVector& InVector, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
-	static void Vector(const FVector& InVector, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+	static void Vector(const FVector& InVector, bool bCompact = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+	static void Vector(const FVector& InVector, bool bCompact = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
-	// Log a FVector2D value to the console or viewport
+	// Log a FVector2D to the console or viewport
 	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
-	static void Vector2D(const FVector2D& InVector2D, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
-	static void Vector2D(const FVector2D& InVector2D, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+	static void Vector2D(const FVector2D& InVector2D, bool bCompact = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+	static void Vector2D(const FVector2D& InVector2D, bool bCompact = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
-	// Log a FRotator value to the console or viewport
+	// Log a FRotator to the console or viewport
 	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
-	static void Rotator(const FRotator& InRotator, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
-	static void Rotator(const FRotator& InRotator, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+	static void Rotator(const FRotator& InRotator, bool bCompact = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+	static void Rotator(const FRotator& InRotator, bool bCompact = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
 	// Log a FTransform value to the console or viewport
 	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
@@ -592,8 +612,8 @@ public:
 
 	// Log a Quaternion value to the console or viewport
 	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
-	static void Quat(const FQuat& Quaternion, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
-	static void Quat(const FQuat& Quaternion, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+	static void Quat(const FQuat& Quaternion, bool bCompact = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+	static void Quat(const FQuat& Quaternion, bool bCompact = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
 	// Log a matrix value to the console or viewport
 	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
@@ -602,8 +622,8 @@ public:
 
 	// Log a color value to the console or viewport
 	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
-	static void Color(const FLinearColor& InColor, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
-	static void Color(const FLinearColor& InColor, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+	static void Color(const FLinearColor& InColor, bool bCompact = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+	static void Color(const FLinearColor& InColor, bool bCompact = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
 	// Log a DateTime value to the console or viewport
 	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))

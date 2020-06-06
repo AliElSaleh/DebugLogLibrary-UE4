@@ -753,49 +753,79 @@ void ULog::Bool(const bool bBoolToTest, const ELoggingOptions LoggingOption, con
 	Bool(bBoolToTest, "", "", LoggingOption, TimeToDisplay);
 }
 
-void ULog::Vector(const FVector& InVector, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Vector(const FVector& InVector, const bool bCompact, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	LogMessage_Internal(InVector.ToString(), Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay);
+	FString FinalVectorString;
+	if (bCompact)
+	{
+		FinalVectorString = "[" + FString::SanitizeFloat(InVector.X) + ", " + FString::SanitizeFloat(InVector.Y) + ", " + FString::SanitizeFloat(InVector.Z) + "]";
+	}
+	else
+	{
+		FinalVectorString = InVector.ToString();
+	}
+	
+	LogMessage_Internal(FinalVectorString, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Vector(const FVector& InVector, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Vector(const FVector& InVector, const bool bCompact, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
-	Vector(InVector, "", "", LoggingOption, TimeToDisplay);
+	Vector(InVector, bCompact, "", "", LoggingOption, TimeToDisplay);
 }
 
-void ULog::Vector2D(const FVector2D& InVector2D, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Vector2D(const FVector2D& InVector2D, const bool bCompact, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	LogMessage_Internal(InVector2D.ToString(), Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay);
+	FString FinalVectorString;
+	if (bCompact)
+	{
+		FinalVectorString = "[" + FString::SanitizeFloat(InVector2D.X) + ", " + FString::SanitizeFloat(InVector2D.Y) + "]";
+	}
+	else
+	{
+		FinalVectorString = InVector2D.ToString();
+	}
+	
+	LogMessage_Internal(FinalVectorString, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Vector2D(const FVector2D& InVector2D, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Vector2D(const FVector2D& InVector2D, const bool bCompact, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
-	Vector2D(InVector2D, "", "", LoggingOption, TimeToDisplay);
+	Vector2D(InVector2D, bCompact, "", "", LoggingOption, TimeToDisplay);
 }
 
-void ULog::Rotator(const FRotator& InRotator, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Rotator(const FRotator& InRotator, const bool bCompact, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	LogMessage_Internal(InRotator.ToString(), Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay);
+	FString FinalRotatorString;
+	if (bCompact)
+	{
+		FinalRotatorString = "[" + FString::SanitizeFloat(InRotator.Roll) + ", " + FString::SanitizeFloat(InRotator.Pitch) + ", " + FString::SanitizeFloat(InRotator.Yaw) + "]";
+	}
+	else
+	{
+		FinalRotatorString = InRotator.ToString();
+	}
+	
+	LogMessage_Internal(FinalRotatorString, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Rotator(const FRotator& InRotator, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Rotator(const FRotator& InRotator, const bool bCompact, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
-	Rotator(InRotator, "", "", LoggingOption, TimeToDisplay);
+	Rotator(InRotator, bCompact, "", "", LoggingOption, TimeToDisplay);
 }
 
 void ULog::Transform(const FTransform& InTransform, const FString& Prefix, const bool bFormat, const ELoggingOptions LoggingOption, const float TimeToDisplay)
@@ -864,19 +894,29 @@ void ULog::Transform(const FTransform& InTransform, const ELoggingOptions Loggin
 	Transform(InTransform, "", bFormat, LoggingOption, TimeToDisplay);
 }
 
-void ULog::Quat(const FQuat& Quaternion, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Quat(const FQuat& Quaternion, const bool bCompact, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	LogMessage_Internal(Quaternion.ToString(), Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay);
+	FString FinalQuatString;
+	if (bCompact)
+	{
+		FinalQuatString = "[" + FString::SanitizeFloat(Quaternion.X) + ", " + FString::SanitizeFloat(Quaternion.Y) + ", " + FString::SanitizeFloat(Quaternion.Z) + ", " + FString::SanitizeFloat(Quaternion.W) + "]";
+	}
+	else
+	{
+		FinalQuatString = Quaternion.ToString();
+	}
+	
+	LogMessage_Internal(FinalQuatString, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Quat(const FQuat& Quaternion, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Quat(const FQuat& Quaternion, const bool bCompact, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
-	Quat(Quaternion, "", "", LoggingOption, TimeToDisplay);
+	Quat(Quaternion, bCompact, "", "", LoggingOption, TimeToDisplay);
 }
 
 void ULog::Matrix(const FMatrix& InMatrix, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
@@ -894,19 +934,29 @@ void ULog::Matrix(const FMatrix& InMatrix, const ELoggingOptions LoggingOption, 
 	Matrix(InMatrix, "", "", LoggingOption, TimeToDisplay);
 }
 
-void ULog::Color(const FLinearColor& InColor, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Color(const FLinearColor& InColor, const bool bCompact, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	LogMessage_Internal(InColor.ToString(), Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay);
+	FString FinalColorString;
+	if (bCompact)
+	{
+		FinalColorString = "[" + FString::SanitizeFloat(InColor.R) + ", " + FString::SanitizeFloat(InColor.G) + ", " + FString::SanitizeFloat(InColor.B) + ", " + FString::SanitizeFloat(InColor.A) + "]";
+	}
+	else
+	{
+		FinalColorString = InColor.ToString();
+	}
+	
+	LogMessage_Internal(FinalColorString, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Color(const FLinearColor& InColor, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Color(const FLinearColor& InColor, const bool bCompact, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
-	Color(InColor, "", "", LoggingOption, TimeToDisplay);	
+	Color(InColor, bCompact, "", "", LoggingOption, TimeToDisplay);	
 }
 
 void ULog::DateTime(const FDateTime& InDateTime, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
