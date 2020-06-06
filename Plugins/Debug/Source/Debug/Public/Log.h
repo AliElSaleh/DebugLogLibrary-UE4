@@ -45,13 +45,6 @@
 // Logs an assert message and crashes the program
 #define ASSERT(expr, message) FDebug::AssertFailed(#expr, UE_LOG_SOURCE_FILE(__FILE__), __LINE__, TEXT("%s"), *message);
 
-#define DECLARE_QUICK_LOG_MACROS(FunctionName) \
-	3define LOG_##FunctionName##(Variable) ULog::FunctionName(Variable, "", "", LO_Both, 5.0f) \
-	\
-	3define LOG_##FunctionName##_CONSOLE(Variable) ULog::FunctionName(Variable, "", "", LO_Console, 5.0f) \
-	\
-	3define LOG_##FunctionName##_VIEWPORT(Variable) ULog::FunctionName(Variable, "", "", LO_Viewport, 5.0f) \
-
 // Quick debug logging macros
 #define LOG_VECTOR(Variable, ...) ULog::Vector(Variable, __VA_ARGS__, LO_Both, 5.0f)
 #define LOG_VECTOR_CONSOLE(Variable, ...) ULog::Vector(Variable, __VA_ARGS__, LO_Console, 5.0f)
@@ -100,6 +93,14 @@
 #define LOG_ENUM(EnumType, Variable, bFriendlyName, ...) ULog::Enum<EnumType>(Variable, bFriendlyName, __VA_ARGS__, LO_Both, 5.0f)
 #define LOG_ENUM_CONSOLE(EnumType, Variable, bFriendlyName, ...) ULog::Enum<EnumType>(Variable, bFriendlyName, __VA_ARGS__, LO_Console, 5.0f)
 #define LOG_ENUM_VIEWPORT(EnumType, Variable, bFriendlyName, ...) ULog::Enum<EnumType>(Variable, bFriendlyName, __VA_ARGS__, LO_Viewport, 5.0f)
+
+#define LOG_LINEBREAK() ULog::LineBreak(LO_Both)
+#define LOG_LINEBREAK_CONSOLE() ULog::LineBreak("", "", LO_Console)
+#define LOG_LINEBREAK_VIEWPORT() ULog::LineBreak("", "", LO_Viewport)
+
+#define LOG_LINEBREAK_S(Symbol) ULog::LineBreak_Symbol(#Symbol, LO_Both)
+#define LOG_LINEBREAK_S_CONSOLE(Symbol) ULog::LineBreak_Symbol(#Symbol, LO_Console)
+#define LOG_LINEBREAK_S_VIEWPORT(Symbol) ULog::LineBreak_Symbol(#Symbol, LO_Viewport)
 
 #if PLATFORM_64BITS
 	typedef int64 platform_int;
@@ -457,6 +458,14 @@ public:
 	static void No(const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console);
 	// Log a no message to the console or viewport
 	static void No(ELoggingOptions LoggingOption = LO_Console);
+
+	// Log a line break to the console or viewport
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
+    static void LineBreak(ELoggingOptions LoggingOption = LO_Console);
+
+	// Log a line break with a symbol string to the console or viewport
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly), DisplayName = "Line Break (Symbol)")
+    static void LineBreak_Symbol(const FString& Symbol, ELoggingOptions LoggingOption = LO_Console);
 
 	// Creates and starts a debug timer
 	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
@@ -1080,7 +1089,7 @@ void ULog::Enum(const EnumType& EnumValue, const bool bFriendlyName, const FStri
 }
 
 template <typename EnumType>
-void ULog::Enum(const EnumType& EnumValue, bool bFriendlyName, const ELoggingOptions& LoggingOption, const float TimeToDisplay)
+void ULog::Enum(const EnumType& EnumValue, const bool bFriendlyName, const ELoggingOptions& LoggingOption, const float TimeToDisplay)
 {
 	Enum<EnumType>(EnumValue, bFriendlyName, "", "", LoggingOption, TimeToDisplay);
 }

@@ -413,6 +413,26 @@ void ULog::No(const ELoggingOptions LoggingOption)
 #endif
 }
 
+void ULog::LineBreak(const ELoggingOptions LoggingOption)
+{
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
+	LogMessage_Internal(" ", "", "", Settings->InfoColor, LoggingOption, 5.0f);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
+#endif
+}
+
+void ULog::LineBreak_Symbol(const FString& Symbol, const ELoggingOptions LoggingOption)
+{
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
+	LogMessage_Internal(Symbol.IsEmpty() ? " " : Symbol, "", "", Settings->InfoColor, LoggingOption, 5.0f);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
+#endif
+}
+
 void ULog::StartDebugTimer(const FString& Description)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
