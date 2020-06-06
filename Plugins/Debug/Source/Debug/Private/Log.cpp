@@ -720,6 +720,246 @@ void ULog::Number(const long Number, const EDebugLogNumberSystems NumberSystem, 
 	LogLongInt(Number, "", "", NumberSystem, LoggingOption, TimeToDisplay);
 }
 
+void ULog::LogArray(const TArray<FString>& InArray, const FString& Prefix, const FString& Suffix, const ELoggingOptions& LoggingOption, const float TimeToDisplay)
+{
+	Info(Prefix, LoggingOption, false, TimeToDisplay);
+
+	for (int32 i = 0; i < InArray.Num(); i++)
+	{
+		Info(FString::FromInt(i) + ": [" + InArray[i] + "]", LoggingOption, false, TimeToDisplay);
+	}
+
+	Info(Suffix, LoggingOption, false, TimeToDisplay);
+}
+
+void ULog::Array_Int32(TArray<int32> InArray, const FString& Prefix, const FString& Suffix, const ELoggingOptions& LoggingOption, const float TimeToDisplay)
+{
+	TArray<FString> InStringArray;
+	InStringArray.Reserve(InArray.Num());
+	for (const int32& Element : InArray)
+	{
+		InStringArray.Add(FString::FromInt(Element));
+	}
+
+	LogArray(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
+}
+
+void ULog::Array_Int64(TArray<int64> InArray, const FString& Prefix, const FString& Suffix, const ELoggingOptions& LoggingOption, const float TimeToDisplay)
+{
+	TArray<FString> InStringArray;
+	InStringArray.Reserve(InArray.Num());
+	for (const int64& Element : InArray)
+	{
+		InStringArray.Add(FString::FromInt(Element));
+	}
+
+	LogArray(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
+}
+
+void ULog::Array_Float(TArray<float> InArray, const FString& Prefix, const FString& Suffix, const ELoggingOptions& LoggingOption, const float TimeToDisplay)
+{
+	TArray<FString> InStringArray;
+	InStringArray.Reserve(InArray.Num());
+	for (const int32& Element : InArray)
+	{
+		InStringArray.Add(FString::SanitizeFloat(Element));
+	}
+
+	LogArray(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
+}
+
+void ULog::Array_Double(TArray<double> InArray, const FString& Prefix, const FString& Suffix, const ELoggingOptions& LoggingOption, const float TimeToDisplay)
+{
+	TArray<FString> InStringArray;
+	InStringArray.Reserve(InArray.Num());
+	for (const int32& Element : InArray)
+	{
+		InStringArray.Add(FString::SanitizeFloat(Element));
+	}
+
+	LogArray(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
+}
+
+void ULog::Array_Bool(TArray<bool> InArray, const FString& Prefix, const FString& Suffix, const ELoggingOptions& LoggingOption, const float TimeToDisplay)
+{
+	TArray<FString> InStringArray;
+	InStringArray.Reserve(InArray.Num());
+	for (const bool& Element : InArray)
+	{
+		if (Element)
+			InStringArray.Add(FString("True"));
+		else
+			InStringArray.Add(FString("False"));
+	}
+
+	LogArray(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
+}
+
+void ULog::Array_Vector(TArray<FVector> InArray, const bool bCompact, const FString& Prefix, const FString& Suffix, const ELoggingOptions& LoggingOption, const float TimeToDisplay)
+{
+	TArray<FString> InStringArray;
+	InStringArray.Reserve(InArray.Num());
+	for (const FVector& Element : InArray)
+	{
+		if (bCompact)
+		{
+			FString VectorAsCompactString = FString::SanitizeFloat(Element.X) + ", " + FString::SanitizeFloat(Element.Y) + ", " + FString::SanitizeFloat(Element.Z);
+			InStringArray.Add(VectorAsCompactString);
+		}
+		else
+		{
+			InStringArray.Add(Element.ToString());
+		}
+	}
+
+	LogArray(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
+}
+
+void ULog::Array_Vector2D(TArray<FVector2D> InArray, const bool bCompact, const FString& Prefix, const FString& Suffix, const ELoggingOptions& LoggingOption, const float TimeToDisplay)
+{
+	TArray<FString> InStringArray;
+	InStringArray.Reserve(InArray.Num());
+	for (const FVector2D& Element : InArray)
+	{
+		if (bCompact)
+		{
+			FString VectorAsCompactString = FString::SanitizeFloat(Element.X) + ", " + FString::SanitizeFloat(Element.Y);
+			InStringArray.Add(VectorAsCompactString);
+		}
+		else
+		{
+			InStringArray.Add(Element.ToString());
+		}
+	}
+
+	LogArray(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
+}
+
+void ULog::Array_Rotator(TArray<FRotator> InArray, const bool bCompact, const FString& Prefix, const FString& Suffix, const ELoggingOptions& LoggingOption, const float TimeToDisplay)
+{
+	TArray<FString> InStringArray;
+	InStringArray.Reserve(InArray.Num());
+	for (const FRotator& Element : InArray)
+	{
+		if (bCompact)
+		{
+			FString RotatorAsCompactString = FString::SanitizeFloat(Element.Roll) + ", " + FString::SanitizeFloat(Element.Pitch) + ", " + FString::SanitizeFloat(Element.Yaw);
+			InStringArray.Add(RotatorAsCompactString);
+		}
+		else
+		{
+			InStringArray.Add(Element.ToString());
+		}
+	}
+
+	LogArray(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
+}
+
+void ULog::Array_Transform(TArray<FTransform> InArray, const FString& Prefix, const FString& Suffix, const ELoggingOptions& LoggingOption, const float TimeToDisplay)
+{
+	TArray<FString> InStringArray;
+	InStringArray.Reserve(InArray.Num());
+	for (const FTransform& Element : InArray)
+	{
+		InStringArray.Add(Element.ToString());
+	}
+
+	LogArray(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
+}
+
+void ULog::Array_Quat(TArray<FQuat> InArray, const bool bCompact, const FString& Prefix, const FString& Suffix, const ELoggingOptions& LoggingOption, const float TimeToDisplay)
+{
+	TArray<FString> InStringArray;
+	InStringArray.Reserve(InArray.Num());
+	for (const FQuat& Element : InArray)
+	{
+		if (bCompact)
+		{
+			FString QuatAsCompactString = FString::SanitizeFloat(Element.X) + ", " + FString::SanitizeFloat(Element.Y) + ", " + FString::SanitizeFloat(Element.Z) + ", " + FString::SanitizeFloat(Element.W);
+			InStringArray.Add(QuatAsCompactString);
+		}
+		else
+		{
+			InStringArray.Add(Element.ToString());
+		}
+	}
+
+	LogArray(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
+}
+
+void ULog::Array_Matrix(TArray<FMatrix> InArray, const FString& Prefix, const FString& Suffix, const ELoggingOptions& LoggingOption, const float TimeToDisplay)
+{
+	TArray<FString> InStringArray;
+	InStringArray.Reserve(InArray.Num());
+	for (const FMatrix& Element : InArray)
+	{
+		InStringArray.Add(Element.ToString());
+	}
+
+	LogArray(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
+}
+
+void ULog::Array_String(const TArray<FString> InArray, const FString& Prefix, const FString& Suffix, const ELoggingOptions& LoggingOption, const float TimeToDisplay)
+{
+	LogArray(InArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
+}
+
+void ULog::Array_Name(TArray<FName> InArray, const FString& Prefix, const FString& Suffix, const ELoggingOptions& LoggingOption, const float TimeToDisplay)
+{
+	TArray<FString> InStringArray;
+	InStringArray.Reserve(InArray.Num());
+	for (const FName& Element : InArray)
+	{
+		InStringArray.Add(Element.ToString());
+	}
+
+	LogArray(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
+}
+
+void ULog::Array_Text(TArray<FText> InArray, const FString& Prefix, const FString& Suffix, const ELoggingOptions& LoggingOption, const float TimeToDisplay)
+{
+	TArray<FString> InStringArray;
+	InStringArray.Reserve(InArray.Num());
+	for (const FText& Element : InArray)
+	{
+		InStringArray.Add(Element.ToString());
+	}
+
+	LogArray(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
+}
+
+void ULog::Array_DateTime(TArray<FDateTime> InArray, const FString& Prefix, const FString& Suffix, const ELoggingOptions& LoggingOption, const float TimeToDisplay)
+{
+	TArray<FString> InStringArray;
+	InStringArray.Reserve(InArray.Num());
+	for (const FDateTime& Element : InArray)
+	{
+		InStringArray.Add(Element.ToString());
+	}
+
+	LogArray(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
+}
+
+void ULog::Array_Color(TArray<FLinearColor> InArray, const bool bCompact, const FString& Prefix, const FString& Suffix, const ELoggingOptions& LoggingOption, const float TimeToDisplay)
+{
+	TArray<FString> InStringArray;
+	InStringArray.Reserve(InArray.Num());
+	for (const FLinearColor& Element : InArray)
+	{
+		if (bCompact)
+		{
+			FString ColorAsCompactString = FString::SanitizeFloat(Element.R) + ", " + FString::SanitizeFloat(Element.G) + ", " + FString::SanitizeFloat(Element.B) + ", " + FString::SanitizeFloat(Element.A);
+			InStringArray.Add(ColorAsCompactString);
+		}
+		else
+		{
+			InStringArray.Add(Element.ToString());
+		}
+	}
+
+	LogArray(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
+}
+
 void ULog::Percent(const float Number, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)

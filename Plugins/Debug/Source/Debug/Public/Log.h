@@ -579,7 +579,70 @@ public:
 	// Enum classes must be marked with a UENUM() macro
 	template<typename EnumType>
     static void Enum(const EnumType& EnumValue, bool bFriendlyName = false, const ELoggingOptions& LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+
+	// Log an array of int32 to the console or viewport
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly), DisplayName = "Array (int32)")
+	static void Array_Int32(TArray<int32> InArray, const FString& Prefix = "", const FString& Suffix = "", const ELoggingOptions& LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+
+	// Log an array of int64 to the console or viewport
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly), DisplayName = "Array (int64)")
+    static void Array_Int64(TArray<int64> InArray, const FString& Prefix = "", const FString& Suffix = "", const ELoggingOptions& LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 	
+	// Log an array of floats to the console or viewport
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly), DisplayName = "Array (float)")
+    static void Array_Float(TArray<float> InArray, const FString& Prefix = "", const FString& Suffix = "", const ELoggingOptions& LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+
+	// Log an array of doubles to the console or viewport
+    static void Array_Double(TArray<double> InArray, const FString& Prefix = "", const FString& Suffix = "", const ELoggingOptions& LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+	
+	// Log an array of bools to the console or viewport
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly), DisplayName = "Array (bool)")
+    static void Array_Bool(TArray<bool> InArray, const FString& Prefix = "", const FString& Suffix = "", const ELoggingOptions& LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+
+	// Log an array of FVectors to the console or viewport
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly), DisplayName = "Array (Vector)")
+	static void Array_Vector(TArray<FVector> InArray, bool bCompact = false, const FString& Prefix = "", const FString& Suffix = "", const ELoggingOptions& LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+
+	// Log an array of FVector2D to the console or viewport
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly), DisplayName = "Array (Vector 2D)")
+    static void Array_Vector2D(TArray<FVector2D> InArray, bool bCompact = false, const FString& Prefix = "", const FString& Suffix = "", const ELoggingOptions& LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+
+	// Log an array of FRotator to the console or viewport
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly), DisplayName = "Array (Rotator)")
+    static void Array_Rotator(TArray<FRotator> InArray, bool bCompact = false, const FString& Prefix = "", const FString& Suffix = "", const ELoggingOptions& LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+
+	// Log an array of FTransform to the console or viewport
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly), DisplayName = "Array (Transform)")
+    static void Array_Transform(TArray<FTransform> InArray, const FString& Prefix = "", const FString& Suffix = "", const ELoggingOptions& LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+
+	// Log an array of Quaternion to the console or viewport
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly), DisplayName = "Array (Quaternion)")
+    static void Array_Quat(TArray<FQuat> InArray, bool bCompact = false, const FString& Prefix = "", const FString& Suffix = "", const ELoggingOptions& LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+
+	// Log an array of Matrix to the console or viewport
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly), DisplayName = "Array (Matrix)")
+    static void Array_Matrix(TArray<FMatrix> InArray, const FString& Prefix = "", const FString& Suffix = "", const ELoggingOptions& LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+
+	// Log an array of FString to the console or viewport
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly), DisplayName = "Array (String)")
+    static void Array_String(TArray<FString> InArray, const FString& Prefix = "", const FString& Suffix = "", const ELoggingOptions& LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+
+	// Log an array of FName to the console or viewport
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly), DisplayName = "Array (Name)")
+    static void Array_Name(TArray<FName> InArray, const FString& Prefix = "", const FString& Suffix = "", const ELoggingOptions& LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+
+	// Log an array of FText to the console or viewport
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly), DisplayName = "Array (Text)")
+    static void Array_Text(TArray<FText> InArray, const FString& Prefix = "", const FString& Suffix = "", const ELoggingOptions& LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+
+	// Log an array of FDateTime to the console or viewport
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly), DisplayName = "Array (DateTime)")
+    static void Array_DateTime(TArray<FDateTime> InArray, const FString& Prefix = "", const FString& Suffix = "", const ELoggingOptions& LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+
+	// Log an array of FLinearColor to the console or viewport
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly), DisplayName = "Array (Color)")
+    static void Array_Color(TArray<FLinearColor> InArray,  bool bCompact = false, const FString& Prefix = "", const FString& Suffix = "", const ELoggingOptions& LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+
 	// Log the a percentage value to the console or viewport (Just appends a % symbol)
 	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
 	static void Percent(float Number, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
@@ -890,6 +953,8 @@ private:
 
 	static void LogUnitSystem(float Value, const FString& UnitSymbol, bool bConvertValueToInt = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 	static void LogCurrencyUnitSystem(float Value, const FString& UnitSymbol, bool bConvertValueToInt = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+
+	static void LogArray(const TArray<FString>& InArray, const FString& Prefix = "", const FString& Suffix = "", const ELoggingOptions& LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
 	static FString DecimalToHex(platform_int DecimalNumber);
 	static FString DecimalToBinary(platform_int DecimalNumber);
