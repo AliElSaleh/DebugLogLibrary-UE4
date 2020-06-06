@@ -1042,6 +1042,9 @@ void ULog::Length(const float InLengthValue, const EDebugLogLengthUnit LengthUni
 	case DLLU_Centimeter:
 		UnitSymbol = "cm";
 	break;
+	case DLLU_Micrometer:
+		UnitSymbol = "um";
+	break;
 	case DLLU_Millimeter:
 		UnitSymbol = "mm";
 	break;
@@ -1065,6 +1068,9 @@ void ULog::Length(const float InLengthValue, const EDebugLogLengthUnit LengthUni
 	break;
 	case DLLU_Yard:
 		UnitSymbol = "yd";
+	break;
+	case DLLU_Lightyears:
+        UnitSymbol = "ly";
 	break;
 	}
 
@@ -1135,6 +1141,12 @@ void ULog::Speed(const float InSpeedValue, const EDebugLogSpeedUnit SpeedUnit, c
 	break;
 	case DLSU_CentimetersPerHour:
 		UnitSymbol = "cm/h";
+	break;
+	case DLSU_MicrometersPerSec:
+		UnitSymbol = "um/s";
+	break;
+	case DLSU_MicrometersPerHour:
+		UnitSymbol = "um/h";
 	break;
 	case DLSU_MillimetersPerSec:
 		UnitSymbol = "mm/s";
@@ -1282,6 +1294,338 @@ void ULog::Time(const float InTimeValue, const EDebugLogTimeUnit TimeUnit, const
 void ULog::Time(const float InTimeValue, const EDebugLogTimeUnit TimeUnit, const bool bConvertValueToInt, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 	Time(InTimeValue, TimeUnit, bConvertValueToInt, "", "", LoggingOption, TimeToDisplay);
+}
+
+void ULog::Angle(const float InAngleValue, const EDebugLogAngularUnit AngleUnit, const bool bConvertValueToInt, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+{
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
+	FString UnitSymbol = "";
+	switch (AngleUnit)
+	{
+		case DLAU_Degrees:
+            UnitSymbol = "deg";
+		break;
+		
+		case DLAU_Radians:
+            UnitSymbol = "rad";
+		break;
+	}
+	
+	LogUnitSystem(InAngleValue, UnitSymbol, bConvertValueToInt, Prefix, Suffix, LoggingOption, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
+#endif
+}
+
+void ULog::Angle(const float InAngleValue, const EDebugLogAngularUnit AngleUnit, const bool bConvertValueToInt, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+{
+	Angle(InAngleValue, AngleUnit, bConvertValueToInt, "", "", LoggingOption, TimeToDisplay);
+}
+
+void ULog::Force(const float InForceValue, const EDebugLogForceUnit ForceUnit, const bool bConvertValueToInt, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+{
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
+	FString UnitSymbol = "";
+	switch (ForceUnit)
+	{
+		case DLFU_Newtons:
+		UnitSymbol = "N";
+		break;
+
+		case DLFU_PoundsForce:
+		UnitSymbol = "lbf";
+		break;
+
+		case DLFU_KilogramsForce:
+		UnitSymbol = "kgf";
+		break;
+
+		default:
+		break;
+	}
+	
+	LogUnitSystem(InForceValue, UnitSymbol, bConvertValueToInt, Prefix, Suffix, LoggingOption, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
+#endif
+}
+
+void ULog::Force(const float InForceValue, const EDebugLogForceUnit ForceUnit, const bool bConvertValueToInt, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+{
+	Force(InForceValue, ForceUnit, bConvertValueToInt, "", "", LoggingOption, TimeToDisplay);
+}
+
+void ULog::Frequency(const float InFrequencyValue, const EDebugLogFrequencyUnit FrequencyUnit, const bool bConvertValueToInt, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+{
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
+	FString UnitSymbol = "";
+	switch (FrequencyUnit)
+	{
+		case DLFU_Hertz:
+		UnitSymbol = "Hz";
+		break;
+
+		case DLFU_Kilohertz:
+		UnitSymbol = "kHz";
+		break;
+
+		case DLFU_Megahertz:
+		UnitSymbol = "MHz";
+		break;
+
+		case DLFU_Gigahertz:
+		UnitSymbol = "GHz";
+		break;
+
+		case DLFU_RevolutionsPerMinute:
+		UnitSymbol = "rpm";
+		break;
+
+		default:
+        break;
+	}
+	
+	LogUnitSystem(InFrequencyValue, UnitSymbol, bConvertValueToInt, Prefix, Suffix, LoggingOption, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
+#endif
+}
+
+void ULog::Frequency(const float InFrequencyValue, const EDebugLogFrequencyUnit FrequencyUnit, const bool bConvertValueToInt, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+{
+	Frequency(InFrequencyValue, FrequencyUnit, bConvertValueToInt, "", "", LoggingOption, TimeToDisplay);
+}
+
+void ULog::Light(const float InLightValue, const EDebugLogLightUnit LightUnit, const bool bConvertValueToInt, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+{
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
+	FString UnitSymbol = "";
+	switch (LightUnit)
+	{
+		case DLLU_Lumens:
+		UnitSymbol = "lm";
+		break;
+
+		case DLLU_Candela:
+		UnitSymbol = "cd";
+		break;
+
+		case DLLU_Lux:
+		UnitSymbol = "lx";
+		break;
+
+		case DLLU_CandelaPerMeter2:
+		UnitSymbol = "cd/m2";
+		break;
+
+		default:
+        break;
+	}
+	
+	LogUnitSystem(InLightValue, UnitSymbol, bConvertValueToInt, Prefix, Suffix, LoggingOption, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
+#endif
+}
+
+void ULog::Light(const float InLightValue, const EDebugLogLightUnit LightUnit, const bool bConvertValueToInt, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+{
+	Light(InLightValue, LightUnit, bConvertValueToInt, "", "", LoggingOption, TimeToDisplay);
+}
+
+void ULog::Unit(float InUnitValue, EUnit InUnit, bool bConvertValueToInt, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, float TimeToDisplay)
+{
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
+	FString UnitSymbol = "";
+	switch (InUnit)
+	{
+		case EUnit::Micrometers:
+		UnitSymbol = "um";
+		break;
+		case EUnit::Millimeters:
+		UnitSymbol = "mm";
+		break;
+		case EUnit::Centimeters:
+		UnitSymbol = "cm";
+		break;
+		case EUnit::Meters:
+		UnitSymbol = "m";
+		break;
+		case EUnit::Kilometers:
+		UnitSymbol = "km";
+		break;
+		case EUnit::Inches:
+		UnitSymbol = "in";
+		break;
+		case EUnit::Feet:
+		UnitSymbol = "ft";
+		break;
+		case EUnit::Yards:
+		UnitSymbol = "yd";
+		break;
+		case EUnit::Miles:
+		UnitSymbol = "mi";
+		break;
+		case EUnit::Lightyears:
+		UnitSymbol = "ly";
+		break;
+		case EUnit::Degrees:
+		UnitSymbol = "deg";
+		break;
+		case EUnit::Radians:
+		UnitSymbol = "rad";
+		break;
+		case EUnit::MetersPerSecond:
+		UnitSymbol = "m/s";
+		break;
+		case EUnit::KilometersPerHour:
+		UnitSymbol = "km/h";
+		break;
+		case EUnit::MilesPerHour:
+		UnitSymbol = "mi/h";
+		break;
+		case EUnit::Celsius:
+		UnitSymbol = "C";
+		break;
+		case EUnit::Farenheit:
+		UnitSymbol = "F";
+		break;
+		case EUnit::Kelvin:
+		UnitSymbol = "K";
+		break;
+		case EUnit::Micrograms:
+		UnitSymbol = "ug";
+		break;
+		case EUnit::Milligrams:
+		UnitSymbol = "mg";
+		break;
+		case EUnit::Grams:
+		UnitSymbol = "g";
+		break;
+		case EUnit::Kilograms:
+		UnitSymbol = "kg";
+		break;
+		case EUnit::MetricTons:
+		UnitSymbol = "t";
+		break;
+		case EUnit::Ounces:
+		UnitSymbol = "oz";
+		break;
+		case EUnit::Pounds:
+		UnitSymbol = "lb";
+		break;
+		case EUnit::Stones:
+		UnitSymbol = "st";
+		break;
+		case EUnit::Newtons:
+		UnitSymbol = "N";
+		break;
+		case EUnit::PoundsForce:
+		UnitSymbol = "lbf";
+		break;
+		case EUnit::KilogramsForce:
+		UnitSymbol = "kgf";
+		break;
+		case EUnit::Hertz:
+		UnitSymbol = "Hz";
+		break;
+		case EUnit::Kilohertz:
+		UnitSymbol = "kHz";
+		break;
+		case EUnit::Megahertz:
+		UnitSymbol = "MHz";
+		break;
+		case EUnit::Gigahertz:
+		UnitSymbol = "GHz";
+		break;
+		case EUnit::RevolutionsPerMinute:
+		UnitSymbol = "rpm";
+		break;
+		case EUnit::Bytes:
+		UnitSymbol = "byte";
+		break;
+		case EUnit::Kilobytes:
+		UnitSymbol = "KB";
+		break;
+		case EUnit::Megabytes:
+		UnitSymbol = "MB";
+		break;
+		case EUnit::Gigabytes:
+		UnitSymbol = "GB";
+		break;
+		case EUnit::Terabytes:
+		UnitSymbol = "TB";
+		break;
+		case EUnit::Lumens:
+		UnitSymbol = "lm";
+		break;
+		case EUnit::Candela:
+		UnitSymbol = "cd";
+		break;
+		case EUnit::Lux:
+		UnitSymbol = "lx";
+		break;
+		case EUnit::CandelaPerMeter2:
+		UnitSymbol = "cd/m2";
+		break;
+		case EUnit::Milliseconds:
+		UnitSymbol = "ms";
+		break;
+		case EUnit::Seconds:
+		UnitSymbol = "sec";
+		break;
+		case EUnit::Minutes:
+		UnitSymbol = "min";
+		break;
+		case EUnit::Hours:
+		UnitSymbol = "hr";
+		break;
+		case EUnit::Days:
+		UnitSymbol = "day";
+		break;
+		case EUnit::Months:
+		UnitSymbol = "mth";
+		break;
+		case EUnit::Years:
+		UnitSymbol = "yr";
+		break;
+		case EUnit::PixelsPerInch:
+		UnitSymbol = "ppi";
+		break;
+		case EUnit::Percentage:
+		UnitSymbol = "%";
+		break;
+		case EUnit::Multiplier:
+		UnitSymbol = "x";
+		break;
+		case EUnit::Unspecified:
+		UnitSymbol = "unspecified";
+		break;
+		
+		default:
+		UnitSymbol = "unspecified";
+		break;
+	}
+
+	if (InUnit == EUnit::Bytes || InUnit == EUnit::Seconds || InUnit == EUnit::Minutes || InUnit == EUnit::Hours || InUnit == EUnit::Days || InUnit == EUnit::Months || InUnit == EUnit::Years)
+	{
+		UnitSymbol.Append("s");
+	}
+	
+	LogUnitSystem(InUnitValue, UnitSymbol, bConvertValueToInt, Prefix, Suffix, LoggingOption, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
+#endif
+}
+
+void ULog::Unit(const float InUnitValue, const EUnit InUnit, const bool bConvertValueToInt, const ELoggingOptions LoggingOption, const float TimeToDisplay)
+{
+	Unit(InUnitValue, InUnit, bConvertValueToInt, "", "", LoggingOption, TimeToDisplay);
 }
 
 void ULog::Dollar(const float InDollarValue, const bool bConvertValueToInt, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
