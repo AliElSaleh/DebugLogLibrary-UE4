@@ -722,17 +722,59 @@ void ULog::Number(const long Number, const EDebugLogNumberSystems NumberSystem, 
 
 void ULog::LogArray(const TArray<FString>& InArray, const FString& Prefix, const FString& Suffix, const ELoggingOptions& LoggingOption, const float TimeToDisplay)
 {
-	Info(Prefix, LoggingOption, false, TimeToDisplay);
-
-	for (int32 i = 0; i < InArray.Num(); i++)
+	switch (LoggingOption)
 	{
-		Info(FString::FromInt(i) + ": [" + InArray[i] + "]", LoggingOption, false, TimeToDisplay);
-	}
+		case LO_Viewport:
+		Info(Suffix, LO_Viewport, false, TimeToDisplay);
 
-	Info(Suffix, LoggingOption, false, TimeToDisplay);
+		for (int32 i = InArray.Num() - 1; i >= 0; i--)
+		{
+			Info(FString::FromInt(i) + ": [" + InArray[i] + "]", LO_Viewport, false, TimeToDisplay);
+		}
+		
+		Info(Prefix, LO_Viewport, false, TimeToDisplay);
+		break;
+
+		case LO_Console:
+		Info(Prefix, LO_Console, false, TimeToDisplay);
+
+		for (int32 i = 0; i < InArray.Num(); i++)
+		{
+			Info(FString::FromInt(i) + ": [" + InArray[i] + "]", LO_Console, false, TimeToDisplay);
+		}
+		
+		Info(Suffix, LO_Console, false, TimeToDisplay);
+		break;
+
+		case LO_Both:
+		Info(Suffix, LO_Viewport, false, TimeToDisplay);
+
+		for (int32 i = InArray.Num() - 1; i >= 0; i--)
+		{
+			Info(FString::FromInt(i) + ": [" + InArray[i] + "]", LO_Viewport, false, TimeToDisplay);
+		}
+		
+		Info(Prefix, LO_Viewport, false, TimeToDisplay);
+
+		Info(Prefix, LO_Console, false, TimeToDisplay);
+
+		for (int32 i = 0; i < InArray.Num(); i++)
+		{
+			Info(FString::FromInt(i) + ": [" + InArray[i] + "]", LO_Console, false, TimeToDisplay);
+		}
+		
+		Info(Suffix, LO_Console, false, TimeToDisplay);
+		break;
+
+		case LO_NoLog:
+		break;
+
+		default:
+		break;
+	}
 }
 
-void ULog::Array_Int32(TArray<int32> InArray, const FString& Prefix, const FString& Suffix, const ELoggingOptions& LoggingOption, const float TimeToDisplay)
+void ULog::Array_Int32(TArray<int32> InArray, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 	TArray<FString> InStringArray;
 	InStringArray.Reserve(InArray.Num());
@@ -744,7 +786,7 @@ void ULog::Array_Int32(TArray<int32> InArray, const FString& Prefix, const FStri
 	LogArray(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
 }
 
-void ULog::Array_Int64(TArray<int64> InArray, const FString& Prefix, const FString& Suffix, const ELoggingOptions& LoggingOption, const float TimeToDisplay)
+void ULog::Array_Int64(TArray<int64> InArray, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 	TArray<FString> InStringArray;
 	InStringArray.Reserve(InArray.Num());
@@ -756,7 +798,7 @@ void ULog::Array_Int64(TArray<int64> InArray, const FString& Prefix, const FStri
 	LogArray(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
 }
 
-void ULog::Array_Float(TArray<float> InArray, const FString& Prefix, const FString& Suffix, const ELoggingOptions& LoggingOption, const float TimeToDisplay)
+void ULog::Array_Float(TArray<float> InArray, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 	TArray<FString> InStringArray;
 	InStringArray.Reserve(InArray.Num());
@@ -768,7 +810,7 @@ void ULog::Array_Float(TArray<float> InArray, const FString& Prefix, const FStri
 	LogArray(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
 }
 
-void ULog::Array_Double(TArray<double> InArray, const FString& Prefix, const FString& Suffix, const ELoggingOptions& LoggingOption, const float TimeToDisplay)
+void ULog::Array_Double(TArray<double> InArray, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 	TArray<FString> InStringArray;
 	InStringArray.Reserve(InArray.Num());
@@ -780,7 +822,7 @@ void ULog::Array_Double(TArray<double> InArray, const FString& Prefix, const FSt
 	LogArray(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
 }
 
-void ULog::Array_Bool(TArray<bool> InArray, const FString& Prefix, const FString& Suffix, const ELoggingOptions& LoggingOption, const float TimeToDisplay)
+void ULog::Array_Bool(TArray<bool> InArray, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 	TArray<FString> InStringArray;
 	InStringArray.Reserve(InArray.Num());
@@ -795,7 +837,7 @@ void ULog::Array_Bool(TArray<bool> InArray, const FString& Prefix, const FString
 	LogArray(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
 }
 
-void ULog::Array_Vector(TArray<FVector> InArray, const bool bCompact, const FString& Prefix, const FString& Suffix, const ELoggingOptions& LoggingOption, const float TimeToDisplay)
+void ULog::Array_Vector(TArray<FVector> InArray, const bool bCompact, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 	TArray<FString> InStringArray;
 	InStringArray.Reserve(InArray.Num());
@@ -815,7 +857,7 @@ void ULog::Array_Vector(TArray<FVector> InArray, const bool bCompact, const FStr
 	LogArray(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
 }
 
-void ULog::Array_Vector2D(TArray<FVector2D> InArray, const bool bCompact, const FString& Prefix, const FString& Suffix, const ELoggingOptions& LoggingOption, const float TimeToDisplay)
+void ULog::Array_Vector2D(TArray<FVector2D> InArray, const bool bCompact, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 	TArray<FString> InStringArray;
 	InStringArray.Reserve(InArray.Num());
@@ -835,7 +877,7 @@ void ULog::Array_Vector2D(TArray<FVector2D> InArray, const bool bCompact, const 
 	LogArray(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
 }
 
-void ULog::Array_Rotator(TArray<FRotator> InArray, const bool bCompact, const FString& Prefix, const FString& Suffix, const ELoggingOptions& LoggingOption, const float TimeToDisplay)
+void ULog::Array_Rotator(TArray<FRotator> InArray, const bool bCompact, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 	TArray<FString> InStringArray;
 	InStringArray.Reserve(InArray.Num());
@@ -855,7 +897,7 @@ void ULog::Array_Rotator(TArray<FRotator> InArray, const bool bCompact, const FS
 	LogArray(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
 }
 
-void ULog::Array_Transform(TArray<FTransform> InArray, const FString& Prefix, const FString& Suffix, const ELoggingOptions& LoggingOption, const float TimeToDisplay)
+void ULog::Array_Transform(TArray<FTransform> InArray, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 	TArray<FString> InStringArray;
 	InStringArray.Reserve(InArray.Num());
@@ -867,7 +909,7 @@ void ULog::Array_Transform(TArray<FTransform> InArray, const FString& Prefix, co
 	LogArray(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
 }
 
-void ULog::Array_Quat(TArray<FQuat> InArray, const bool bCompact, const FString& Prefix, const FString& Suffix, const ELoggingOptions& LoggingOption, const float TimeToDisplay)
+void ULog::Array_Quat(TArray<FQuat> InArray, const bool bCompact, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 	TArray<FString> InStringArray;
 	InStringArray.Reserve(InArray.Num());
@@ -887,7 +929,7 @@ void ULog::Array_Quat(TArray<FQuat> InArray, const bool bCompact, const FString&
 	LogArray(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
 }
 
-void ULog::Array_Matrix(TArray<FMatrix> InArray, const FString& Prefix, const FString& Suffix, const ELoggingOptions& LoggingOption, const float TimeToDisplay)
+void ULog::Array_Matrix(TArray<FMatrix> InArray, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 	TArray<FString> InStringArray;
 	InStringArray.Reserve(InArray.Num());
@@ -899,12 +941,12 @@ void ULog::Array_Matrix(TArray<FMatrix> InArray, const FString& Prefix, const FS
 	LogArray(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
 }
 
-void ULog::Array_String(const TArray<FString> InArray, const FString& Prefix, const FString& Suffix, const ELoggingOptions& LoggingOption, const float TimeToDisplay)
+void ULog::Array_String(const TArray<FString> InArray, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 	LogArray(InArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
 }
 
-void ULog::Array_Name(TArray<FName> InArray, const FString& Prefix, const FString& Suffix, const ELoggingOptions& LoggingOption, const float TimeToDisplay)
+void ULog::Array_Name(TArray<FName> InArray, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 	TArray<FString> InStringArray;
 	InStringArray.Reserve(InArray.Num());
@@ -916,7 +958,7 @@ void ULog::Array_Name(TArray<FName> InArray, const FString& Prefix, const FStrin
 	LogArray(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
 }
 
-void ULog::Array_Text(TArray<FText> InArray, const FString& Prefix, const FString& Suffix, const ELoggingOptions& LoggingOption, const float TimeToDisplay)
+void ULog::Array_Text(TArray<FText> InArray, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 	TArray<FString> InStringArray;
 	InStringArray.Reserve(InArray.Num());
@@ -928,7 +970,7 @@ void ULog::Array_Text(TArray<FText> InArray, const FString& Prefix, const FStrin
 	LogArray(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
 }
 
-void ULog::Array_DateTime(TArray<FDateTime> InArray, const FString& Prefix, const FString& Suffix, const ELoggingOptions& LoggingOption, const float TimeToDisplay)
+void ULog::Array_DateTime(TArray<FDateTime> InArray, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 	TArray<FString> InStringArray;
 	InStringArray.Reserve(InArray.Num());
@@ -940,7 +982,7 @@ void ULog::Array_DateTime(TArray<FDateTime> InArray, const FString& Prefix, cons
 	LogArray(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
 }
 
-void ULog::Array_Color(TArray<FLinearColor> InArray, const bool bCompact, const FString& Prefix, const FString& Suffix, const ELoggingOptions& LoggingOption, const float TimeToDisplay)
+void ULog::Array_Color(TArray<FLinearColor> InArray, const bool bCompact, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 	TArray<FString> InStringArray;
 	InStringArray.Reserve(InArray.Num());
