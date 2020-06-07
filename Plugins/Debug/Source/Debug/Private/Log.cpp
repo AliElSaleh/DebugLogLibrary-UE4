@@ -736,52 +736,51 @@ void ULog::LogArray_Internal(const TArray<FString>& InArray, const FString& Pref
 	switch (LoggingOption)
 	{
 		case LO_Viewport:
-		LogMessage_Internal("", "", Suffix, Settings->InfoColor, LO_Viewport, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString());
+		if (!Suffix.IsEmpty())
+			LogMessage_Internal("", "", Suffix, Settings->InfoColor, LO_Viewport, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString());
 
 		for (int32 i = InArray.Num() - 1; i >= 0; i--)
 		{
 			LogMessage_Internal(FString::FromInt(i) + ": [" + InArray[i] + "]", "", "", Settings->InfoColor, LO_Viewport, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString());
-
-			//Info(FString::FromInt(i) + ": [" + InArray[i] + "]", LO_Viewport, false, TimeToDisplay);
 		}
-		
-		LogMessage_Internal("", Prefix, "", Settings->InfoColor, LO_Viewport, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString());
+
+		if (!Prefix.IsEmpty())
+			LogMessage_Internal("", Prefix, "", Settings->InfoColor, LO_Viewport, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString());
 		break;
 
 		case LO_Console:
-		LogMessage_Internal("", "", Suffix, Settings->InfoColor, LO_Console, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString());
+		if (!Suffix.IsEmpty())
+			LogMessage_Internal("", "", Suffix, Settings->InfoColor, LO_Console, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString());
 
 		for (int32 i = 0; i < InArray.Num(); i++)
 		{
 			LogMessage_Internal(FString::FromInt(i) + ": [" + InArray[i] + "]", "", "", Settings->InfoColor, LO_Console, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString());
-			//Info(FString::FromInt(i) + ": [" + InArray[i] + "]", LO_Console, false, TimeToDisplay);
 		}
-		
-		LogMessage_Internal("", Prefix, "", Settings->InfoColor, LO_Console, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString());
+
+		if (!Prefix.IsEmpty())
+			LogMessage_Internal("", Prefix, "", Settings->InfoColor, LO_Console, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString());
 		break;
 
 		case LO_Both:
-		LogMessage_Internal("", "", Suffix, Settings->InfoColor, LO_Viewport, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString());
+		LogMessage_Internal("", "", Suffix, Settings->InfoColor, LO_Viewport, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString(), false);
 
 		for (int32 i = InArray.Num() - 1; i >= 0; i--)
 		{
-			LogMessage_Internal(FString::FromInt(i) + ": [" + InArray[i] + "]", "", "", Settings->InfoColor, LO_Viewport, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString());
-
-			//Info(FString::FromInt(i) + ": [" + InArray[i] + "]", LO_Viewport, false, TimeToDisplay);
+			LogMessage_Internal(FString::FromInt(i) + ": [" + InArray[i] + "]", "", "", Settings->InfoColor, LO_Viewport, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString(), false);
 		}
 		
-		LogMessage_Internal("", Prefix, "", Settings->InfoColor, LO_Viewport, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString());
-		
-		LogMessage_Internal("", Prefix, "", Settings->InfoColor, LO_Console, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString());
+		LogMessage_Internal("", Prefix, "", Settings->InfoColor, LO_Viewport, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString(), false);
+
+		if (!Prefix.IsEmpty())
+			LogMessage_Internal("", Prefix, "", Settings->InfoColor, LO_Console, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString());
 
 		for (int32 i = 0; i < InArray.Num(); i++)
 		{
 			LogMessage_Internal(FString::FromInt(i) + ": [" + InArray[i] + "]", "", "", Settings->InfoColor, LO_Console, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString());
-
-			//Info(FString::FromInt(i) + ": [" + InArray[i] + "]", LO_Console, false, TimeToDisplay);
 		}
 		
-		LogMessage_Internal("", "", Suffix, Settings->InfoColor, LO_Console, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString());
+		if (!Suffix.IsEmpty())
+			LogMessage_Internal("", "", Suffix, Settings->InfoColor, LO_Console, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString());
 		break;
 
 		case LO_NoLog:
@@ -1140,38 +1139,53 @@ void ULog::Transform(const FTransform& InTransform, const FString& Prefix, const
 			GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + FString("Location: ") + InTransform.GetLocation().ToString());
 
 			if (!Prefix.IsEmpty())
+			{
 				GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix);
+				
+				WriteToLogFile(LogFilename, LogTransform.GetCategoryName().ToString() + ": Info: " + NET_MODE_PREFIX + Prefix);
+			}
+
+			WriteToLogFile(LogFilename, LogTransform.GetCategoryName().ToString() + ": Info: " + FString("Location: ") + InTransform.GetLocation().ToString());
+			WriteToLogFile(LogFilename, LogTransform.GetCategoryName().ToString() + ": Info: " + FString("Rotation: ") + InTransform.GetRotation().ToString());
+			WriteToLogFile(LogFilename, LogTransform.GetCategoryName().ToString() + ": Info: " + FString("Scale: ") + InTransform.GetScale3D().ToString());
 		}
 		else
 		{
-			int32* Key = nullptr;
-		
-			if (!ViewportKeyName.IsNone())
-				Key = Settings->ViewportLogKeys.Find(ViewportKeyName);
-			
-			GEngine->AddOnScreenDebugMessage(Key ? *Key : -1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + InTransform.ToString());
-			//todo log file
+			LogMessage_Internal(InTransform.ToString(), Prefix, "", Settings->InfoColor, LO_Viewport, TimeToDisplay, ViewportKeyName, LogTransform.GetCategoryName().ToString());
 		}
 	}
 	else if (LoggingOption == LO_Console)
 	{
 		if (bFormat)
 		{
-			UE_LOG(LogTransform, Warning, TEXT("%s%s"), NET_MODE_PREFIX, *Prefix)
+			if (!Prefix.IsEmpty())
+				UE_LOG(LogTransform, Warning, TEXT("%s%s"), NET_MODE_PREFIX, *Prefix)
+			
 			UE_LOG(LogTransform, Warning, TEXT("%sLocation: %s"), NET_MODE_PREFIX, *InTransform.GetLocation().ToString())
 			UE_LOG(LogTransform, Warning, TEXT("%sRotation: %s"), NET_MODE_PREFIX, *InTransform.GetRotation().ToString())
 			UE_LOG(LogTransform, Warning, TEXT("%sScale: %s"), NET_MODE_PREFIX, *InTransform.GetScale3D().ToString())
+
+			if (!Prefix.IsEmpty())
+				WriteToLogFile(LogFilename, LogTransform.GetCategoryName().ToString() + ": Info: " + NET_MODE_PREFIX + Prefix);
+
+			WriteToLogFile(LogFilename, LogTransform.GetCategoryName().ToString() + ": Info: " + FString("Location: ") + InTransform.GetLocation().ToString());
+			WriteToLogFile(LogFilename, LogTransform.GetCategoryName().ToString() + ": Info: " + FString("Rotation: ") + InTransform.GetRotation().ToString());
+			WriteToLogFile(LogFilename, LogTransform.GetCategoryName().ToString() + ": Info: " + FString("Scale: ") + InTransform.GetScale3D().ToString());
 		}
 		else
 		{
 			UE_LOG(LogTransform, Warning, TEXT("%s%s%s"), NET_MODE_PREFIX, *Prefix, *InTransform.ToString())
+			
+			WriteToLogFile(LogFilename, LogTransform.GetCategoryName().ToString() + ": Info: " + NET_MODE_PREFIX + Prefix + InTransform.ToString());
 		}
 	}
 	else if (LoggingOption == LO_Both)
 	{
 		if (bFormat)
 		{
-			UE_LOG(LogTransform, Warning, TEXT("%s%s"), NET_MODE_PREFIX, *Prefix)
+			if (!Prefix.IsEmpty())
+				UE_LOG(LogTransform, Warning, TEXT("%s%s"), NET_MODE_PREFIX, *Prefix)
+
 			UE_LOG(LogTransform, Warning, TEXT("%sLocation: %s"), NET_MODE_PREFIX, *InTransform.GetLocation().ToString())
 			UE_LOG(LogTransform, Warning, TEXT("%sRotation: %s"), NET_MODE_PREFIX, *InTransform.GetRotation().ToString())
 			UE_LOG(LogTransform, Warning, TEXT("%sScale: %s"), NET_MODE_PREFIX, *InTransform.GetScale3D().ToString())
@@ -1181,20 +1195,19 @@ void ULog::Transform(const FTransform& InTransform, const FString& Prefix, const
 			GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + FString("Location: ") + InTransform.GetLocation().ToString());
 
 			if (!Prefix.IsEmpty())
+			{
 				GEngine->AddOnScreenDebugMessage(-1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix);
+
+				WriteToLogFile(LogFilename, LogTransform.GetCategoryName().ToString() + ": Info: " + NET_MODE_PREFIX + Prefix);
+			}
+
+			WriteToLogFile(LogFilename, LogTransform.GetCategoryName().ToString() + ": Info: " + FString("Location: ") + InTransform.GetLocation().ToString());
+			WriteToLogFile(LogFilename, LogTransform.GetCategoryName().ToString() + ": Info: " + FString("Rotation: ") + InTransform.GetRotation().ToString());
+			WriteToLogFile(LogFilename, LogTransform.GetCategoryName().ToString() + ": Info: " + FString("Scale: ") + InTransform.GetScale3D().ToString());
 		}
 		else
 		{
-			UE_LOG(LogTransform, Warning, TEXT("%s%s%s"), NET_MODE_PREFIX, *Prefix, *InTransform.ToString())
-
-			int32* Key = nullptr;
-		
-			if (!ViewportKeyName.IsNone())
-				Key = Settings->ViewportLogKeys.Find(ViewportKeyName);
-			
-			GEngine->AddOnScreenDebugMessage(Key ? *Key : -1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + InTransform.ToString());
-
-			// todo log file
+			LogMessage_Internal(InTransform.ToString(), Prefix, "", Settings->InfoColor, LO_Both, TimeToDisplay, ViewportKeyName, LogTransform.GetCategoryName().ToString());
 		}
 	}
 #elif (UE_BUILD_SHIPPING)
@@ -2532,7 +2545,7 @@ void ULog::EnsureCondition(const bool bCondition, const bool bAlwaysEnsure, cons
 #endif
 }
 
-void ULog::LogMessage_Internal(const FString& Message, const FString& Prefix, const FString& Suffix, const FColor& InLogColor, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, const FString& LogCategory)
+void ULog::LogMessage_Internal(const FString& Message, const FString& Prefix, const FString& Suffix, const FColor& InLogColor, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, const FString& LogCategory, bool bWriteToLog)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	if (LoggingOption == LO_NoLog)
@@ -2583,8 +2596,9 @@ void ULog::LogMessage_Internal(const FString& Message, const FString& Prefix, co
 		
 		GEngine->AddOnScreenDebugMessage(Key ? *Key : -1, TimeToDisplay, InLogColor, *FinalMessage);
 	}
-	
-	WriteToLogFile(LogFilename, LogCategory + ": " + LogVerbosity + FinalMessage);
+
+	if (bWriteToLog)
+		WriteToLogFile(LogFilename, LogCategory + ": " + LogVerbosity + FinalMessage);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
