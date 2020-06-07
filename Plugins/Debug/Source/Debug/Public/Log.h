@@ -942,9 +942,7 @@ protected:
 	static void UnImplemented();
 
 private:
-	static void LogMessage_Internal(const FString& Message, const FString& Prefix = "", const FString& Suffix = "", const FColor& InLogColor = FColor::Cyan, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
-
-	static void QuitApplication_Internal();
+	static void LogMessage_Internal(const FString& Message, const FString& Prefix = "", const FString& Suffix = "", const FColor& InLogColor = FColor::Cyan, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, const FString& LogCategory = "");
 
 	static void LogFloat(float Number, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
 	static void LogInt(platform_int Number, const FString& Prefix = "", const FString& Suffix = "", EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
@@ -954,9 +952,11 @@ private:
 	static void LogUnitSystem(float Value, const FString& UnitSymbol, bool bConvertValueToInt = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
 	static void LogCurrencyUnitSystem(float Value, const FString& UnitSymbol, bool bConvertValueToInt = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
 
-	static void LogArray(const TArray<FString>& InArray, const FString& Prefix = "", const FString& Suffix = "", const ELoggingOptions& LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+	static void LogArray_Internal(const TArray<FString>& InArray, const FString& Prefix = "", const FString& Suffix = "", const ELoggingOptions& LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
-	static bool WriteToLogFile(FString Directory, const FString& FileName, const FString& Text, bool bAllowOverwriting = true);
+	static void QuitApplication_Internal();
+
+	static bool WriteToLogFile(const FString& FileName, const FString& Text, bool bAllowOverwriting = false);
 
 	static FString GetSavedLogsDirectory();
 
@@ -1150,7 +1150,7 @@ bool ULog::PerformComparison(T LHS, T RHS, const EDebugLogComparisonMethod Compa
 }
 
 template <typename EnumType>
-void ULog::Enum(const EnumType& EnumValue, const bool bFriendlyName, const FString& Prefix, const FString& Suffix, const ELoggingOptions& LoggingOption, float TimeToDisplay, FName ViewportKeyName)
+void ULog::Enum(const EnumType& EnumValue, const bool bFriendlyName, const FString& Prefix, const FString& Suffix, const ELoggingOptions& LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
 {
 	FString EnumTypeString = typeid(EnumType).name();
 
@@ -1168,11 +1168,11 @@ void ULog::Enum(const EnumType& EnumValue, const bool bFriendlyName, const FStri
 	{
 		if (bFriendlyName)
 		{
-			LogMessage_Internal(EnumObject->GetDisplayNameTextByIndex(uint8(EnumValue)).ToString(), Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName);
+			LogMessage_Internal(EnumObject->GetDisplayNameTextByIndex(uint8(EnumValue)).ToString(), Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, "LogEnum");
 		}
 		else
 		{
-			LogMessage_Internal(EnumObject->GetNameStringByIndex(uint8(EnumValue)), Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName);
+			LogMessage_Internal(EnumObject->GetNameStringByIndex(uint8(EnumValue)), Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, "LogEnum");
 		}
 	}
 	else
@@ -1182,7 +1182,7 @@ void ULog::Enum(const EnumType& EnumValue, const bool bFriendlyName, const FStri
 }
 
 template <typename EnumType>
-void ULog::Enum(const EnumType& EnumValue, const bool bFriendlyName, const ELoggingOptions& LoggingOption, const float TimeToDisplay, FName ViewportKeyName)
+void ULog::Enum(const EnumType& EnumValue, const bool bFriendlyName, const ELoggingOptions& LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
 {
 	Enum<EnumType>(EnumValue, bFriendlyName, "", "", LoggingOption, TimeToDisplay, ViewportKeyName);
 }
