@@ -19,25 +19,29 @@ public:
 
 	// The color to use when logging a standard message
 	UPROPERTY(EditAnywhere, config, Category = "Viewport Log Colors", DisplayName = "Default Color")
-		FColor InfoColor = FLinearColor(0.0f, 0.66f, 1.0f).ToFColor(true);
+	FColor InfoColor = FLinearColor(0.0f, 0.66f, 1.0f).ToFColor(true);
 	
 	// The color to use when logging a error message
 	UPROPERTY(EditAnywhere, config, Category = "Viewport Log Colors")
-		FColor ErrorColor = FColor::Red;
+	FColor ErrorColor = FColor::Red;
 	
 	// The color to use when logging a warning message
 	UPROPERTY(EditAnywhere, config, Category = "Viewport Log Colors")
-		FColor WarningColor = FColor::Yellow;
+	FColor WarningColor = FColor::Yellow;
 	
 	// The color to use when logging a success message
 	UPROPERTY(EditAnywhere, config, Category = "Viewport Log Colors")
-		FColor SuccessColor = FColor::Green;
+	FColor SuccessColor = FColor::Green;
 
 	// Should we use Two's Compliment when converting a decimal number to a hexadecimal value on negative numbers?
 	UPROPERTY(EditAnywhere, config, Category = "Settings")
-		uint8 bUseTwosComplimentForDecimalToHexConversionOnNegativeNumbers : 1;
+	uint8 bUseTwosComplimentForDecimalToHexConversionOnNegativeNumbers : 1;
 
 	// Should the game crash if any ULog functions are called in a shipping build configuration?
 	UPROPERTY(EditAnywhere, config, Category = "Settings")
-		uint8 bCrashGameInShippingBuildConfiguration : 1;
+	uint8 bCrashGameInShippingBuildConfiguration : 1;
+
+	// The key to use when calling any logging functions that specify its corresponding name (case-insensitive)
+	UPROPERTY(EditAnywhere, config, Category = "Settings")
+	TMap<FName, int32> ViewportLogKeys;
 };
