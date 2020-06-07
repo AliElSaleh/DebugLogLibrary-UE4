@@ -956,6 +956,10 @@ private:
 
 	static void LogArray(const TArray<FString>& InArray, const FString& Prefix = "", const FString& Suffix = "", const ELoggingOptions& LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
+	static bool WriteToLogFile(FString Directory, const FString& FileName, const FString& Text, bool bAllowOverwriting = true);
+
+	static FString GetSavedLogsDirectory();
+
 	static FString DecimalToHex(platform_int DecimalNumber);
 	static FString DecimalToBinary(platform_int DecimalNumber);
 	static FString DecimalToOctal(platform_int DecimalNumber);
@@ -987,6 +991,10 @@ private:
 	static class UDebugLogLibrarySettings* Settings;
 
 	static class FDebugLogTimer* Timer;
+
+	static FDateTime SavedDateTime;
+	
+	static FString LogFilename;
 
 	static bool bIsShippingBuild;
 };

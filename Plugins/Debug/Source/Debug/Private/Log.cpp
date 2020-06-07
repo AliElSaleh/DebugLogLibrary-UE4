@@ -13,11 +13,16 @@
 #include "Kismet/GameplayStatics.h"
 
 #include "Misc/MessageDialog.h"
+#include "Misc/FileHelper.h"
+
+#include "HAL/PlatformFilemanager.h"
 
 #define MAX_HEX_VALUES 16
 
 UDebugLogLibrarySettings* ULog::Settings;
 FDebugLogTimer* ULog::Timer;
+FDateTime ULog::SavedDateTime;
+FString ULog::LogFilename;
 bool ULog::bIsShippingBuild;
 
 void ULog::PostInitProperties()
@@ -26,6 +31,11 @@ void ULog::PostInitProperties()
 
 	Settings = GetMutableDefault<UDebugLogLibrarySettings>();
 	Settings->AddToRoot();
+
+	SavedDateTime = FDateTime::Now();
+	LogFilename = "DebugLog-" + SavedDateTime.ToString() + ".log";
+	
+	WriteToLogFile(GetSavedLogsDirectory(), LogFilename, "[" + FDateTime::Now().ToString() + "] Log file open");
 
 #if (!UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	bIsShippingBuild = false;
@@ -39,6 +49,9 @@ void ULog::PostInitProperties()
 void ULog::FinishDestroy()
 {
 	Settings->RemoveFromRoot();
+	
+	WriteToLogFile(GetSavedLogsDirectory(), LogFilename, "[" + FDateTime::Now().ToString() + "] Engine shutdown");
+	WriteToLogFile(GetSavedLogsDirectory(), LogFilename, "[" + FDateTime::Now().ToString() + "] Log file closed");
 	
 	Super::FinishDestroy();
 }
@@ -1126,7 +1139,12 @@ void ULog::Transform(const FTransform& InTransform, const FString& Prefix, const
 		}
 		else
 		{
-			GEngine->AddOnScreenDebugMessage(ViewportKeyName.IsNone() || !Settings->ViewportLogKeys.Find(ViewportKeyName) ? -1 : Settings->ViewportLogKeys[ViewportKeyName], TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + InTransform.ToString());
+			int32* Key = nullptr;
+		
+			if (!ViewportKeyName.IsNone())
+				Key = Settings->ViewportLogKeys.Find(ViewportKeyName);
+			
+			GEngine->AddOnScreenDebugMessage(Key ? *Key : -1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + InTransform.ToString());
 		}
 	}
 	else if (LoggingOption == LO_Console)
@@ -1162,7 +1180,13 @@ void ULog::Transform(const FTransform& InTransform, const FString& Prefix, const
 		else
 		{
 			UE_LOG(LogTransform, Warning, TEXT("%s%s%s"), NET_MODE_PREFIX, *Prefix, *InTransform.ToString())
-			GEngine->AddOnScreenDebugMessage(ViewportKeyName.IsNone() || !Settings->ViewportLogKeys.Find(ViewportKeyName) ? -1 : Settings->ViewportLogKeys[ViewportKeyName], TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + InTransform.ToString());
+
+			int32* Key = nullptr;
+		
+			if (!ViewportKeyName.IsNone())
+				Key = Settings->ViewportLogKeys.Find(ViewportKeyName);
+			
+			GEngine->AddOnScreenDebugMessage(Key ? *Key : -1, TimeToDisplay, Settings->InfoColor, NET_MODE_PREFIX + Prefix + InTransform.ToString());
 		}
 	}
 #elif (UE_BUILD_SHIPPING)
@@ -2503,26 +2527,39 @@ void ULog::EnsureCondition(const bool bCondition, const bool bAlwaysEnsure, cons
 void ULog::LogMessage_Internal(const FString& Message, const FString& Prefix, const FString& Suffix, const FColor& InLogColor, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
+	const FString FinalMessage = NET_MODE_PREFIX + Prefix + Message + Suffix;
 	if (LoggingOption == LO_Viewport)
 	{
-		GEngine->AddOnScreenDebugMessage(ViewportKeyName.IsNone() || !Settings->ViewportLogKeys.Find(ViewportKeyName) ? -1 : Settings->ViewportLogKeys[ViewportKeyName], TimeToDisplay, InLogColor, NET_MODE_PREFIX + Prefix + Message + Suffix);
+		int32* Key = nullptr;
+		
+		if (!ViewportKeyName.IsNone())
+			Key = Settings->ViewportLogKeys.Find(ViewportKeyName);
+		
+		GEngine->AddOnScreenDebugMessage(Key ? *Key : -1, TimeToDisplay, InLogColor, FinalMessage);
 	}
 	else if (LoggingOption == LO_Console)
 	{
 		if (InLogColor == Settings->ErrorColor)
-			UE_LOG(LogMessage, Error, TEXT("%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *Message, *Suffix)
+			UE_LOG(LogMessage, Error, TEXT("%s"), *FinalMessage)
 		else
-			UE_LOG(LogMessage, Warning, TEXT("%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *Message, *Suffix)
+			UE_LOG(LogMessage, Warning, TEXT("%s"), *FinalMessage)
 	}
 	else if (LoggingOption == LO_Both)
 	{
 		if (InLogColor == Settings->ErrorColor)
-			UE_LOG(LogMessage, Error, TEXT("%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *Message, *Suffix)
+			UE_LOG(LogMessage, Error, TEXT("%s"), *FinalMessage)
 		else
-			UE_LOG(LogMessage, Warning, TEXT("%s%s%s%s"), NET_MODE_PREFIX, *Prefix, *Message, *Suffix)
+			UE_LOG(LogMessage, Warning, TEXT("%s"), *FinalMessage)
 
-		GEngine->AddOnScreenDebugMessage(ViewportKeyName.IsNone() || !Settings->ViewportLogKeys.Find(ViewportKeyName) ? -1 : Settings->ViewportLogKeys[ViewportKeyName], TimeToDisplay, InLogColor, NET_MODE_PREFIX + Prefix + Message + Suffix);
+		int32* Key = nullptr;
+		
+		if (!ViewportKeyName.IsNone())
+			Key = Settings->ViewportLogKeys.Find(ViewportKeyName);
+		
+		GEngine->AddOnScreenDebugMessage(Key ? *Key : -1, TimeToDisplay, InLogColor, *FinalMessage);
 	}
+
+	WriteToLogFile(GetSavedLogsDirectory(), LogFilename, "[" + FDateTime::Now().ToString() + "] " + FinalMessage);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
@@ -2934,4 +2971,30 @@ void ULog::AssertFailed(const FString& Message, const bool bCrashOnFailure, cons
 	if (Settings->bCrashGameInShippingBuildConfiguration)
 		Crash("", FString(__FUNCTION__));
 #endif
+}
+
+bool ULog::WriteToLogFile(FString Directory, const FString& FileName, const FString& Text, const bool bAllowOverwriting)
+{
+	Directory += "/";
+	Directory += FileName;
+
+	if (!bAllowOverwriting)
+	{
+		if (FPlatformFileManager::Get().GetPlatformFile().FileExists(*Directory))
+		{
+			return false;
+		}
+	}
+
+	FString ContentInFile;
+	FFileHelper::LoadFileToString(ContentInFile, *Directory);
+	
+	const FString FinalString = ContentInFile + Text + LINE_TERMINATOR;
+
+	return FFileHelper::SaveStringToFile(FinalString, *Directory);
+}
+
+FString ULog::GetSavedLogsDirectory()
+{
+	return FPaths::ProjectSavedDir() + "Logs";
 }
