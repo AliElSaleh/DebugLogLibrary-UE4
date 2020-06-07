@@ -6,7 +6,7 @@ public class Debug : ModuleRules
 {
 	public Debug(ReadOnlyTargetRules Target) : base(Target)
 	{
-		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
+		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 		bUseUnity = true;
 		MinFilesUsingPrecompiledHeaderOverride = 1;
 		PrivatePCHHeaderFile = "Public/Debug.h";
@@ -26,7 +26,7 @@ public class Debug : ModuleRules
 			
 		
 		PublicDependencyModuleNames.AddRange(
-			new string[]
+			new[]
 			{
 				"Core",
 				// ... add other public dependencies that you statically link with here ...
@@ -35,7 +35,7 @@ public class Debug : ModuleRules
 			
 		
 		PrivateDependencyModuleNames.AddRange(
-			new string[]
+			new[]
 			{
 				"CoreUObject",
 				"Engine",

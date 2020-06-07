@@ -1,7 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 using UnrealBuildTool;
-using System.Collections.Generic;
 
 public class DebugLogLibraryEditorTarget : TargetRules
 {
@@ -9,7 +8,7 @@ public class DebugLogLibraryEditorTarget : TargetRules
 	{
 		Type = TargetType.Editor;
 
-		ExtraModuleNames.AddRange( new string[] { "DebugLogLibrary" } );
+		ExtraModuleNames.AddRange( new[] { "DebugLogLibrary" } );
 		DefaultBuildSettings = BuildSettingsVersion.Latest;
 	}
 }
