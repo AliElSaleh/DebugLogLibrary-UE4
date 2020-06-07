@@ -6,6 +6,7 @@
 #include "Engine/Engine.h"
 
 #include "DrawDebugHelpers.h"
+#include "GenericPlatform/GenericPlatformStackWalk.h"
 
 #include "Math/Vector.h"
 
@@ -16,6 +17,7 @@
 #include "Misc/FileHelper.h"
 
 #include "HAL/PlatformFilemanager.h"
+#include "Windows/WindowsPlatformStackWalk.h"
 
 #define MAX_HEX_VALUES 16
 
@@ -47,10 +49,12 @@ void ULog::PostInitProperties()
 void ULog::FinishDestroy()
 {
 	Settings->RemoveFromRoot();
-	
+
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	WriteToLogFile(LogFilename, "Engine shutdown");
 	WriteToLogFile(LogFilename, "Log file closed");
-	
+#endif	
+
 	Super::FinishDestroy();
 }
 
@@ -733,6 +737,7 @@ void ULog::Number(const long Number, const EDebugLogNumberSystems NumberSystem, 
 
 void ULog::LogArray_Internal(const TArray<FString>& InArray, const FString& Prefix, const FString& Suffix, const ELoggingOptions& LoggingOption, const float TimeToDisplay)
 {
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	switch (LoggingOption)
 	{
 		case LO_Viewport:
@@ -789,10 +794,15 @@ void ULog::LogArray_Internal(const TArray<FString>& InArray, const FString& Pref
 		default:
 		break;
 	}
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
+#endif
 }
 
 void ULog::Array_Int32(TArray<int32> InArray, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	TArray<FString> InStringArray;
 	InStringArray.Reserve(InArray.Num());
 	for (const int32& Element : InArray)
@@ -801,10 +811,15 @@ void ULog::Array_Int32(TArray<int32> InArray, const FString& Prefix, const FStri
 	}
 
 	LogArray_Internal(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
+#endif
 }
 
 void ULog::Array_Int64(TArray<int64> InArray, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	TArray<FString> InStringArray;
 	InStringArray.Reserve(InArray.Num());
 	for (const int64& Element : InArray)
@@ -813,10 +828,15 @@ void ULog::Array_Int64(TArray<int64> InArray, const FString& Prefix, const FStri
 	}
 
 	LogArray_Internal(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
+#endif
 }
 
 void ULog::Array_Float(TArray<float> InArray, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	TArray<FString> InStringArray;
 	InStringArray.Reserve(InArray.Num());
 	for (const int32& Element : InArray)
@@ -825,10 +845,15 @@ void ULog::Array_Float(TArray<float> InArray, const FString& Prefix, const FStri
 	}
 
 	LogArray_Internal(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
+#endif
 }
 
 void ULog::Array_Double(TArray<double> InArray, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	TArray<FString> InStringArray;
 	InStringArray.Reserve(InArray.Num());
 	for (const int32& Element : InArray)
@@ -837,10 +862,15 @@ void ULog::Array_Double(TArray<double> InArray, const FString& Prefix, const FSt
 	}
 
 	LogArray_Internal(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
+#endif
 }
 
 void ULog::Array_Bool(TArray<bool> InArray, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	TArray<FString> InStringArray;
 	InStringArray.Reserve(InArray.Num());
 	for (const bool& Element : InArray)
@@ -852,10 +882,15 @@ void ULog::Array_Bool(TArray<bool> InArray, const FString& Prefix, const FString
 	}
 
 	LogArray_Internal(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
+#endif
 }
 
 void ULog::Array_Vector(TArray<FVector> InArray, const bool bCompact, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	TArray<FString> InStringArray;
 	InStringArray.Reserve(InArray.Num());
 	for (const FVector& Element : InArray)
@@ -872,10 +907,15 @@ void ULog::Array_Vector(TArray<FVector> InArray, const bool bCompact, const FStr
 	}
 
 	LogArray_Internal(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
+#endif
 }
 
 void ULog::Array_Vector2D(TArray<FVector2D> InArray, const bool bCompact, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	TArray<FString> InStringArray;
 	InStringArray.Reserve(InArray.Num());
 	for (const FVector2D& Element : InArray)
@@ -892,10 +932,15 @@ void ULog::Array_Vector2D(TArray<FVector2D> InArray, const bool bCompact, const 
 	}
 
 	LogArray_Internal(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
+#endif
 }
 
 void ULog::Array_Rotator(TArray<FRotator> InArray, const bool bCompact, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	TArray<FString> InStringArray;
 	InStringArray.Reserve(InArray.Num());
 	for (const FRotator& Element : InArray)
@@ -912,10 +957,15 @@ void ULog::Array_Rotator(TArray<FRotator> InArray, const bool bCompact, const FS
 	}
 
 	LogArray_Internal(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
+#endif
 }
 
 void ULog::Array_Transform(TArray<FTransform> InArray, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	TArray<FString> InStringArray;
 	InStringArray.Reserve(InArray.Num());
 	for (const FTransform& Element : InArray)
@@ -924,10 +974,15 @@ void ULog::Array_Transform(TArray<FTransform> InArray, const FString& Prefix, co
 	}
 
 	LogArray_Internal(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
+#endif
 }
 
 void ULog::Array_Quat(TArray<FQuat> InArray, const bool bCompact, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	TArray<FString> InStringArray;
 	InStringArray.Reserve(InArray.Num());
 	for (const FQuat& Element : InArray)
@@ -944,10 +999,15 @@ void ULog::Array_Quat(TArray<FQuat> InArray, const bool bCompact, const FString&
 	}
 
 	LogArray_Internal(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
+#endif
 }
 
 void ULog::Array_Matrix(TArray<FMatrix> InArray, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	TArray<FString> InStringArray;
 	InStringArray.Reserve(InArray.Num());
 	for (const FMatrix& Element : InArray)
@@ -956,15 +1016,25 @@ void ULog::Array_Matrix(TArray<FMatrix> InArray, const FString& Prefix, const FS
 	}
 
 	LogArray_Internal(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
+#endif
 }
 
 void ULog::Array_String(const TArray<FString> InArray, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	LogArray_Internal(InArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
+#endif
 }
 
 void ULog::Array_Name(TArray<FName> InArray, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	TArray<FString> InStringArray;
 	InStringArray.Reserve(InArray.Num());
 	for (const FName& Element : InArray)
@@ -973,10 +1043,15 @@ void ULog::Array_Name(TArray<FName> InArray, const FString& Prefix, const FStrin
 	}
 
 	LogArray_Internal(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
+#endif
 }
 
 void ULog::Array_Text(TArray<FText> InArray, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	TArray<FString> InStringArray;
 	InStringArray.Reserve(InArray.Num());
 	for (const FText& Element : InArray)
@@ -985,10 +1060,15 @@ void ULog::Array_Text(TArray<FText> InArray, const FString& Prefix, const FStrin
 	}
 
 	LogArray_Internal(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
+#endif
 }
 
 void ULog::Array_DateTime(TArray<FDateTime> InArray, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	TArray<FString> InStringArray;
 	InStringArray.Reserve(InArray.Num());
 	for (const FDateTime& Element : InArray)
@@ -997,10 +1077,15 @@ void ULog::Array_DateTime(TArray<FDateTime> InArray, const FString& Prefix, cons
 	}
 
 	LogArray_Internal(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
+#endif
 }
 
 void ULog::Array_Color(TArray<FLinearColor> InArray, const bool bCompact, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	TArray<FString> InStringArray;
 	InStringArray.Reserve(InArray.Num());
 	for (const FLinearColor& Element : InArray)
@@ -1017,6 +1102,10 @@ void ULog::Array_Color(TArray<FLinearColor> InArray, const bool bCompact, const 
 	}
 
 	LogArray_Internal(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
+#endif
 }
 
 void ULog::Percent(const float Number, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
@@ -3014,6 +3103,7 @@ void ULog::AssertFailed(const FString& Message, const bool bCrashOnFailure, cons
 
 bool ULog::WriteToLogFile(const FString& FileName, const FString& Text, const bool bAllowOverwriting)
 {
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	const FString Directory = GetSavedLogsDirectory() + FileName;
 
 	const FString FinalText = "[" + FDateTime::Now().ToString() + "] " + Text + LINE_TERMINATOR;
@@ -3041,9 +3131,33 @@ bool ULog::WriteToLogFile(const FString& FileName, const FString& Text, const bo
 	}
 	
 	return false;
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration)
+		Crash("", FString(__FUNCTION__));
+
+	return false;
+#endif
+}
+
+TArray<FString> ULog::GetStackDump(const int32 Depth)
+{
+	TArray<FString> StackDump;
+	const TArray<FProgramCounterSymbolInfo> Stack = FPlatformStackWalk::GetStack(1, Depth);
+	StackDump.Reserve(Stack.Num());
+	for (const FProgramCounterSymbolInfo& Frame : Stack)
+	{
+		StackDump.Add(FString(Frame.FunctionName) + ":" + FString::FromInt(Frame.LineNumber));
+		//StackDump.Add(FString::Printf(TEXT("%s:%i"), ANSI_TO_TCHAR(Frame.FunctionName), Frame.LineNumber));
+	}
+	
+	return StackDump;
 }
 
 FString ULog::GetSavedLogsDirectory()
 {
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	return FPaths::ProjectSavedDir() + "Logs/Debug Logs/";
+#endif
+	
+	return "";
 }

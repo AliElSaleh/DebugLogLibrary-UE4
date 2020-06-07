@@ -958,6 +958,8 @@ private:
 
 	static bool WriteToLogFile(const FString& FileName, const FString& Text, bool bAllowOverwriting = false);
 
+	static TArray<FString> GetStackDump(int32 Depth);
+	
 	static FString GetSavedLogsDirectory();
 
 	static FString DecimalToHex(platform_int DecimalNumber);
