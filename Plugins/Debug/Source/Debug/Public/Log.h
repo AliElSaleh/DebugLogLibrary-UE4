@@ -46,6 +46,7 @@
 #define ASSERT(expr, message) FDebug::AssertFailed(#expr, UE_LOG_SOURCE_FILE(__FILE__), __LINE__, TEXT("%s"), *message);
 
 // Quick debug logging macros
+#if !UE_BUILD_SHIPPING
 #define LOG_VECTOR(Variable, ...) ULog::Vector(Variable, false, __VA_ARGS__, LO_Both, 5.0f)
 #define LOG_VECTOR_CONSOLE(Variable, ...) ULog::Vector(Variable, false, __VA_ARGS__, LO_Console, 5.0f)
 #define LOG_VECTOR_VIEWPORT(Variable, ...) ULog::Vector(Variable, false, __VA_ARGS__, LO_Viewport, 5.0f)
@@ -121,6 +122,7 @@
 #define LOG_LINEBREAK_S(Symbol) ULog::LineBreak_Symbol(#Symbol, LO_Both)
 #define LOG_LINEBREAK_S_CONSOLE(Symbol) ULog::LineBreak_Symbol(#Symbol, LO_Console)
 #define LOG_LINEBREAK_S_VIEWPORT(Symbol) ULog::LineBreak_Symbol(#Symbol, LO_Viewport)
+#endif
 
 #if PLATFORM_64BITS
 	typedef int64 platform_int;
@@ -958,8 +960,6 @@ private:
 
 	static bool WriteToLogFile(const FString& FileName, const FString& Text, bool bAllowOverwriting = false);
 
-	static TArray<FString> GetStackDump(int32 Depth);
-	
 	static FString GetSavedLogsDirectory();
 
 	static FString DecimalToHex(platform_int DecimalNumber);

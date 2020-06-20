@@ -15,9 +15,9 @@
 
 #include "Misc/MessageDialog.h"
 #include "Misc/FileHelper.h"
+#include "Misc/Paths.h"
 
 #include "HAL/PlatformFilemanager.h"
-#include "Windows/WindowsPlatformStackWalk.h"
 
 #define MAX_HEX_VALUES 16
 
@@ -50,7 +50,7 @@ void ULog::FinishDestroy()
 {
 	Settings->RemoveFromRoot();
 
-#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
+#if !UE_BUILD_SHIPPING
 	WriteToLogFile(LogFilename, "Engine shutdown");
 	WriteToLogFile(LogFilename, "Log file closed");
 #endif	
@@ -3137,20 +3137,6 @@ bool ULog::WriteToLogFile(const FString& FileName, const FString& Text, const bo
 
 	return false;
 #endif
-}
-
-TArray<FString> ULog::GetStackDump(const int32 Depth)
-{
-	TArray<FString> StackDump;
-	const TArray<FProgramCounterSymbolInfo> Stack = FPlatformStackWalk::GetStack(1, Depth);
-	StackDump.Reserve(Stack.Num());
-	for (const FProgramCounterSymbolInfo& Frame : Stack)
-	{
-		StackDump.Add(FString(Frame.FunctionName) + ":" + FString::FromInt(Frame.LineNumber));
-		//StackDump.Add(FString::Printf(TEXT("%s:%i"), ANSI_TO_TCHAR(Frame.FunctionName), Frame.LineNumber));
-	}
-	
-	return StackDump;
 }
 
 FString ULog::GetSavedLogsDirectory()
