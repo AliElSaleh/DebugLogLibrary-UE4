@@ -62,9 +62,9 @@ void ULog::ObjectValidity(UObject* InObject, const bool bSilenceOnError, const E
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	if (InObject)
-		LogMessage_Internal(InObject->GetName() + " is valid", "", "", Settings->SuccessColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogObjectValidity.GetCategoryName().ToString());
+		LogMessage_Internal(InObject->GetName() + " is valid", DL_Success, "", "", Settings->SuccessColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogObjectValidity.GetCategoryName().ToString());
 	else if (!bSilenceOnError)
-		LogMessage_Internal("None (Object is null)", "", "", Settings->ErrorColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogObjectValidity.GetCategoryName().ToString());
+		LogMessage_Internal("None (Object is null)", DL_Error, "", "", Settings->ErrorColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogObjectValidity.GetCategoryName().ToString());
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
@@ -75,9 +75,9 @@ void ULog::ObjectName(UObject* InObject, const bool bSilenceOnError, const ELogg
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	if (InObject)
-		LogMessage_Internal(InObject->GetName(), "", "", Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogMessage.GetCategoryName().ToString());
+		LogMessage_Internal(InObject->GetName(), DL_Info, "", "", Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogMessage.GetCategoryName().ToString());
 	else if (!bSilenceOnError)
-		LogMessage_Internal("None (Object is null)", "", "", Settings->ErrorColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogMessage.GetCategoryName().ToString());
+		LogMessage_Internal("None (Object is null)", DL_Error, "", "", Settings->ErrorColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogMessage.GetCategoryName().ToString());
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
@@ -227,7 +227,7 @@ void ULog::Error(const FString& Message, const ELoggingOptions LoggingOption, co
 	else
 		NewMessage = Message;
 
-	LogMessage_Internal(NewMessage, "", "", Settings->ErrorColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogError.GetCategoryName().ToString());
+	LogMessage_Internal(NewMessage, DL_Error, "", "", Settings->ErrorColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogError.GetCategoryName().ToString());
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
@@ -254,7 +254,7 @@ void ULog::Success(const FString& Message, const ELoggingOptions LoggingOption, 
 	else
 		NewMessage = Message;
 	
-	LogMessage_Internal(NewMessage, "", "", Settings->SuccessColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogSuccess.GetCategoryName().ToString());
+	LogMessage_Internal(NewMessage, DL_Success, "", "", Settings->SuccessColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogSuccess.GetCategoryName().ToString());
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
@@ -282,7 +282,7 @@ void ULog::Warning(const FString& Message, const ELoggingOptions LoggingOption, 
 	else
 		NewMessage = Message;
 	
-	LogMessage_Internal(NewMessage, "", "", Settings->WarningColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogWarning.GetCategoryName().ToString());
+	LogMessage_Internal(NewMessage, DL_Warning, "", "", Settings->WarningColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogWarning.GetCategoryName().ToString());
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
@@ -310,7 +310,7 @@ void ULog::Info(const FString& Message, const ELoggingOptions LoggingOption, con
 	else
 		NewMessage = Message;
 	
-	LogMessage_Internal(NewMessage, "", "", Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogMessage.GetCategoryName().ToString());
+	LogMessage_Internal(NewMessage, DL_Info, "", "", Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogMessage.GetCategoryName().ToString());
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
@@ -331,7 +331,7 @@ void ULog::Info_WithCondition(const FString& Message, const bool bCondition, con
 void ULog::Hello(const ELoggingOptions LoggingOption, const FName ViewportKeyName)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	LogMessage_Internal("Hello", "", "", Settings->InfoColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString());
+	LogMessage_Internal("Hello", DL_Info, "", "", Settings->InfoColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString());
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
@@ -341,7 +341,7 @@ void ULog::Hello(const ELoggingOptions LoggingOption, const FName ViewportKeyNam
 void ULog::Hey(const ELoggingOptions LoggingOption, const FName ViewportKeyName)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	LogMessage_Internal("Hey", "", "", Settings->InfoColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString());
+	LogMessage_Internal("Hey", DL_Info, "", "", Settings->InfoColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString());
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
@@ -351,7 +351,7 @@ void ULog::Hey(const ELoggingOptions LoggingOption, const FName ViewportKeyName)
 void ULog::Bye(const ELoggingOptions LoggingOption, const FName ViewportKeyName)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	LogMessage_Internal("Bye", "", "", Settings->InfoColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString());
+	LogMessage_Internal("Bye", DL_Info, "", "", Settings->InfoColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString());
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
@@ -361,7 +361,7 @@ void ULog::Bye(const ELoggingOptions LoggingOption, const FName ViewportKeyName)
 void ULog::Goodbye(const ELoggingOptions LoggingOption, const FName ViewportKeyName)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	LogMessage_Internal("Goodbye", "", "", Settings->InfoColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString());
+	LogMessage_Internal("Goodbye", DL_Info, "", "", Settings->InfoColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString());
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
@@ -371,7 +371,7 @@ void ULog::Goodbye(const ELoggingOptions LoggingOption, const FName ViewportKeyN
 void ULog::Cya(const ELoggingOptions LoggingOption, const FName ViewportKeyName)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	LogMessage_Internal("Cya", "", "", Settings->InfoColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString());
+	LogMessage_Internal("Cya", DL_Info, "", "", Settings->InfoColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString());
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
@@ -381,7 +381,7 @@ void ULog::Cya(const ELoggingOptions LoggingOption, const FName ViewportKeyName)
 void ULog::Wassup(const ELoggingOptions LoggingOption, const FName ViewportKeyName)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	LogMessage_Internal("Wassup", "", "", Settings->InfoColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString());
+	LogMessage_Internal("Wassup", DL_Info, "", "", Settings->InfoColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString());
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
@@ -391,7 +391,7 @@ void ULog::Wassup(const ELoggingOptions LoggingOption, const FName ViewportKeyNa
 void ULog::Yo(const ELoggingOptions LoggingOption, const FName ViewportKeyName)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	LogMessage_Internal("Yo", "", "", Settings->InfoColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString());
+	LogMessage_Internal("Yo", DL_Info, "", "", Settings->InfoColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString());
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
@@ -401,7 +401,7 @@ void ULog::Yo(const ELoggingOptions LoggingOption, const FName ViewportKeyName)
 void ULog::Yes(const ELoggingOptions LoggingOption, const FName ViewportKeyName)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	LogMessage_Internal("Yes", "", "", Settings->InfoColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString());
+	LogMessage_Internal("Yes", DL_Info, "", "", Settings->InfoColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString());
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
@@ -411,7 +411,7 @@ void ULog::Yes(const ELoggingOptions LoggingOption, const FName ViewportKeyName)
 void ULog::Yes(const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const FName ViewportKeyName)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	LogMessage_Internal("Yes", Prefix, Suffix, Settings->InfoColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString());
+	LogMessage_Internal("Yes", DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString());
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
@@ -421,7 +421,7 @@ void ULog::Yes(const FString& Prefix, const FString& Suffix, const ELoggingOptio
 void ULog::No(const ELoggingOptions LoggingOption, const FName ViewportKeyName)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	LogMessage_Internal("No", "", "", Settings->InfoColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString());
+	LogMessage_Internal("No", DL_Info, "", "", Settings->InfoColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString());
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
@@ -431,7 +431,7 @@ void ULog::No(const ELoggingOptions LoggingOption, const FName ViewportKeyName)
 void ULog::LineBreak(const ELoggingOptions LoggingOption)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	LogMessage_Internal(" ", "", "", Settings->InfoColor, LoggingOption, 5.0f, NAME_None, LogMessage.GetCategoryName().ToString());
+	LogMessage_Internal(" ", DL_Info, "", "", Settings->InfoColor, LoggingOption, 5.0f, NAME_None, LogMessage.GetCategoryName().ToString());
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
@@ -441,7 +441,7 @@ void ULog::LineBreak(const ELoggingOptions LoggingOption)
 void ULog::LineBreak_Symbol(const FString& Symbol, const ELoggingOptions LoggingOption)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	LogMessage_Internal(Symbol.IsEmpty() ? " " : Symbol, "", "", Settings->InfoColor, LoggingOption, 5.0f, NAME_None, LogMessage.GetCategoryName().ToString());
+	LogMessage_Internal(Symbol.IsEmpty() ? " " : Symbol, DL_Info, "", "", Settings->InfoColor, LoggingOption, 5.0f, NAME_None, LogMessage.GetCategoryName().ToString());
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
@@ -578,17 +578,17 @@ FText ULog::InBrackets(const FText& Text)
 void ULog::No(const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const FName ViewportKeyName)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	LogMessage_Internal("No", Prefix, Suffix, Settings->ErrorColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString());
+	LogMessage_Internal("No", DL_Error, Prefix, Suffix, Settings->ErrorColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString());
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Valid(const ELoggingOptions LoggingOption, FName ViewportKeyName)
+void ULog::Valid(const ELoggingOptions LoggingOption, const FName ViewportKeyName)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	LogMessage_Internal("Valid", "", "", Settings->SuccessColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString());
+	LogMessage_Internal("Valid", DL_Success, "", "", Settings->SuccessColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString());
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
@@ -598,7 +598,7 @@ void ULog::Valid(const ELoggingOptions LoggingOption, FName ViewportKeyName)
 void ULog::Valid(const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const FName ViewportKeyName)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	LogMessage_Internal("Valid", Prefix, Suffix, Settings->SuccessColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString());
+	LogMessage_Internal("Valid", DL_Success, Prefix, Suffix, Settings->SuccessColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString());
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
@@ -608,7 +608,7 @@ void ULog::Valid(const FString& Prefix, const FString& Suffix, const ELoggingOpt
 void ULog::Invalid(const ELoggingOptions LoggingOption, FName ViewportKeyName)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	LogMessage_Internal("Invalid", "", "", Settings->ErrorColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString());
+	LogMessage_Internal("Invalid", DL_Error, "", "", Settings->ErrorColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString());
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
@@ -618,7 +618,7 @@ void ULog::Invalid(const ELoggingOptions LoggingOption, FName ViewportKeyName)
 void ULog::Invalid(const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const FName ViewportKeyName)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	LogMessage_Internal("Invalid", Prefix, Suffix, Settings->ErrorColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString());
+	LogMessage_Internal("Invalid", DL_Error, Prefix, Suffix, Settings->ErrorColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString());
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
@@ -742,50 +742,50 @@ void ULog::LogArray_Internal(const TArray<FString>& InArray, const FString& Pref
 	{
 		case LO_Viewport:
 		if (!Suffix.IsEmpty())
-			LogMessage_Internal("", "", Suffix, Settings->InfoColor, LO_Viewport, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString());
+			LogMessage_Internal("", DL_Info, "", Suffix, Settings->InfoColor, LO_Viewport, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString());
 
 		for (int32 i = InArray.Num() - 1; i >= 0; i--)
 		{
-			LogMessage_Internal(FString::FromInt(i) + ": [" + InArray[i] + "]", "", "", Settings->InfoColor, LO_Viewport, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString());
+			LogMessage_Internal(FString::FromInt(i) + ": [" + InArray[i] + "]", DL_Info, "", "", Settings->InfoColor, LO_Viewport, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString());
 		}
 
 		if (!Prefix.IsEmpty())
-			LogMessage_Internal("", Prefix, "", Settings->InfoColor, LO_Viewport, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString());
+			LogMessage_Internal("", DL_Info, Prefix, "", Settings->InfoColor, LO_Viewport, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString());
 		break;
 
 		case LO_Console:
 		if (!Suffix.IsEmpty())
-			LogMessage_Internal("", "", Suffix, Settings->InfoColor, LO_Console, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString());
+			LogMessage_Internal("", DL_Info, "", Suffix, Settings->InfoColor, LO_Console, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString());
 
 		for (int32 i = 0; i < InArray.Num(); i++)
 		{
-			LogMessage_Internal(FString::FromInt(i) + ": [" + InArray[i] + "]", "", "", Settings->InfoColor, LO_Console, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString());
+			LogMessage_Internal(FString::FromInt(i) + ": [" + InArray[i] + "]", DL_Info, "", "", Settings->InfoColor, LO_Console, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString());
 		}
 
 		if (!Prefix.IsEmpty())
-			LogMessage_Internal("", Prefix, "", Settings->InfoColor, LO_Console, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString());
+			LogMessage_Internal("", DL_Info, Prefix, "", Settings->InfoColor, LO_Console, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString());
 		break;
 
 		case LO_Both:
-		LogMessage_Internal("", "", Suffix, Settings->InfoColor, LO_Viewport, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString(), false);
+		LogMessage_Internal("", DL_Info, "", Suffix, Settings->InfoColor, LO_Viewport, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString(), false);
 
 		for (int32 i = InArray.Num() - 1; i >= 0; i--)
 		{
-			LogMessage_Internal(FString::FromInt(i) + ": [" + InArray[i] + "]", "", "", Settings->InfoColor, LO_Viewport, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString(), false);
+			LogMessage_Internal(FString::FromInt(i) + ": [" + InArray[i] + "]", DL_Info, "", "", Settings->InfoColor, LO_Viewport, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString(), false);
 		}
 		
-		LogMessage_Internal("", Prefix, "", Settings->InfoColor, LO_Viewport, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString(), false);
+		LogMessage_Internal("", DL_Info, Prefix, "", Settings->InfoColor, LO_Viewport, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString(), false);
 
 		if (!Prefix.IsEmpty())
-			LogMessage_Internal("", Prefix, "", Settings->InfoColor, LO_Console, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString());
+			LogMessage_Internal("", DL_Info, Prefix, "", Settings->InfoColor, LO_Console, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString());
 
 		for (int32 i = 0; i < InArray.Num(); i++)
 		{
-			LogMessage_Internal(FString::FromInt(i) + ": [" + InArray[i] + "]", "", "", Settings->InfoColor, LO_Console, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString());
+			LogMessage_Internal(FString::FromInt(i) + ": [" + InArray[i] + "]", DL_Info, "", "", Settings->InfoColor, LO_Console, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString());
 		}
 		
 		if (!Suffix.IsEmpty())
-			LogMessage_Internal("", "", Suffix, Settings->InfoColor, LO_Console, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString());
+			LogMessage_Internal("", DL_Info, "", Suffix, Settings->InfoColor, LO_Console, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString());
 		break;
 
 		case LO_NoLog:
@@ -1111,7 +1111,7 @@ void ULog::Array_Color(TArray<FLinearColor> InArray, const bool bCompact, const 
 void ULog::Percent(const float Number, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	LogMessage_Internal(FString::SanitizeFloat(Number) + "%", Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogNumber.GetCategoryName().ToString());
+	LogMessage_Internal(FString::SanitizeFloat(Number) + "%", DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogNumber.GetCategoryName().ToString());
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
@@ -1127,9 +1127,9 @@ void ULog::Bool(const bool bBoolToTest, const FString& Prefix, const FString& Su
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	if (bBoolToTest)
-		LogMessage_Internal("True", Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogBool.GetCategoryName().ToString());
+		LogMessage_Internal("True", DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogBool.GetCategoryName().ToString());
 	else
-		LogMessage_Internal("False", Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogBool.GetCategoryName().ToString());
+		LogMessage_Internal("False", DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogBool.GetCategoryName().ToString());
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
@@ -1154,7 +1154,7 @@ void ULog::Vector(const FVector& InVector, const bool bCompact, const FString& P
 		FinalVectorString = InVector.ToString();
 	}
 	
-	LogMessage_Internal(FinalVectorString, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogVector.GetCategoryName().ToString());
+	LogMessage_Internal(FinalVectorString, DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogVector.GetCategoryName().ToString());
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
@@ -1179,7 +1179,7 @@ void ULog::Vector2D(const FVector2D& InVector2D, const bool bCompact, const FStr
 		FinalVectorString = InVector2D.ToString();
 	}
 	
-	LogMessage_Internal(FinalVectorString, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogVector.GetCategoryName().ToString());
+	LogMessage_Internal(FinalVectorString, DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogVector.GetCategoryName().ToString());
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
@@ -1204,7 +1204,7 @@ void ULog::Rotator(const FRotator& InRotator, const bool bCompact, const FString
 		FinalRotatorString = InRotator.ToString();
 	}
 	
-	LogMessage_Internal(FinalRotatorString, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogRotator.GetCategoryName().ToString());
+	LogMessage_Internal(FinalRotatorString, DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogRotator.GetCategoryName().ToString());
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
@@ -1240,7 +1240,7 @@ void ULog::Transform(const FTransform& InTransform, const FString& Prefix, const
 		}
 		else
 		{
-			LogMessage_Internal(InTransform.ToString(), Prefix, "", Settings->InfoColor, LO_Viewport, TimeToDisplay, ViewportKeyName, LogTransform.GetCategoryName().ToString());
+			LogMessage_Internal(InTransform.ToString(), DL_Info, Prefix, "", Settings->InfoColor, LO_Viewport, TimeToDisplay, ViewportKeyName, LogTransform.GetCategoryName().ToString());
 		}
 	}
 	else if (LoggingOption == LO_Console)
@@ -1296,7 +1296,7 @@ void ULog::Transform(const FTransform& InTransform, const FString& Prefix, const
 		}
 		else
 		{
-			LogMessage_Internal(InTransform.ToString(), Prefix, "", Settings->InfoColor, LO_Both, TimeToDisplay, ViewportKeyName, LogTransform.GetCategoryName().ToString());
+			LogMessage_Internal(InTransform.ToString(), DL_Info, Prefix, "", Settings->InfoColor, LO_Both, TimeToDisplay, ViewportKeyName, LogTransform.GetCategoryName().ToString());
 		}
 	}
 #elif (UE_BUILD_SHIPPING)
@@ -1323,7 +1323,7 @@ void ULog::Quat(const FQuat& Quaternion, const bool bCompact, const FString& Pre
 		FinalQuatString = Quaternion.ToString();
 	}
 	
-	LogMessage_Internal(FinalQuatString, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogQuaternion.GetCategoryName().ToString());
+	LogMessage_Internal(FinalQuatString, DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogQuaternion.GetCategoryName().ToString());
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
@@ -1338,7 +1338,7 @@ void ULog::Quat(const FQuat& Quaternion, const bool bCompact, const ELoggingOpti
 void ULog::Matrix(const FMatrix& InMatrix, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	LogMessage_Internal(InMatrix.ToString(), Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogMatrix.GetCategoryName().ToString());
+	LogMessage_Internal(InMatrix.ToString(), DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogMatrix.GetCategoryName().ToString());
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
@@ -1363,7 +1363,7 @@ void ULog::Color(const FLinearColor& InColor, const bool bCompact, const FString
 		FinalColorString = InColor.ToString();
 	}
 	
-	LogMessage_Internal(FinalColorString, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogFColor.GetCategoryName().ToString());
+	LogMessage_Internal(FinalColorString, DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogFColor.GetCategoryName().ToString());
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
@@ -1378,7 +1378,7 @@ void ULog::Color(const FLinearColor& InColor, const bool bCompact, const ELoggin
 void ULog::DateTime(const FDateTime& InDateTime, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	LogMessage_Internal(InDateTime.ToString(), Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogDateTime.GetCategoryName().ToString());
+	LogMessage_Internal(InDateTime.ToString(), DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogDateTime.GetCategoryName().ToString());
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
@@ -2634,25 +2634,28 @@ void ULog::EnsureCondition(const bool bCondition, const bool bAlwaysEnsure, cons
 #endif
 }
 
-void ULog::LogMessage_Internal(const FString& Message, const FString& Prefix, const FString& Suffix, const FColor& InLogColor, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, const FString& LogCategory, bool bWriteToLog)
+void ULog::LogMessage_Internal(const FString& Message, const EDebugLogType LogSeverity, const FString& Prefix, const FString& Suffix, const FColor& InLogColor, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, const FString& LogCategory, const bool bWriteToLog)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	if (LoggingOption == LO_NoLog)
 		return;
-	
+
+	const FString TagSpecifier = Settings->bEnableSpecifiers ? Settings->LogCategorySpecifiers[LogSeverity] : "";
 	const FString FinalMessage = NET_MODE_PREFIX + Prefix + Message + Suffix;
-	FString LogVerbosity = "Info: ";
+	const FString FinalMessage_WithTagSpecifier = NET_MODE_PREFIX + TagSpecifier + Prefix + Message + Suffix;
+	
+	FString LogVerbosity = Settings->LogCategorySpecifiers[DL_Info];
 	if (InLogColor == Settings->WarningColor)
 	{
-		LogVerbosity = "Warning: ";
+		LogVerbosity = Settings->LogCategorySpecifiers[DL_Warning];
 	}
 	else if (InLogColor == Settings->ErrorColor)
 	{
-		LogVerbosity = "Error: ";
+		LogVerbosity = Settings->LogCategorySpecifiers[DL_Error];
 	}
 	else if (InLogColor == Settings->SuccessColor)
 	{
-		LogVerbosity = "Success: ";
+		LogVerbosity = Settings->LogCategorySpecifiers[DL_Success];
 	}
 	
 	if (LoggingOption == LO_Viewport)
@@ -2661,29 +2664,55 @@ void ULog::LogMessage_Internal(const FString& Message, const FString& Prefix, co
 		
 		if (!ViewportKeyName.IsNone())
 			Key = Settings->ViewportLogKeys.Find(ViewportKeyName);
-		
-		GEngine->AddOnScreenDebugMessage(Key ? *Key : -1, TimeToDisplay, InLogColor, FinalMessage);
+
+		if (Settings->bEnableSpecifiers && (Settings->ShowSpecifiersIn == LO_Viewport || Settings->ShowSpecifiersIn == LO_Both))
+			GEngine->AddOnScreenDebugMessage(Key ? *Key : -1, TimeToDisplay, InLogColor, FinalMessage_WithTagSpecifier);
+		else
+			GEngine->AddOnScreenDebugMessage(Key ? *Key : -1, TimeToDisplay, InLogColor, FinalMessage);
 	}
 	else if (LoggingOption == LO_Console)
 	{
 		if (InLogColor == Settings->ErrorColor)
-			UE_LOG(LogMessage, Error, TEXT("%s"), *FinalMessage)
+		{
+			if (Settings->bEnableSpecifiers && (Settings->ShowSpecifiersIn == LO_Console || Settings->ShowSpecifiersIn == LO_Both))
+				UE_LOG(LogMessage, Error, TEXT("%s"), *FinalMessage_WithTagSpecifier)
+			else
+				UE_LOG(LogMessage, Error, TEXT("%s"), *FinalMessage)
+		}
 		else
-			UE_LOG(LogMessage, Warning, TEXT("%s"), *FinalMessage)
+		{
+			if (Settings->bEnableSpecifiers && (Settings->ShowSpecifiersIn == LO_Console || Settings->ShowSpecifiersIn == LO_Both))
+				UE_LOG(LogMessage, Warning, TEXT("%s"), *FinalMessage_WithTagSpecifier)
+			else
+				UE_LOG(LogMessage, Warning, TEXT("%s"), *FinalMessage)
+		}
 	}
 	else if (LoggingOption == LO_Both)
 	{
 		if (InLogColor == Settings->ErrorColor)
-			UE_LOG(LogMessage, Error, TEXT("%s"), *FinalMessage)
+		{
+			if (Settings->bEnableSpecifiers && (Settings->ShowSpecifiersIn == LO_Console || Settings->ShowSpecifiersIn == LO_Both))
+				UE_LOG(LogMessage, Error, TEXT("%s"), *FinalMessage_WithTagSpecifier)
+            else
+            	UE_LOG(LogMessage, Error, TEXT("%s"), *FinalMessage)
+        }
 		else
-			UE_LOG(LogMessage, Warning, TEXT("%s"), *FinalMessage)
+		{
+			if (Settings->bEnableSpecifiers && (Settings->ShowSpecifiersIn == LO_Console || Settings->ShowSpecifiersIn == LO_Both))
+				UE_LOG(LogMessage, Warning, TEXT("%s"), *FinalMessage_WithTagSpecifier)
+            else
+            	UE_LOG(LogMessage, Warning, TEXT("%s"), *FinalMessage)
+        }
 
 		int32* Key = nullptr;
 		
 		if (!ViewportKeyName.IsNone())
 			Key = Settings->ViewportLogKeys.Find(ViewportKeyName);
-		
-		GEngine->AddOnScreenDebugMessage(Key ? *Key : -1, TimeToDisplay, InLogColor, *FinalMessage);
+
+		if (Settings->bEnableSpecifiers && (Settings->ShowSpecifiersIn == LO_Viewport || Settings->ShowSpecifiersIn == LO_Both))
+			GEngine->AddOnScreenDebugMessage(Key ? *Key : -1, TimeToDisplay, InLogColor, *FinalMessage_WithTagSpecifier);
+		else
+			GEngine->AddOnScreenDebugMessage(Key ? *Key : -1, TimeToDisplay, InLogColor, *FinalMessage);
 	}
 
 	if (bWriteToLog)
@@ -2726,7 +2755,7 @@ void ULog::LogInt(const platform_int Number, const FString& Prefix, const FStrin
 		break;
 	}
 	
-	LogMessage_Internal(FinalNumber, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogNumber.GetCategoryName().ToString());
+	LogMessage_Internal(FinalNumber, DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogNumber.GetCategoryName().ToString());
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
@@ -2760,7 +2789,7 @@ void ULog::LogUInt(const platform_uint Number, const FString& Prefix, const FStr
 		break;
 	}
 
-	LogMessage_Internal(FinalNumber, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogNumber.GetCategoryName().ToString());
+	LogMessage_Internal(FinalNumber, DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogNumber.GetCategoryName().ToString());
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
@@ -2770,7 +2799,7 @@ void ULog::LogUInt(const platform_uint Number, const FString& Prefix, const FStr
 void ULog::LogFloat(const float Number, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	LogMessage_Internal(FString::SanitizeFloat(Number), Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogNumber.GetCategoryName().ToString());
+	LogMessage_Internal(FString::SanitizeFloat(Number), DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogNumber.GetCategoryName().ToString());
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
@@ -2785,7 +2814,7 @@ void ULog::LogUnitSystem(const float Value, const FString& UnitSymbol, const boo
 	if (bConvertValueToInt)
 		ValueInString = FString::FromInt(Value);
 
-	LogMessage_Internal(ValueInString + UnitSymbol, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogNumber.GetCategoryName().ToString());
+	LogMessage_Internal(ValueInString + UnitSymbol, DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogNumber.GetCategoryName().ToString());
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
@@ -2800,7 +2829,7 @@ void ULog::LogCurrencyUnitSystem(const float Value, const FString& UnitSymbol, c
 	if (bConvertValueToInt)
 		ValueInString = FString::FromInt(Value);
 
-	LogMessage_Internal(UnitSymbol + ValueInString, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogNumber.GetCategoryName().ToString());
+	LogMessage_Internal(UnitSymbol + ValueInString, DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogNumber.GetCategoryName().ToString());
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
@@ -2834,7 +2863,7 @@ void ULog::LogLongInt(const long Number, const FString& Prefix, const FString& S
 		break;
 	}
 
-	LogMessage_Internal(FinalNumber, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogNumber.GetCategoryName().ToString());
+	LogMessage_Internal(FinalNumber, DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogNumber.GetCategoryName().ToString());
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));

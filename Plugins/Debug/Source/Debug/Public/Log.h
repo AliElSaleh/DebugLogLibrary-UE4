@@ -133,25 +133,6 @@
 #endif
 
 UENUM(BlueprintType)
-enum EDebugLogType
-{
-	DL_Info		UMETA(DisplayName = "Info"),
-	DL_Success	UMETA(DisplayName = "Success"),
-	DL_Warning	UMETA(DisplayName = "Warning"),
-	DL_Error	UMETA(DisplayName = "Error"),
-	DL_Fatal	UMETA(DisplayName = "Fatal")
-};
-
-UENUM(BlueprintType)
-enum ELoggingOptions
-{
-	LO_Viewport UMETA(DisplayName = "Viewport"),
-	LO_Console	UMETA(DisplayName = "Console"),
-	LO_Both		UMETA(DisplayName = "Viewport and Console"),
-	LO_NoLog	UMETA(DisplayName = "Disabled")
-};
-
-UENUM(BlueprintType)
 enum EDebugLogNumberSystems
 {
 	DLNS_Decimal	UMETA(DisplayName = "Decimal (Base 10)"),
@@ -944,7 +925,7 @@ protected:
 	static void UnImplemented();
 
 private:
-	static void LogMessage_Internal(const FString& Message, const FString& Prefix = "", const FString& Suffix = "", const FColor& InLogColor = FColor::Cyan, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, const FString& LogCategory = "", bool bWriteToLog = true);
+	static void LogMessage_Internal(const FString& Message, EDebugLogType LogSeverity, const FString& Prefix = "", const FString& Suffix = "", const FColor& InLogColor = FColor::Cyan, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, const FString& LogCategory = "", bool bWriteToLog = true);
 
 	static void LogFloat(float Number, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
 	static void LogInt(platform_int Number, const FString& Prefix = "", const FString& Suffix = "", EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
@@ -1170,11 +1151,11 @@ void ULog::Enum(const EnumType& EnumValue, const bool bFriendlyName, const FStri
 	{
 		if (bFriendlyName)
 		{
-			LogMessage_Internal(EnumObject->GetDisplayNameTextByIndex(uint8(EnumValue)).ToString(), Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, "LogEnum");
+			LogMessage_Internal(EnumObject->GetDisplayNameTextByIndex(uint8(EnumValue)).ToString(), DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, "LogEnum");
 		}
 		else
 		{
-			LogMessage_Internal(EnumObject->GetNameStringByIndex(uint8(EnumValue)), Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, "LogEnum");
+			LogMessage_Internal(EnumObject->GetNameStringByIndex(uint8(EnumValue)), DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, "LogEnum");
 		}
 	}
 	else
