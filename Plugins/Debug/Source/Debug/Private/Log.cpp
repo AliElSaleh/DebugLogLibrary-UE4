@@ -58,51 +58,51 @@ void ULog::FinishDestroy()
 	Super::FinishDestroy();
 }
 
-void ULog::ObjectValidity(UObject* InObject, const bool bSilenceOnError, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::ObjectValidity(UObject* InObject, const bool bSilenceOnError, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	if (InObject)
-		LogMessage_Internal(InObject->GetName() + " is valid", DL_Success, "", "", Settings->SuccessColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogObjectValidity.GetCategoryName().ToString());
+		LogMessage_Internal(InObject->GetName() + " is valid", DL_Success, "", "", Settings->SuccessColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogObjectValidity.GetCategoryName().ToString(), true, ContextObject);
 	else if (!bSilenceOnError)
-		LogMessage_Internal("None (Object is null)", DL_Error, "", "", Settings->ErrorColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogObjectValidity.GetCategoryName().ToString());
+		LogMessage_Internal("None (Object is null)", DL_Error, "", "", Settings->ErrorColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogObjectValidity.GetCategoryName().ToString(), true, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::ObjectName(UObject* InObject, const bool bSilenceOnError, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::ObjectName(UObject* InObject, const bool bSilenceOnError, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	if (InObject)
-		LogMessage_Internal(InObject->GetName(), DL_Info, "", "", Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogMessage.GetCategoryName().ToString());
+		LogMessage_Internal(InObject->GetName(), DL_Info, "", "", Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogMessage.GetCategoryName().ToString(), true, ContextObject);
 	else if (!bSilenceOnError)
-		LogMessage_Internal("None (Object is null)", DL_Error, "", "", Settings->ErrorColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogMessage.GetCategoryName().ToString());
+		LogMessage_Internal("None (Object is null)", DL_Error, "", "", Settings->ErrorColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogMessage.GetCategoryName().ToString(), true, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::DebugMessage(const EDebugLogType LogSeverity, const FString& Message, const ELoggingOptions LoggingOption, const bool bAddPrefix, const float TimeToDisplay, FName ViewportKeyName)
+void ULog::DebugMessage(const EDebugLogType LogSeverity, const FString& Message, const ELoggingOptions LoggingOption, const bool bAddPrefix, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	switch (LogSeverity)
 	{
 	case DL_Info:
-		Info(Message, LoggingOption, bAddPrefix, TimeToDisplay, ViewportKeyName);
+		Info(Message, LoggingOption, bAddPrefix, TimeToDisplay, ViewportKeyName, ContextObject);
 	break;
 
 	case DL_Success:
-		Success(Message, LoggingOption, bAddPrefix, TimeToDisplay, ViewportKeyName);
+		Success(Message, LoggingOption, bAddPrefix, TimeToDisplay, ViewportKeyName, ContextObject);
 	break;
 
 	case DL_Warning:
-		Warning(Message, LoggingOption, bAddPrefix, TimeToDisplay, ViewportKeyName);
+		Warning(Message, LoggingOption, bAddPrefix, TimeToDisplay, ViewportKeyName, ContextObject);
 	break;
 
 	case DL_Error:
-		Error(Message, LoggingOption, bAddPrefix, TimeToDisplay, ViewportKeyName);
+		Error(Message, LoggingOption, bAddPrefix, TimeToDisplay, ViewportKeyName, ContextObject);
 	break;
 
 	case DL_Fatal:
@@ -118,25 +118,25 @@ void ULog::DebugMessage(const EDebugLogType LogSeverity, const FString& Message,
 #endif
 }
 
-void ULog::DebugMessage(const EDebugLogType LogSeverity, const FName& Message, const ELoggingOptions LoggingOption, const bool bAddPrefix, const float TimeToDisplay, FName ViewportKeyName)
+void ULog::DebugMessage(const EDebugLogType LogSeverity, const FName& Message, const ELoggingOptions LoggingOption, const bool bAddPrefix, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {	
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	switch (LogSeverity)
 	{
 	case DL_Info:
-		Info(Message.ToString(), LoggingOption, bAddPrefix, TimeToDisplay, ViewportKeyName);
+		Info(Message.ToString(), LoggingOption, bAddPrefix, TimeToDisplay, ViewportKeyName, ContextObject);
 	break;
 
 	case DL_Success:
-		Success(Message.ToString(), LoggingOption, bAddPrefix, TimeToDisplay, ViewportKeyName);
+		Success(Message.ToString(), LoggingOption, bAddPrefix, TimeToDisplay, ViewportKeyName, ContextObject);
 	break;
 
 	case DL_Warning:
-		Warning(Message.ToString(), LoggingOption, bAddPrefix, TimeToDisplay, ViewportKeyName);
+		Warning(Message.ToString(), LoggingOption, bAddPrefix, TimeToDisplay, ViewportKeyName, ContextObject);
 	break;
 
 	case DL_Error:
-		Error(Message.ToString(), LoggingOption, bAddPrefix, TimeToDisplay, ViewportKeyName);
+		Error(Message.ToString(), LoggingOption, bAddPrefix, TimeToDisplay, ViewportKeyName, ContextObject);
 	break;
 
 	case DL_Fatal:
@@ -152,21 +152,22 @@ void ULog::DebugMessage(const EDebugLogType LogSeverity, const FName& Message, c
 #endif
 }
 
-void ULog::DebugMessage_WithCondition(const EDebugLogType LogSeverity, const bool bCondition, const FString& Message, const ELoggingOptions LoggingOption, const bool bAddPrefix, const float TimeToDisplay, FName ViewportKeyName)
+void ULog::DebugMessage_WithCondition(const EDebugLogType LogSeverity, const bool bCondition, const FString& Message, const ELoggingOptions LoggingOption, const bool bAddPrefix, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	if (bCondition)
-		DebugMessage(LogSeverity, Message, LoggingOption, bAddPrefix, TimeToDisplay, ViewportKeyName);
+		DebugMessage(LogSeverity, Message, LoggingOption, bAddPrefix, TimeToDisplay, ViewportKeyName, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Crash(const FString& Message, const FString& FromFunction)
+void ULog::Crash(const FString& Message, const FString& FromFunction, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	UE_LOG(LogCrash, Fatal, TEXT("%s%s | %s"), NET_MODE_PREFIX, *FromFunction, *Message)
+	const FString ContextObjectName = ContextObject ? ContextObject->GetName() : "";
+	UE_LOG(LogCrash, Fatal, TEXT("%s%s %s | %s"), NET_MODE_PREFIX, *FromFunction, *ContextObjectName, *Message)
 #elif (UE_BUILD_SHIPPING)
 	FString ErrorMessage = "";
 	FString Line1 = "A function from the DebugLogLibrary plugin was called from C++ or Blueprint!\n";
@@ -217,7 +218,7 @@ void ULog::Fatal_WithCondition(const FString& Message, const bool bCondition)
 #endif
 }
 
-void ULog::Error(const FString& Message, const ELoggingOptions LoggingOption, const bool bAddPrefix, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Error(const FString& Message, const ELoggingOptions LoggingOption, const bool bAddPrefix, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	FString NewMessage;
@@ -227,25 +228,25 @@ void ULog::Error(const FString& Message, const ELoggingOptions LoggingOption, co
 	else
 		NewMessage = Message;
 
-	LogMessage_Internal(NewMessage, DL_Error, "", "", Settings->ErrorColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogError.GetCategoryName().ToString());
+	LogMessage_Internal(NewMessage, DL_Error, "", "", Settings->ErrorColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogError.GetCategoryName().ToString(), true, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Error_WithCondition(const FString& Message, const bool bCondition, const ELoggingOptions LoggingOption, const bool bAddPrefix, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Error_WithCondition(const FString& Message, const bool bCondition, const ELoggingOptions LoggingOption, const bool bAddPrefix, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	if (bCondition)
-		Error(Message, LoggingOption, bAddPrefix, TimeToDisplay, ViewportKeyName);
+		Error(Message, LoggingOption, bAddPrefix, TimeToDisplay, ViewportKeyName, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Success(const FString& Message, const ELoggingOptions LoggingOption, const bool bAddPrefix, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Success(const FString& Message, const ELoggingOptions LoggingOption, const bool bAddPrefix, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	FString NewMessage;
@@ -254,25 +255,25 @@ void ULog::Success(const FString& Message, const ELoggingOptions LoggingOption, 
 	else
 		NewMessage = Message;
 	
-	LogMessage_Internal(NewMessage, DL_Success, "", "", Settings->SuccessColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogSuccess.GetCategoryName().ToString());
+	LogMessage_Internal(NewMessage, DL_Success, "", "", Settings->SuccessColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogSuccess.GetCategoryName().ToString(), true, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Success_WithCondition(const FString& Message, const bool bCondition, const ELoggingOptions LoggingOption, const bool bAddPrefix, const float TimeToDisplay, FName ViewportKeyName)
+void ULog::Success_WithCondition(const FString& Message, const bool bCondition, const ELoggingOptions LoggingOption, const bool bAddPrefix, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	if (bCondition)
-		Success(Message, LoggingOption, bAddPrefix, TimeToDisplay, ViewportKeyName);
+		Success(Message, LoggingOption, bAddPrefix, TimeToDisplay, ViewportKeyName, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Warning(const FString& Message, const ELoggingOptions LoggingOption, const bool bAddPrefix, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Warning(const FString& Message, const ELoggingOptions LoggingOption, const bool bAddPrefix, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	FString NewMessage;
@@ -282,25 +283,25 @@ void ULog::Warning(const FString& Message, const ELoggingOptions LoggingOption, 
 	else
 		NewMessage = Message;
 	
-	LogMessage_Internal(NewMessage, DL_Warning, "", "", Settings->WarningColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogWarning.GetCategoryName().ToString());
+	LogMessage_Internal(NewMessage, DL_Warning, "", "", Settings->WarningColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogWarning.GetCategoryName().ToString(), true, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Warning_WithCondition(const FString& Message, const bool bCondition, const ELoggingOptions LoggingOption, const bool bAddPrefix, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Warning_WithCondition(const FString& Message, const bool bCondition, const ELoggingOptions LoggingOption, const bool bAddPrefix, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	if (bCondition)
-		Warning(Message, LoggingOption, bAddPrefix, TimeToDisplay, ViewportKeyName);
+		Warning(Message, LoggingOption, bAddPrefix, TimeToDisplay, ViewportKeyName, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Info(const FString& Message, const ELoggingOptions LoggingOption, const bool bAddPrefix, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Info(const FString& Message, const ELoggingOptions LoggingOption, const bool bAddPrefix, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	FString NewMessage;
@@ -310,118 +311,118 @@ void ULog::Info(const FString& Message, const ELoggingOptions LoggingOption, con
 	else
 		NewMessage = Message;
 	
-	LogMessage_Internal(NewMessage, DL_Info, "", "", Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogMessage.GetCategoryName().ToString());
+	LogMessage_Internal(NewMessage, DL_Info, "", "", Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogMessage.GetCategoryName().ToString(), true, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Info_WithCondition(const FString& Message, const bool bCondition, const ELoggingOptions LoggingOption, const bool bAddPrefix, const float TimeToDisplay, FName ViewportKeyName)
+void ULog::Info_WithCondition(const FString& Message, const bool bCondition, const ELoggingOptions LoggingOption, const bool bAddPrefix, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	if (bCondition)
-		Info(Message, LoggingOption, bAddPrefix, TimeToDisplay, ViewportKeyName);
+		Info(Message, LoggingOption, bAddPrefix, TimeToDisplay, ViewportKeyName, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Hello(const ELoggingOptions LoggingOption, const FName ViewportKeyName)
+void ULog::Hello(const ELoggingOptions LoggingOption, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	LogMessage_Internal("Hello", DL_Info, "", "", Settings->InfoColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString());
+	LogMessage_Internal("Hello", DL_Info, "", "", Settings->InfoColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString(), true, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Hey(const ELoggingOptions LoggingOption, const FName ViewportKeyName)
+void ULog::Hey(const ELoggingOptions LoggingOption, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	LogMessage_Internal("Hey", DL_Info, "", "", Settings->InfoColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString());
+	LogMessage_Internal("Hey", DL_Info, "", "", Settings->InfoColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString(), true, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Bye(const ELoggingOptions LoggingOption, const FName ViewportKeyName)
+void ULog::Bye(const ELoggingOptions LoggingOption, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	LogMessage_Internal("Bye", DL_Info, "", "", Settings->InfoColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString());
+	LogMessage_Internal("Bye", DL_Info, "", "", Settings->InfoColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString(), true, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Goodbye(const ELoggingOptions LoggingOption, const FName ViewportKeyName)
+void ULog::Goodbye(const ELoggingOptions LoggingOption, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	LogMessage_Internal("Goodbye", DL_Info, "", "", Settings->InfoColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString());
+	LogMessage_Internal("Goodbye", DL_Info, "", "", Settings->InfoColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString(), true, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Cya(const ELoggingOptions LoggingOption, const FName ViewportKeyName)
+void ULog::Cya(const ELoggingOptions LoggingOption, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	LogMessage_Internal("Cya", DL_Info, "", "", Settings->InfoColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString());
+	LogMessage_Internal("Cya", DL_Info, "", "", Settings->InfoColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString(), true, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Wassup(const ELoggingOptions LoggingOption, const FName ViewportKeyName)
+void ULog::Wassup(const ELoggingOptions LoggingOption, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	LogMessage_Internal("Wassup", DL_Info, "", "", Settings->InfoColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString());
+	LogMessage_Internal("Wassup", DL_Info, "", "", Settings->InfoColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString(), true, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Yo(const ELoggingOptions LoggingOption, const FName ViewportKeyName)
+void ULog::Yo(const ELoggingOptions LoggingOption, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	LogMessage_Internal("Yo", DL_Info, "", "", Settings->InfoColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString());
+	LogMessage_Internal("Yo", DL_Info, "", "", Settings->InfoColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString(), true, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Yes(const ELoggingOptions LoggingOption, const FName ViewportKeyName)
+void ULog::Yes(const ELoggingOptions LoggingOption, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	LogMessage_Internal("Yes", DL_Info, "", "", Settings->InfoColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString());
+	LogMessage_Internal("Yes", DL_Info, "", "", Settings->InfoColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString(), true, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Yes(const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const FName ViewportKeyName)
+void ULog::Yes(const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	LogMessage_Internal("Yes", DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString());
+	LogMessage_Internal("Yes", DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString(), true, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::No(const ELoggingOptions LoggingOption, const FName ViewportKeyName)
+void ULog::No(const ELoggingOptions LoggingOption, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	LogMessage_Internal("No", DL_Info, "", "", Settings->InfoColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString());
+	LogMessage_Internal("No", DL_Info, "", "", Settings->InfoColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString(), true, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
@@ -431,7 +432,7 @@ void ULog::No(const ELoggingOptions LoggingOption, const FName ViewportKeyName)
 void ULog::LineBreak(const ELoggingOptions LoggingOption)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	LogMessage_Internal(" ", DL_Info, "", "", Settings->InfoColor, LoggingOption, 5.0f, NAME_None, LogMessage.GetCategoryName().ToString());
+	LogMessage_Internal(" ", EDebugLogType(5), "", "", Settings->InfoColor, LoggingOption, 5.0f, NAME_None, LogMessage.GetCategoryName().ToString());
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
@@ -441,7 +442,7 @@ void ULog::LineBreak(const ELoggingOptions LoggingOption)
 void ULog::LineBreak_Symbol(const FString& Symbol, const ELoggingOptions LoggingOption)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	LogMessage_Internal(Symbol.IsEmpty() ? " " : Symbol, DL_Info, "", "", Settings->InfoColor, LoggingOption, 5.0f, NAME_None, LogMessage.GetCategoryName().ToString());
+	LogMessage_Internal(Symbol.IsEmpty() ? " " : Symbol, EDebugLogType(5), "", "", Settings->InfoColor, LoggingOption, 5.0f, NAME_None, LogMessage.GetCategoryName().ToString());
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
@@ -466,7 +467,7 @@ void ULog::StartDebugTimer(const FString& Description)
 #endif
 }
 
-void ULog::StopDebugTimer(const bool bAutoDetermineTimeUnit, const EDebugLogTimeUnit DisplayIn, const ELoggingOptions LoggingOption, const FName ViewportKeyName)
+void ULog::StopDebugTimer(const bool bAutoDetermineTimeUnit, const EDebugLogTimeUnit DisplayIn, const ELoggingOptions LoggingOption, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	if (!Timer)
@@ -481,12 +482,12 @@ void ULog::StopDebugTimer(const bool bAutoDetermineTimeUnit, const EDebugLogTime
 	{
 		// < 1,000 microseconds
 		if (Timer->GetDurationInMicroseconds() < 1000)
-			Time(Timer->GetDurationInMicroseconds(), DLTU_Microseconds, false, Timer->GetDescription() + " | Operation took: ", "", LoggingOption);
+			Time(Timer->GetDurationInMicroseconds(), DLTU_Microseconds, false, Timer->GetDescription() + " | Operation took: ", "", LoggingOption, 5.0f, ViewportKeyName, ContextObject);
 		// > 1,000 microseconds AND < 1,000,000 microseconds
 		else if (Timer->GetDurationInMicroseconds() > 1000 && Timer->GetDurationInMicroseconds() < 1000000)
-			Time(Timer->GetDurationInMilliseconds(), DLTU_Milliseconds, false, Timer->GetDescription() + " | Operation took: ", "", LoggingOption);
+			Time(Timer->GetDurationInMilliseconds(), DLTU_Milliseconds, false, Timer->GetDescription() + " | Operation took: ", "", LoggingOption, 5.0f, ViewportKeyName, ContextObject);
 		else
-			Time(Timer->GetDurationInSeconds(), DLTU_Seconds, false, Timer->GetDescription() + " | Operation took: ", "", LoggingOption);
+			Time(Timer->GetDurationInSeconds(), DLTU_Seconds, false, Timer->GetDescription() + " | Operation took: ", "", LoggingOption, 5.0f, ViewportKeyName, ContextObject);
 	}
 	else
 	{
@@ -549,7 +550,7 @@ void ULog::StopDebugTimer(const bool bAutoDetermineTimeUnit, const EDebugLogTime
 			break;
 		}
 
-		Time(Duration, DisplayIn, false, Timer->GetDescription() + " | Operation took: ", "", LoggingOption, 5.0f, ViewportKeyName);
+		Time(Duration, DisplayIn, false, Timer->GetDescription() + " | Operation took: ", "", LoggingOption, 5.0f, ViewportKeyName, ContextObject);
 	}
 
 	delete Timer;
@@ -575,221 +576,214 @@ FText ULog::InBrackets(const FText& Text)
 	return FText::FromString("(" + Text.ToString() + ")");
 }
 
-void ULog::No(const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const FName ViewportKeyName)
+void ULog::No(const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	LogMessage_Internal("No", DL_Error, Prefix, Suffix, Settings->ErrorColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString());
+	LogMessage_Internal("No", DL_Error, Prefix, Suffix, Settings->ErrorColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString(), true, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Valid(const ELoggingOptions LoggingOption, const FName ViewportKeyName)
+void ULog::Valid(const ELoggingOptions LoggingOption, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	LogMessage_Internal("Valid", DL_Success, "", "", Settings->SuccessColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString());
+	LogMessage_Internal("Valid", DL_Success, "", "", Settings->SuccessColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString(), true, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Valid(const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const FName ViewportKeyName)
+void ULog::Valid(const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	LogMessage_Internal("Valid", DL_Success, Prefix, Suffix, Settings->SuccessColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString());
+	LogMessage_Internal("Valid", DL_Success, Prefix, Suffix, Settings->SuccessColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString(), true, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Invalid(const ELoggingOptions LoggingOption, FName ViewportKeyName)
+void ULog::Invalid(const ELoggingOptions LoggingOption, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	LogMessage_Internal("Invalid", DL_Error, "", "", Settings->ErrorColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString());
+	LogMessage_Internal("Invalid", DL_Error, "", "", Settings->ErrorColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString(), true, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Invalid(const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const FName ViewportKeyName)
+void ULog::Invalid(const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	LogMessage_Internal("Invalid", DL_Error, Prefix, Suffix, Settings->ErrorColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString());
+	LogMessage_Internal("Invalid", DL_Error, Prefix, Suffix, Settings->ErrorColor, LoggingOption, 5.0f, ViewportKeyName, LogMessage.GetCategoryName().ToString(), true, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Number(const int8 Number, const FString& Prefix, const FString& Suffix, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Number(const int8 Number, const FString& Prefix, const FString& Suffix, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	LogInt(Number, Prefix, Suffix, NumberSystem, LoggingOption, TimeToDisplay, ViewportKeyName);
+	LogInt(Number, Prefix, Suffix, NumberSystem, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-void ULog::Number(const int16 Number, const FString& Prefix, const FString& Suffix, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Number(const int16 Number, const FString& Prefix, const FString& Suffix, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	LogInt(Number, Prefix, Suffix, NumberSystem, LoggingOption, TimeToDisplay, ViewportKeyName);
+	LogInt(Number, Prefix, Suffix, NumberSystem, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-void ULog::Number(const int32 Number, const FString& Prefix, const FString& Suffix, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Number(const int32 Number, const FString& Prefix, const FString& Suffix, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	LogInt(Number, Prefix, Suffix, NumberSystem, LoggingOption, TimeToDisplay, ViewportKeyName);
+	LogInt(Number, Prefix, Suffix, NumberSystem, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-void ULog::Number(const int64 Number, const FString& Prefix, const FString& Suffix, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Number(const int64 Number, const FString& Prefix, const FString& Suffix, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	LogInt(Number, Prefix, Suffix, NumberSystem, LoggingOption, TimeToDisplay, ViewportKeyName);
+	LogInt(Number, Prefix, Suffix, NumberSystem, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-void ULog::Number(const uint8 Number, const FString& Prefix, const FString& Suffix, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Number(const uint8 Number, const FString& Prefix, const FString& Suffix, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	LogUInt(Number, Prefix, Suffix, NumberSystem, LoggingOption, TimeToDisplay, ViewportKeyName);
+	LogUInt(Number, Prefix, Suffix, NumberSystem, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-void ULog::Number(const uint16 Number, const FString& Prefix, const FString& Suffix, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Number(const uint16 Number, const FString& Prefix, const FString& Suffix, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	LogUInt(Number, Prefix, Suffix, NumberSystem, LoggingOption, TimeToDisplay, ViewportKeyName);
+	LogUInt(Number, Prefix, Suffix, NumberSystem, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-void ULog::Number(const uint32 Number, const FString& Prefix, const FString& Suffix, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Number(const uint32 Number, const FString& Prefix, const FString& Suffix, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	LogUInt(Number, Prefix, Suffix, NumberSystem, LoggingOption, TimeToDisplay, ViewportKeyName);
+	LogUInt(Number, Prefix, Suffix, NumberSystem, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-void ULog::Number(const uint64 Number, const FString& Prefix, const FString& Suffix, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Number(const uint64 Number, const FString& Prefix, const FString& Suffix, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	LogUInt(Number, Prefix, Suffix, NumberSystem, LoggingOption, TimeToDisplay, ViewportKeyName);
+	LogUInt(Number, Prefix, Suffix, NumberSystem, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-void ULog::Number(const float Number, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Number(const float Number, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	LogFloat(Number, Prefix, Suffix, LoggingOption, TimeToDisplay, ViewportKeyName);
+	LogFloat(Number, Prefix, Suffix, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-void ULog::Number(const double Number, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Number(const double Number, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	LogFloat(Number, Prefix, Suffix, LoggingOption, TimeToDisplay, ViewportKeyName);
+	LogFloat(Number, Prefix, Suffix, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-void ULog::Number(const long Number, const FString& Prefix, const FString& Suffix, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Number(const long Number, const FString& Prefix, const FString& Suffix, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	LogLongInt(Number, Prefix, Suffix, NumberSystem, LoggingOption, TimeToDisplay, ViewportKeyName);
+	LogLongInt(Number, Prefix, Suffix, NumberSystem, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-void ULog::Number(const int8 Number, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Number(const int8 Number, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	LogInt(Number, "", "", NumberSystem, LoggingOption, TimeToDisplay, ViewportKeyName);
+	LogInt(Number, "", "", NumberSystem, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-void ULog::Number(const int16 Number, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Number(const int16 Number, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	LogInt(Number, "", "", NumberSystem, LoggingOption, TimeToDisplay, ViewportKeyName);
+	LogInt(Number, "", "", NumberSystem, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-void ULog::Number(const int32 Number, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Number(const int32 Number, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	LogInt(Number, "", "", NumberSystem, LoggingOption, TimeToDisplay, ViewportKeyName);
+	LogInt(Number, "", "", NumberSystem, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-void ULog::Number(const int64 Number, EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Number(const int64 Number, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	LogInt(Number, "", "", NumberSystem, LoggingOption, TimeToDisplay, ViewportKeyName);
+	LogInt(Number, "", "", NumberSystem, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-void ULog::Number(const uint8 Number, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Number(const uint8 Number, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	LogUInt(Number, "", "", NumberSystem, LoggingOption, TimeToDisplay, ViewportKeyName);
+	LogUInt(Number, "", "", NumberSystem, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-void ULog::Number(const uint16 Number, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Number(const uint16 Number, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	LogUInt(Number, "", "", NumberSystem, LoggingOption, TimeToDisplay, ViewportKeyName);
+	LogUInt(Number, "", "", NumberSystem, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-void ULog::Number(const uint32 Number, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Number(const uint32 Number, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	LogUInt(Number, "", "", NumberSystem, LoggingOption, TimeToDisplay, ViewportKeyName);
+	LogUInt(Number, "", "", NumberSystem, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-void ULog::Number(const uint64 Number, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Number(const uint64 Number, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	LogUInt(Number, "", "", NumberSystem, LoggingOption, TimeToDisplay, ViewportKeyName);
+	LogUInt(Number, "", "", NumberSystem, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-void ULog::Number(const float Number, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Number(const float Number, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	LogFloat(Number, "", "", LoggingOption, TimeToDisplay, ViewportKeyName);
+	LogFloat(Number, "", "", LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-void ULog::Number(const double Number, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Number(const double Number, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	LogFloat(Number, "", "", LoggingOption, TimeToDisplay, ViewportKeyName);
+	LogFloat(Number, "", "", LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-void ULog::Number(const long Number, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Number(const long Number, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	LogLongInt(Number, "", "", NumberSystem, LoggingOption, TimeToDisplay, ViewportKeyName);
+	LogLongInt(Number, "", "", NumberSystem, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-void ULog::LogArray_Internal(const TArray<FString>& InArray, const FString& Prefix, const FString& Suffix, const ELoggingOptions& LoggingOption, const float TimeToDisplay)
+void ULog::LogArray_Internal(const TArray<FString>& InArray, const FString& Prefix, const FString& Suffix, const ELoggingOptions& LoggingOption, const float TimeToDisplay, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
+	const auto LogToViewport = [&](const bool bWriteToLog = true)
+	{
+		if (!Suffix.IsEmpty())
+			LogMessage_Internal("", DL_Info, "", Suffix, Settings->InfoColor, LO_Viewport, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString(), bWriteToLog, ContextObject);
+
+		for (int32 i = InArray.Num() - 1; i >= 0; i--)
+		{
+			LogMessage_Internal(FString::FromInt(i) + ": [" + InArray[i] + "]", DL_Info, "", "", Settings->InfoColor, LO_Viewport, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString(), bWriteToLog, ContextObject);
+		}
+
+		if (!Prefix.IsEmpty())
+			LogMessage_Internal("", DL_Info, Prefix, "", Settings->InfoColor, LO_Viewport, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString(), bWriteToLog, ContextObject);
+	};
+
+	const auto LogToConsole = [&](const bool bWriteToLog = true)
+	{
+		if (!Prefix.IsEmpty())
+			LogMessage_Internal("", DL_Info, Prefix, "", Settings->InfoColor, LO_Console, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString(), bWriteToLog, ContextObject);
+
+		for (int32 i = 0; i < InArray.Num(); i++)
+		{
+			LogMessage_Internal(FString::FromInt(i) + ": [" + InArray[i] + "]", DL_Info, "", "", Settings->InfoColor, LO_Console, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString(), bWriteToLog, ContextObject);
+		}
+
+		if (!Suffix.IsEmpty())
+			LogMessage_Internal("", DL_Info, "", Suffix, Settings->InfoColor, LO_Console, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString(), bWriteToLog, ContextObject);
+	};
+	
 	switch (LoggingOption)
 	{
 		case LO_Viewport:
-		if (!Suffix.IsEmpty())
-			LogMessage_Internal("", DL_Info, "", Suffix, Settings->InfoColor, LO_Viewport, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString());
-
-		for (int32 i = InArray.Num() - 1; i >= 0; i--)
-		{
-			LogMessage_Internal(FString::FromInt(i) + ": [" + InArray[i] + "]", DL_Info, "", "", Settings->InfoColor, LO_Viewport, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString());
-		}
-
-		if (!Prefix.IsEmpty())
-			LogMessage_Internal("", DL_Info, Prefix, "", Settings->InfoColor, LO_Viewport, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString());
+		LogToViewport();
 		break;
 
 		case LO_Console:
-		if (!Suffix.IsEmpty())
-			LogMessage_Internal("", DL_Info, "", Suffix, Settings->InfoColor, LO_Console, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString());
-
-		for (int32 i = 0; i < InArray.Num(); i++)
-		{
-			LogMessage_Internal(FString::FromInt(i) + ": [" + InArray[i] + "]", DL_Info, "", "", Settings->InfoColor, LO_Console, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString());
-		}
-
-		if (!Prefix.IsEmpty())
-			LogMessage_Internal("", DL_Info, Prefix, "", Settings->InfoColor, LO_Console, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString());
+		LogToConsole();
 		break;
 
 		case LO_Both:
-		LogMessage_Internal("", DL_Info, "", Suffix, Settings->InfoColor, LO_Viewport, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString(), false);
-
-		for (int32 i = InArray.Num() - 1; i >= 0; i--)
-		{
-			LogMessage_Internal(FString::FromInt(i) + ": [" + InArray[i] + "]", DL_Info, "", "", Settings->InfoColor, LO_Viewport, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString(), false);
-		}
-		
-		LogMessage_Internal("", DL_Info, Prefix, "", Settings->InfoColor, LO_Viewport, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString(), false);
-
-		if (!Prefix.IsEmpty())
-			LogMessage_Internal("", DL_Info, Prefix, "", Settings->InfoColor, LO_Console, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString());
-
-		for (int32 i = 0; i < InArray.Num(); i++)
-		{
-			LogMessage_Internal(FString::FromInt(i) + ": [" + InArray[i] + "]", DL_Info, "", "", Settings->InfoColor, LO_Console, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString());
-		}
-		
-		if (!Suffix.IsEmpty())
-			LogMessage_Internal("", DL_Info, "", Suffix, Settings->InfoColor, LO_Console, TimeToDisplay, NAME_None, LogArray.GetCategoryName().ToString());
+		LogToViewport(false);
+		LogToConsole();
 		break;
 
 		case LO_NoLog:
-		break;
+		return;
 
 		default:
 		break;
@@ -800,7 +794,7 @@ void ULog::LogArray_Internal(const TArray<FString>& InArray, const FString& Pref
 #endif
 }
 
-void ULog::Array_Int32(TArray<int32> InArray, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Array_Int32(TArray<int32> InArray, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	TArray<FString> InStringArray;
@@ -810,14 +804,14 @@ void ULog::Array_Int32(TArray<int32> InArray, const FString& Prefix, const FStri
 		InStringArray.Add(FString::FromInt(Element));
 	}
 
-	LogArray_Internal(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
+	LogArray_Internal(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Array_Int64(TArray<int64> InArray, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Array_Int64(TArray<int64> InArray, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	TArray<FString> InStringArray;
@@ -827,14 +821,14 @@ void ULog::Array_Int64(TArray<int64> InArray, const FString& Prefix, const FStri
 		InStringArray.Add(FString::FromInt(Element));
 	}
 
-	LogArray_Internal(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
+	LogArray_Internal(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Array_Float(TArray<float> InArray, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Array_Float(TArray<float> InArray, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	TArray<FString> InStringArray;
@@ -844,14 +838,14 @@ void ULog::Array_Float(TArray<float> InArray, const FString& Prefix, const FStri
 		InStringArray.Add(FString::SanitizeFloat(Element));
 	}
 
-	LogArray_Internal(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
+	LogArray_Internal(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Array_Double(TArray<double> InArray, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Array_Double(TArray<double> InArray, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	TArray<FString> InStringArray;
@@ -861,14 +855,14 @@ void ULog::Array_Double(TArray<double> InArray, const FString& Prefix, const FSt
 		InStringArray.Add(FString::SanitizeFloat(Element));
 	}
 
-	LogArray_Internal(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
+	LogArray_Internal(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Array_Bool(TArray<bool> InArray, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Array_Bool(TArray<bool> InArray, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	TArray<FString> InStringArray;
@@ -881,14 +875,14 @@ void ULog::Array_Bool(TArray<bool> InArray, const FString& Prefix, const FString
 			InStringArray.Add(FString("False"));
 	}
 
-	LogArray_Internal(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
+	LogArray_Internal(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Array_Vector(TArray<FVector> InArray, const bool bCompact, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Array_Vector(TArray<FVector> InArray, const bool bCompact, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	TArray<FString> InStringArray;
@@ -906,14 +900,14 @@ void ULog::Array_Vector(TArray<FVector> InArray, const bool bCompact, const FStr
 		}
 	}
 
-	LogArray_Internal(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
+	LogArray_Internal(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Array_Vector2D(TArray<FVector2D> InArray, const bool bCompact, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Array_Vector2D(TArray<FVector2D> InArray, const bool bCompact, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	TArray<FString> InStringArray;
@@ -931,14 +925,14 @@ void ULog::Array_Vector2D(TArray<FVector2D> InArray, const bool bCompact, const 
 		}
 	}
 
-	LogArray_Internal(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
+	LogArray_Internal(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Array_Rotator(TArray<FRotator> InArray, const bool bCompact, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Array_Rotator(TArray<FRotator> InArray, const bool bCompact, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	TArray<FString> InStringArray;
@@ -956,14 +950,14 @@ void ULog::Array_Rotator(TArray<FRotator> InArray, const bool bCompact, const FS
 		}
 	}
 
-	LogArray_Internal(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
+	LogArray_Internal(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Array_Transform(TArray<FTransform> InArray, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Array_Transform(TArray<FTransform> InArray, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	TArray<FString> InStringArray;
@@ -973,14 +967,14 @@ void ULog::Array_Transform(TArray<FTransform> InArray, const FString& Prefix, co
 		InStringArray.Add(Element.ToString());
 	}
 
-	LogArray_Internal(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
+	LogArray_Internal(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Array_Quat(TArray<FQuat> InArray, const bool bCompact, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Array_Quat(TArray<FQuat> InArray, const bool bCompact, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	TArray<FString> InStringArray;
@@ -998,14 +992,14 @@ void ULog::Array_Quat(TArray<FQuat> InArray, const bool bCompact, const FString&
 		}
 	}
 
-	LogArray_Internal(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
+	LogArray_Internal(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Array_Matrix(TArray<FMatrix> InArray, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Array_Matrix(TArray<FMatrix> InArray, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	TArray<FString> InStringArray;
@@ -1015,24 +1009,24 @@ void ULog::Array_Matrix(TArray<FMatrix> InArray, const FString& Prefix, const FS
 		InStringArray.Add(Element.ToString());
 	}
 
-	LogArray_Internal(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
+	LogArray_Internal(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Array_String(const TArray<FString> InArray, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Array_String(const TArray<FString> InArray, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	LogArray_Internal(InArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
+	LogArray_Internal(InArray, Prefix, Suffix, LoggingOption, TimeToDisplay, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Array_Name(TArray<FName> InArray, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Array_Name(TArray<FName> InArray, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	TArray<FString> InStringArray;
@@ -1042,14 +1036,14 @@ void ULog::Array_Name(TArray<FName> InArray, const FString& Prefix, const FStrin
 		InStringArray.Add(Element.ToString());
 	}
 
-	LogArray_Internal(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
+	LogArray_Internal(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Array_Text(TArray<FText> InArray, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Array_Text(TArray<FText> InArray, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	TArray<FString> InStringArray;
@@ -1059,14 +1053,14 @@ void ULog::Array_Text(TArray<FText> InArray, const FString& Prefix, const FStrin
 		InStringArray.Add(Element.ToString());
 	}
 
-	LogArray_Internal(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
+	LogArray_Internal(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Array_DateTime(TArray<FDateTime> InArray, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Array_DateTime(TArray<FDateTime> InArray, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	TArray<FString> InStringArray;
@@ -1076,14 +1070,14 @@ void ULog::Array_DateTime(TArray<FDateTime> InArray, const FString& Prefix, cons
 		InStringArray.Add(Element.ToString());
 	}
 
-	LogArray_Internal(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
+	LogArray_Internal(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Array_Color(TArray<FLinearColor> InArray, const bool bCompact, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay)
+void ULog::Array_Color(TArray<FLinearColor> InArray, const bool bCompact, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, const float TimeToDisplay, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	TArray<FString> InStringArray;
@@ -1101,47 +1095,47 @@ void ULog::Array_Color(TArray<FLinearColor> InArray, const bool bCompact, const 
 		}
 	}
 
-	LogArray_Internal(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay);
+	LogArray_Internal(InStringArray, Prefix, Suffix, LoggingOption, TimeToDisplay, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Percent(const float Number, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Percent(const float Number, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	LogMessage_Internal(FString::SanitizeFloat(Number) + "%", DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogNumber.GetCategoryName().ToString());
+	LogMessage_Internal(FString::SanitizeFloat(Number) + "%", DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogNumber.GetCategoryName().ToString(), true, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Percent(const float Number, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Percent(const float Number, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	Percent(Number, "", "", LoggingOption, TimeToDisplay, ViewportKeyName);
+	Percent(Number, "", "", LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-void ULog::Bool(const bool bBoolToTest, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Bool(const bool bBoolToTest, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	if (bBoolToTest)
-		LogMessage_Internal("True", DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogBool.GetCategoryName().ToString());
+		LogMessage_Internal("True", DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogBool.GetCategoryName().ToString(), true, ContextObject);
 	else
-		LogMessage_Internal("False", DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogBool.GetCategoryName().ToString());
+		LogMessage_Internal("False", DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogBool.GetCategoryName().ToString(), true, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Bool(const bool bBoolToTest, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Bool(const bool bBoolToTest, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	Bool(bBoolToTest, "", "", LoggingOption, TimeToDisplay, ViewportKeyName);
+	Bool(bBoolToTest, "", "", LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-void ULog::Vector(const FVector& InVector, const bool bCompact, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Vector(const FVector& InVector, const bool bCompact, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	FString FinalVectorString;
@@ -1161,12 +1155,12 @@ void ULog::Vector(const FVector& InVector, const bool bCompact, const FString& P
 #endif
 }
 
-void ULog::Vector(const FVector& InVector, const bool bCompact, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Vector(const FVector& InVector, const bool bCompact, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	Vector(InVector, bCompact, "", "", LoggingOption, TimeToDisplay, ViewportKeyName);
+	Vector(InVector, bCompact, "", "", LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-void ULog::Vector2D(const FVector2D& InVector2D, const bool bCompact, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Vector2D(const FVector2D& InVector2D, const bool bCompact, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	FString FinalVectorString;
@@ -1179,19 +1173,19 @@ void ULog::Vector2D(const FVector2D& InVector2D, const bool bCompact, const FStr
 		FinalVectorString = InVector2D.ToString();
 	}
 	
-	LogMessage_Internal(FinalVectorString, DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogVector.GetCategoryName().ToString());
+	LogMessage_Internal(FinalVectorString, DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogVector.GetCategoryName().ToString(), true, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Vector2D(const FVector2D& InVector2D, const bool bCompact, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Vector2D(const FVector2D& InVector2D, const bool bCompact, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	Vector2D(InVector2D, bCompact, "", "", LoggingOption, TimeToDisplay, ViewportKeyName);
+	Vector2D(InVector2D, bCompact, "", "", LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-void ULog::Rotator(const FRotator& InRotator, const bool bCompact, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Rotator(const FRotator& InRotator, const bool bCompact, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	FString FinalRotatorString;
@@ -1211,12 +1205,12 @@ void ULog::Rotator(const FRotator& InRotator, const bool bCompact, const FString
 #endif
 }
 
-void ULog::Rotator(const FRotator& InRotator, const bool bCompact, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Rotator(const FRotator& InRotator, const bool bCompact, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	Rotator(InRotator, bCompact, "", "", LoggingOption, TimeToDisplay, ViewportKeyName);
+	Rotator(InRotator, bCompact, "", "", LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-void ULog::Transform(const FTransform& InTransform, const FString& Prefix, const bool bFormat, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Transform(const FTransform& InTransform, const FString& Prefix, const bool bFormat, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	if (LoggingOption == LO_Viewport)
@@ -1240,7 +1234,7 @@ void ULog::Transform(const FTransform& InTransform, const FString& Prefix, const
 		}
 		else
 		{
-			LogMessage_Internal(InTransform.ToString(), DL_Info, Prefix, "", Settings->InfoColor, LO_Viewport, TimeToDisplay, ViewportKeyName, LogTransform.GetCategoryName().ToString());
+			LogMessage_Internal(InTransform.ToString(), DL_Info, Prefix, "", Settings->InfoColor, LO_Viewport, TimeToDisplay, ViewportKeyName, LogTransform.GetCategoryName().ToString(), true, ContextObject);
 		}
 	}
 	else if (LoggingOption == LO_Console)
@@ -1296,7 +1290,7 @@ void ULog::Transform(const FTransform& InTransform, const FString& Prefix, const
 		}
 		else
 		{
-			LogMessage_Internal(InTransform.ToString(), DL_Info, Prefix, "", Settings->InfoColor, LO_Both, TimeToDisplay, ViewportKeyName, LogTransform.GetCategoryName().ToString());
+			LogMessage_Internal(InTransform.ToString(), DL_Info, Prefix, "", Settings->InfoColor, LO_Both, TimeToDisplay, ViewportKeyName, LogTransform.GetCategoryName().ToString(), true, ContextObject);
 		}
 	}
 #elif (UE_BUILD_SHIPPING)
@@ -1305,12 +1299,12 @@ void ULog::Transform(const FTransform& InTransform, const FString& Prefix, const
 #endif
 }
 
-void ULog::Transform(const FTransform& InTransform, const ELoggingOptions LoggingOption, const bool bFormat, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Transform(const FTransform& InTransform, const ELoggingOptions LoggingOption, const bool bFormat, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	Transform(InTransform, "", bFormat, LoggingOption, TimeToDisplay, ViewportKeyName);
+	Transform(InTransform, "", bFormat, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-void ULog::Quat(const FQuat& Quaternion, const bool bCompact, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Quat(const FQuat& Quaternion, const bool bCompact, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	FString FinalQuatString;
@@ -1323,34 +1317,34 @@ void ULog::Quat(const FQuat& Quaternion, const bool bCompact, const FString& Pre
 		FinalQuatString = Quaternion.ToString();
 	}
 	
-	LogMessage_Internal(FinalQuatString, DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogQuaternion.GetCategoryName().ToString());
+	LogMessage_Internal(FinalQuatString, DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogQuaternion.GetCategoryName().ToString(), true, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Quat(const FQuat& Quaternion, const bool bCompact, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Quat(const FQuat& Quaternion, const bool bCompact, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	Quat(Quaternion, bCompact, "", "", LoggingOption, TimeToDisplay, ViewportKeyName);
+	Quat(Quaternion, bCompact, "", "", LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-void ULog::Matrix(const FMatrix& InMatrix, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Matrix(const FMatrix& InMatrix, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	LogMessage_Internal(InMatrix.ToString(), DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogMatrix.GetCategoryName().ToString());
+	LogMessage_Internal(InMatrix.ToString(), DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogMatrix.GetCategoryName().ToString(), true, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Matrix(const FMatrix& InMatrix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Matrix(const FMatrix& InMatrix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	Matrix(InMatrix, "", "", LoggingOption, TimeToDisplay, ViewportKeyName);
+	Matrix(InMatrix, "", "", LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-void ULog::Color(const FLinearColor& InColor, const bool bCompact, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Color(const FLinearColor& InColor, const bool bCompact, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	FString FinalColorString;
@@ -1363,31 +1357,31 @@ void ULog::Color(const FLinearColor& InColor, const bool bCompact, const FString
 		FinalColorString = InColor.ToString();
 	}
 	
-	LogMessage_Internal(FinalColorString, DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogFColor.GetCategoryName().ToString());
+	LogMessage_Internal(FinalColorString, DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogFColor.GetCategoryName().ToString(), true, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Color(const FLinearColor& InColor, const bool bCompact, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Color(const FLinearColor& InColor, const bool bCompact, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	Color(InColor, bCompact, "", "", LoggingOption, TimeToDisplay, ViewportKeyName);	
+	Color(InColor, bCompact, "", "", LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);	
 }
 
-void ULog::DateTime(const FDateTime& InDateTime, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::DateTime(const FDateTime& InDateTime, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	LogMessage_Internal(InDateTime.ToString(), DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogDateTime.GetCategoryName().ToString());
+	LogMessage_Internal(InDateTime.ToString(), DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogDateTime.GetCategoryName().ToString(), true, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::DateTime(const FDateTime& InDateTime, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::DateTime(const FDateTime& InDateTime, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	DateTime(InDateTime, "", "", LoggingOption, TimeToDisplay, ViewportKeyName);
+	DateTime(InDateTime, "", "", LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
 void ULog::MessageInWorld(const FString& Message, const FVector& WorldLocation, const float FontScale, const FString& Prefix, const FString& Suffix, const float TimeToDisplay)
@@ -1406,7 +1400,7 @@ void ULog::MessageInWorld(const FString& Message, const FVector& WorldLocation, 
 	MessageInWorld(Message, WorldLocation, FontScale, "", "", TimeToDisplay);
 }
 
-void ULog::Temperature(const float InTemperatureValue, const EDebugLogTemperatureUnit TemperatureUnit, const bool bConvertValueToInt, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Temperature(const float InTemperatureValue, const EDebugLogTemperatureUnit TemperatureUnit, const bool bConvertValueToInt, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	FString UnitSymbol = "";
@@ -1426,19 +1420,19 @@ void ULog::Temperature(const float InTemperatureValue, const EDebugLogTemperatur
 	break;
 	}
 
-	LogUnitSystem(InTemperatureValue, UnitSymbol, bConvertValueToInt, Prefix, Suffix, LoggingOption, TimeToDisplay, ViewportKeyName);
+	LogUnitSystem(InTemperatureValue, UnitSymbol, bConvertValueToInt, Prefix, Suffix, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Temperature(const float InTemperatureValue, const EDebugLogTemperatureUnit TemperatureUnit, const bool bConvertValueToInt, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Temperature(const float InTemperatureValue, const EDebugLogTemperatureUnit TemperatureUnit, const bool bConvertValueToInt, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	Temperature(InTemperatureValue, TemperatureUnit, bConvertValueToInt, "", "", LoggingOption, TimeToDisplay, ViewportKeyName);
+	Temperature(InTemperatureValue, TemperatureUnit, bConvertValueToInt, "", "", LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-void ULog::Volume(const float InVolumeValue, const EDebugLogVolumeUnit VolumeUnit, const bool bConvertValueToInt, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Volume(const float InVolumeValue, const EDebugLogVolumeUnit VolumeUnit, const bool bConvertValueToInt, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	FString UnitSymbol = "";
@@ -1461,19 +1455,19 @@ void ULog::Volume(const float InVolumeValue, const EDebugLogVolumeUnit VolumeUni
 	break;
 	}
 	
-	LogUnitSystem(InVolumeValue, UnitSymbol, bConvertValueToInt, Prefix, Suffix, LoggingOption, TimeToDisplay, ViewportKeyName);
+	LogUnitSystem(InVolumeValue, UnitSymbol, bConvertValueToInt, Prefix, Suffix, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Volume(const float InVolumeValue, const EDebugLogVolumeUnit VolumeUnit, const bool bConvertValueToInt, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Volume(const float InVolumeValue, const EDebugLogVolumeUnit VolumeUnit, const bool bConvertValueToInt, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	Volume(InVolumeValue, VolumeUnit, bConvertValueToInt, "", "", LoggingOption, TimeToDisplay, ViewportKeyName);
+	Volume(InVolumeValue, VolumeUnit, bConvertValueToInt, "", "", LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-void ULog::Data(const float InDataValue, const EDebugLogDataUnit DataUnit, const bool bConvertValueToInt, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Data(const float InDataValue, const EDebugLogDataUnit DataUnit, const bool bConvertValueToInt, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	FString UnitSymbol = "";
@@ -1507,19 +1501,19 @@ void ULog::Data(const float InDataValue, const EDebugLogDataUnit DataUnit, const
 		UnitSymbol.Append("s");
 	}
 	
-	LogUnitSystem(InDataValue, UnitSymbol, bConvertValueToInt, Prefix, Suffix, LoggingOption, TimeToDisplay, ViewportKeyName);
+	LogUnitSystem(InDataValue, UnitSymbol, bConvertValueToInt, Prefix, Suffix, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Data(const float InDataValue, const EDebugLogDataUnit DataUnit, const bool bConvertValueToInt, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Data(const float InDataValue, const EDebugLogDataUnit DataUnit, const bool bConvertValueToInt, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	Data(InDataValue, DataUnit, bConvertValueToInt, "", "", LoggingOption, TimeToDisplay, ViewportKeyName);
+	Data(InDataValue, DataUnit, bConvertValueToInt, "", "", LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-void ULog::Length(const float InLengthValue, const EDebugLogLengthUnit LengthUnit, const bool bConvertValueToInt, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Length(const float InLengthValue, const EDebugLogLengthUnit LengthUnit, const bool bConvertValueToInt, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	FString UnitSymbol = "";
@@ -1560,19 +1554,19 @@ void ULog::Length(const float InLengthValue, const EDebugLogLengthUnit LengthUni
 	break;
 	}
 
-	LogUnitSystem(InLengthValue, UnitSymbol, bConvertValueToInt, Prefix, Suffix, LoggingOption, TimeToDisplay, ViewportKeyName);
+	LogUnitSystem(InLengthValue, UnitSymbol, bConvertValueToInt, Prefix, Suffix, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Length(const float InLengthValue, const EDebugLogLengthUnit LengthUnit, const bool bConvertValueToInt, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Length(const float InLengthValue, const EDebugLogLengthUnit LengthUnit, const bool bConvertValueToInt, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	Length(InLengthValue, LengthUnit, bConvertValueToInt, "", "", LoggingOption, TimeToDisplay, ViewportKeyName);
+	Length(InLengthValue, LengthUnit, bConvertValueToInt, "", "", LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-void ULog::Mass(const float InMassValue, const EDebugLogMassUnit MassUnit, const bool bConvertValueToInt, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Mass(const float InMassValue, const EDebugLogMassUnit MassUnit, const bool bConvertValueToInt, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	FString UnitSymbol = "";
@@ -1604,19 +1598,19 @@ void ULog::Mass(const float InMassValue, const EDebugLogMassUnit MassUnit, const
 	break;
 	}
 
-	LogUnitSystem(InMassValue, UnitSymbol, bConvertValueToInt, Prefix, Suffix, LoggingOption, TimeToDisplay, ViewportKeyName);
+	LogUnitSystem(InMassValue, UnitSymbol, bConvertValueToInt, Prefix, Suffix, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Mass(const float InMassValue, const EDebugLogMassUnit MassUnit, const bool bConvertValueToInt, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Mass(const float InMassValue, const EDebugLogMassUnit MassUnit, const bool bConvertValueToInt, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	Mass(InMassValue, MassUnit, bConvertValueToInt, "", "", LoggingOption, TimeToDisplay, ViewportKeyName);
+	Mass(InMassValue, MassUnit, bConvertValueToInt, "", "", LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-void ULog::Speed(const float InSpeedValue, const EDebugLogSpeedUnit SpeedUnit, const bool bConvertValueToInt, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Speed(const float InSpeedValue, const EDebugLogSpeedUnit SpeedUnit, const bool bConvertValueToInt, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	FString UnitSymbol = "";
@@ -1681,19 +1675,19 @@ void ULog::Speed(const float InSpeedValue, const EDebugLogSpeedUnit SpeedUnit, c
 	break;
 	}
 
-	LogUnitSystem(InSpeedValue, UnitSymbol, bConvertValueToInt, Prefix, Suffix, LoggingOption, TimeToDisplay, ViewportKeyName);
+	LogUnitSystem(InSpeedValue, UnitSymbol, bConvertValueToInt, Prefix, Suffix, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Speed(const float InSpeedValue, const EDebugLogSpeedUnit SpeedUnit, const bool bConvertValueToInt, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Speed(const float InSpeedValue, const EDebugLogSpeedUnit SpeedUnit, const bool bConvertValueToInt, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	Speed(InSpeedValue, SpeedUnit, bConvertValueToInt, "", "", LoggingOption, TimeToDisplay, ViewportKeyName);
+	Speed(InSpeedValue, SpeedUnit, bConvertValueToInt, "", "", LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-void ULog::Time(const float InTimeValue, const EDebugLogTimeUnit TimeUnit, const bool bConvertValueToInt, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Time(const float InTimeValue, const EDebugLogTimeUnit TimeUnit, const bool bConvertValueToInt, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	FString UnitSymbol = "";
@@ -1770,19 +1764,19 @@ void ULog::Time(const float InTimeValue, const EDebugLogTimeUnit TimeUnit, const
 	break;
 	}
 	
-	LogUnitSystem(InTimeValue, UnitSymbol, bConvertValueToInt, Prefix, Suffix, LoggingOption, TimeToDisplay, ViewportKeyName);
+	LogUnitSystem(InTimeValue, UnitSymbol, bConvertValueToInt, Prefix, Suffix, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Time(const float InTimeValue, const EDebugLogTimeUnit TimeUnit, const bool bConvertValueToInt, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Time(const float InTimeValue, const EDebugLogTimeUnit TimeUnit, const bool bConvertValueToInt, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	Time(InTimeValue, TimeUnit, bConvertValueToInt, "", "", LoggingOption, TimeToDisplay, ViewportKeyName);
+	Time(InTimeValue, TimeUnit, bConvertValueToInt, "", "", LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-void ULog::Angle(const float InAngleValue, const EDebugLogAngularUnit AngleUnit, const bool bConvertValueToInt, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Angle(const float InAngleValue, const EDebugLogAngularUnit AngleUnit, const bool bConvertValueToInt, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	FString UnitSymbol = "";
@@ -1797,19 +1791,19 @@ void ULog::Angle(const float InAngleValue, const EDebugLogAngularUnit AngleUnit,
 		break;
 	}
 	
-	LogUnitSystem(InAngleValue, UnitSymbol, bConvertValueToInt, Prefix, Suffix, LoggingOption, TimeToDisplay, ViewportKeyName);
+	LogUnitSystem(InAngleValue, UnitSymbol, bConvertValueToInt, Prefix, Suffix, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Angle(const float InAngleValue, const EDebugLogAngularUnit AngleUnit, const bool bConvertValueToInt, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Angle(const float InAngleValue, const EDebugLogAngularUnit AngleUnit, const bool bConvertValueToInt, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	Angle(InAngleValue, AngleUnit, bConvertValueToInt, "", "", LoggingOption, TimeToDisplay, ViewportKeyName);
+	Angle(InAngleValue, AngleUnit, bConvertValueToInt, "", "", LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-void ULog::Force(const float InForceValue, const EDebugLogForceUnit ForceUnit, const bool bConvertValueToInt, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Force(const float InForceValue, const EDebugLogForceUnit ForceUnit, const bool bConvertValueToInt, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	FString UnitSymbol = "";
@@ -1831,19 +1825,19 @@ void ULog::Force(const float InForceValue, const EDebugLogForceUnit ForceUnit, c
 		break;
 	}
 	
-	LogUnitSystem(InForceValue, UnitSymbol, bConvertValueToInt, Prefix, Suffix, LoggingOption, TimeToDisplay, ViewportKeyName);
+	LogUnitSystem(InForceValue, UnitSymbol, bConvertValueToInt, Prefix, Suffix, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Force(const float InForceValue, const EDebugLogForceUnit ForceUnit, const bool bConvertValueToInt, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Force(const float InForceValue, const EDebugLogForceUnit ForceUnit, const bool bConvertValueToInt, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	Force(InForceValue, ForceUnit, bConvertValueToInt, "", "", LoggingOption, TimeToDisplay, ViewportKeyName);
+	Force(InForceValue, ForceUnit, bConvertValueToInt, "", "", LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-void ULog::Frequency(const float InFrequencyValue, const EDebugLogFrequencyUnit FrequencyUnit, const bool bConvertValueToInt, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Frequency(const float InFrequencyValue, const EDebugLogFrequencyUnit FrequencyUnit, const bool bConvertValueToInt, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	FString UnitSymbol = "";
@@ -1873,19 +1867,19 @@ void ULog::Frequency(const float InFrequencyValue, const EDebugLogFrequencyUnit 
         break;
 	}
 	
-	LogUnitSystem(InFrequencyValue, UnitSymbol, bConvertValueToInt, Prefix, Suffix, LoggingOption, TimeToDisplay, ViewportKeyName);
+	LogUnitSystem(InFrequencyValue, UnitSymbol, bConvertValueToInt, Prefix, Suffix, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Frequency(const float InFrequencyValue, const EDebugLogFrequencyUnit FrequencyUnit, const bool bConvertValueToInt, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Frequency(const float InFrequencyValue, const EDebugLogFrequencyUnit FrequencyUnit, const bool bConvertValueToInt, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	Frequency(InFrequencyValue, FrequencyUnit, bConvertValueToInt, "", "", LoggingOption, TimeToDisplay, ViewportKeyName);
+	Frequency(InFrequencyValue, FrequencyUnit, bConvertValueToInt, "", "", LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-void ULog::Light(const float InLightValue, const EDebugLogLightUnit LightUnit, const bool bConvertValueToInt, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Light(const float InLightValue, const EDebugLogLightUnit LightUnit, const bool bConvertValueToInt, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	FString UnitSymbol = "";
@@ -1911,19 +1905,19 @@ void ULog::Light(const float InLightValue, const EDebugLogLightUnit LightUnit, c
         break;
 	}
 	
-	LogUnitSystem(InLightValue, UnitSymbol, bConvertValueToInt, Prefix, Suffix, LoggingOption, TimeToDisplay, ViewportKeyName);
+	LogUnitSystem(InLightValue, UnitSymbol, bConvertValueToInt, Prefix, Suffix, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Light(const float InLightValue, const EDebugLogLightUnit LightUnit, const bool bConvertValueToInt, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Light(const float InLightValue, const EDebugLogLightUnit LightUnit, const bool bConvertValueToInt, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	Light(InLightValue, LightUnit, bConvertValueToInt, "", "", LoggingOption, TimeToDisplay, ViewportKeyName);
+	Light(InLightValue, LightUnit, bConvertValueToInt, "", "", LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-void ULog::Unit(float InUnitValue, EUnit InUnit, bool bConvertValueToInt, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Unit(float InUnitValue, EUnit InUnit, bool bConvertValueToInt, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	FString UnitSymbol = "";
@@ -2102,31 +2096,31 @@ void ULog::Unit(float InUnitValue, EUnit InUnit, bool bConvertValueToInt, const 
 		UnitSymbol.Append("s");
 	}
 	
-	LogUnitSystem(InUnitValue, UnitSymbol, bConvertValueToInt, Prefix, Suffix, LoggingOption, TimeToDisplay, ViewportKeyName);
+	LogUnitSystem(InUnitValue, UnitSymbol, bConvertValueToInt, Prefix, Suffix, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Unit(const float InUnitValue, const EUnit InUnit, const bool bConvertValueToInt, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Unit(const float InUnitValue, const EUnit InUnit, const bool bConvertValueToInt, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	Unit(InUnitValue, InUnit, bConvertValueToInt, "", "", LoggingOption, TimeToDisplay, ViewportKeyName);
+	Unit(InUnitValue, InUnit, bConvertValueToInt, "", "", LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-void ULog::Dollar(const float InDollarValue, const bool bConvertValueToInt, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Dollar(const float InDollarValue, const bool bConvertValueToInt, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	LogCurrencyUnitSystem(InDollarValue, "$", bConvertValueToInt, Prefix, Suffix, LoggingOption, TimeToDisplay, ViewportKeyName);
+	LogCurrencyUnitSystem(InDollarValue, "$", bConvertValueToInt, Prefix, Suffix, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Dollar(const float InDollarValue, const bool bConvertValueToInt, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Dollar(const float InDollarValue, const bool bConvertValueToInt, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	Dollar(InDollarValue, bConvertValueToInt, "", "", LoggingOption, TimeToDisplay, ViewportKeyName);
+	Dollar(InDollarValue, bConvertValueToInt, "", "", LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
 void ULog::Sphere(const FSphere& Sphere, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
@@ -2242,114 +2236,114 @@ void ULog::Capsule(const FCapsuleShape& Capsule, const FString& Prefix, const FS
 #endif
 }
 
-bool ULog::AssertEqual_Bool(const bool bActual, const bool bExpected, const FString Message, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+bool ULog::AssertEqual_Bool(const bool bActual, const bool bExpected, const FString Message, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	return AssertEqual<bool>(bActual, bExpected, "AssertEqual (Bool)", Message, bCrashOnFailure, LoggingOption, TimeToDisplay, ViewportKeyName);
+	return AssertEqual<bool>(bActual, bExpected, "AssertEqual (Bool)", Message, bCrashOnFailure, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-bool ULog::AssertEqual_Integer(const int32 Actual, const int32 Expected, const FString Message, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+bool ULog::AssertEqual_Integer(const int32 Actual, const int32 Expected, const FString Message, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	return AssertEqual<int32>(Actual, Expected, "AssertEqual (Integer)", Message, bCrashOnFailure, LoggingOption, TimeToDisplay, ViewportKeyName);
+	return AssertEqual<int32>(Actual, Expected, "AssertEqual (Integer)", Message, bCrashOnFailure, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-bool ULog::AssertValue_Integer(const int32 Actual, const int32 Expected, const EDebugLogComparisonMethod ShouldBe, const FString Message, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+bool ULog::AssertValue_Integer(const int32 Actual, const int32 Expected, const EDebugLogComparisonMethod ShouldBe, const FString Message, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	return AssertValue<int32>(Actual, Expected, ShouldBe, "AssertValue (Integer)", Message, bCrashOnFailure, LoggingOption, TimeToDisplay, ViewportKeyName);
+	return AssertValue<int32>(Actual, Expected, ShouldBe, "AssertValue (Integer)", Message, bCrashOnFailure, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-bool ULog::AssertEqual_Float(const float Actual, const float Expected, const FString Message, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+bool ULog::AssertEqual_Float(const float Actual, const float Expected, const FString Message, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	return AssertEqual<float>(Actual, Expected, "AssertEqual (Float)", Message, bCrashOnFailure, LoggingOption, TimeToDisplay, ViewportKeyName);
+	return AssertEqual<float>(Actual, Expected, "AssertEqual (Float)", Message, bCrashOnFailure, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-bool ULog::AssertValue_Float(const float Actual, const float Expected, const EDebugLogComparisonMethod ShouldBe, const FString Message, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+bool ULog::AssertValue_Float(const float Actual, const float Expected, const EDebugLogComparisonMethod ShouldBe, const FString Message, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	return AssertValue<float>(Actual, Expected, ShouldBe, "AssertValue (Float)", Message, bCrashOnFailure, LoggingOption, TimeToDisplay, ViewportKeyName);
+	return AssertValue<float>(Actual, Expected, ShouldBe, "AssertValue (Float)", Message, bCrashOnFailure, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-bool ULog::AssertEqual_String(const FString Actual, const FString Expected, const FString Message, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+bool ULog::AssertEqual_String(const FString Actual, const FString Expected, const FString Message, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	return AssertEqual<FString>(Actual, Expected, "AssertEqual (String)", Message, bCrashOnFailure, LoggingOption, TimeToDisplay, ViewportKeyName);
+	return AssertEqual<FString>(Actual, Expected, "AssertEqual (String)", Message, bCrashOnFailure, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-bool ULog::AssertNotEqual_String(const FString Actual, const FString Expected, const FString Message, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+bool ULog::AssertNotEqual_String(const FString Actual, const FString Expected, const FString Message, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	return AssertNotEqual<FString>(Actual, Expected, "AssertNotEqual (String)", Message, bCrashOnFailure, LoggingOption, TimeToDisplay, ViewportKeyName);
+	return AssertNotEqual<FString>(Actual, Expected, "AssertNotEqual (String)", Message, bCrashOnFailure, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-bool ULog::AssertEqual_Name(const FName Actual, const FName Expected, const FString Message, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+bool ULog::AssertEqual_Name(const FName Actual, const FName Expected, const FString Message, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	return AssertEqual<FName>(Actual, Expected, "AssertEqual (Name)", Message, bCrashOnFailure, LoggingOption, TimeToDisplay, ViewportKeyName);
+	return AssertEqual<FName>(Actual, Expected, "AssertEqual (Name)", Message, bCrashOnFailure, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-bool ULog::AssertNotEqual_Name(const FName Actual, const FName Expected, const FString Message, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+bool ULog::AssertNotEqual_Name(const FName Actual, const FName Expected, const FString Message, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	return AssertNotEqual<FName>(Actual, Expected, "AssertNotEqual (Name)", Message, bCrashOnFailure, LoggingOption, TimeToDisplay, ViewportKeyName);
+	return AssertNotEqual<FName>(Actual, Expected, "AssertNotEqual (Name)", Message, bCrashOnFailure, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-bool ULog::AssertEqual_Object(UObject* Actual, UObject* Expected, const FString Message, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+bool ULog::AssertEqual_Object(UObject* Actual, UObject* Expected, const FString Message, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	return AssertEqual<UObject>(Actual, Expected, "AssertEqual (Object)", Message, bCrashOnFailure, LoggingOption, TimeToDisplay, ViewportKeyName);
+	return AssertEqual<UObject>(Actual, Expected, "AssertEqual (Object)", Message, bCrashOnFailure, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-bool ULog::AssertNotEqual_Object(UObject* Actual, UObject* Expected, const FString Message, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+bool ULog::AssertNotEqual_Object(UObject* Actual, UObject* Expected, const FString Message, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	return AssertNotEqual<UObject>(Actual, Expected, "AssertNotEqual (Object)", Message, bCrashOnFailure, LoggingOption, TimeToDisplay, ViewportKeyName);
+	return AssertNotEqual<UObject>(Actual, Expected, "AssertNotEqual (Object)", Message, bCrashOnFailure, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-bool ULog::AssertEqual_Vector(const FVector Actual, const FVector Expected, const FString Message, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+bool ULog::AssertEqual_Vector(const FVector Actual, const FVector Expected, const FString Message, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	return AssertEqual<FVector>(Actual, Expected, "AssertEqual (Vector)", Message, bCrashOnFailure, LoggingOption, TimeToDisplay, ViewportKeyName);
+	return AssertEqual<FVector>(Actual, Expected, "AssertEqual (Vector)", Message, bCrashOnFailure, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-bool ULog::AssertEqual_Vector2D(const FVector2D Actual, const FVector2D Expected, const FString Message, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+bool ULog::AssertEqual_Vector2D(const FVector2D Actual, const FVector2D Expected, const FString Message, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	return AssertEqual<FVector2D>(Actual, Expected, "AssertEqual (Vector2D)", Message, bCrashOnFailure, LoggingOption, TimeToDisplay, ViewportKeyName);
+	return AssertEqual<FVector2D>(Actual, Expected, "AssertEqual (Vector2D)", Message, bCrashOnFailure, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-bool ULog::AssertNotEqual_Vector(const FVector Actual, const FVector Expected, const FString Message, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+bool ULog::AssertNotEqual_Vector(const FVector Actual, const FVector Expected, const FString Message, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	return AssertNotEqual<FVector>(Actual, Expected, "AssertNotEqual (Vector)", Message, bCrashOnFailure, LoggingOption, TimeToDisplay, ViewportKeyName);
+	return AssertNotEqual<FVector>(Actual, Expected, "AssertNotEqual (Vector)", Message, bCrashOnFailure, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-bool ULog::AssertNotEqual_Vector2D(const FVector2D Actual, const FVector2D Expected, const FString Message, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+bool ULog::AssertNotEqual_Vector2D(const FVector2D Actual, const FVector2D Expected, const FString Message, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	return AssertNotEqual<FVector2D>(Actual, Expected, "AssertNotEqual (Vector2D)", Message, bCrashOnFailure, LoggingOption, TimeToDisplay, ViewportKeyName);
+	return AssertNotEqual<FVector2D>(Actual, Expected, "AssertNotEqual (Vector2D)", Message, bCrashOnFailure, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-bool ULog::AssertEqual_Rotator(const FRotator Actual, const FRotator Expected, const FString Message, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+bool ULog::AssertEqual_Rotator(const FRotator Actual, const FRotator Expected, const FString Message, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	return AssertEqual<FRotator>(Actual, Expected, "AssertEqual (Rotator)", Message, bCrashOnFailure, LoggingOption, TimeToDisplay, ViewportKeyName);
+	return AssertEqual<FRotator>(Actual, Expected, "AssertEqual (Rotator)", Message, bCrashOnFailure, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-bool ULog::AssertNotEqual_Rotator(const FRotator Actual, const FRotator Expected, const FString Message, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+bool ULog::AssertNotEqual_Rotator(const FRotator Actual, const FRotator Expected, const FString Message, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	return AssertNotEqual<FRotator>(Actual, Expected, "AssertNotEqual (Rotator)", Message, bCrashOnFailure, LoggingOption, TimeToDisplay, ViewportKeyName);
+	return AssertNotEqual<FRotator>(Actual, Expected, "AssertNotEqual (Rotator)", Message, bCrashOnFailure, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-bool ULog::AssertEqual_Quat(const FQuat Actual, const FQuat Expected, const FString Message, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+bool ULog::AssertEqual_Quat(const FQuat Actual, const FQuat Expected, const FString Message, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	return AssertEqual<FQuat>(Actual, Expected, "AssertEqual (Quat)", Message, bCrashOnFailure, LoggingOption, TimeToDisplay, ViewportKeyName);
+	return AssertEqual<FQuat>(Actual, Expected, "AssertEqual (Quat)", Message, bCrashOnFailure, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-bool ULog::AssertNotEqual_Quat(const FQuat Actual, const FQuat Expected, const FString Message, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+bool ULog::AssertNotEqual_Quat(const FQuat Actual, const FQuat Expected, const FString Message, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	return AssertNotEqual<FQuat>(Actual, Expected, "AssertNotEqual (Quat)", Message, bCrashOnFailure, LoggingOption, TimeToDisplay, ViewportKeyName);
+	return AssertNotEqual<FQuat>(Actual, Expected, "AssertNotEqual (Quat)", Message, bCrashOnFailure, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-bool ULog::AssertEqual_Transform(const FTransform Actual, const FTransform Expected, const FString Message, const bool bNoScale, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+bool ULog::AssertEqual_Transform(const FTransform Actual, const FTransform Expected, const FString Message, const bool bNoScale, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	if (bNoScale && !Actual.EqualsNoScale(Expected))
 	{
-		AssertFailed(Message, bCrashOnFailure, LoggingOption, TimeToDisplay, ViewportKeyName);
+		AssertFailed(Message, bCrashOnFailure, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 
 		return false;
 	}
 
 	if (!Actual.Equals(Expected))
 	{
-		AssertFailed(Message, bCrashOnFailure, LoggingOption, TimeToDisplay, ViewportKeyName);
+		AssertFailed(Message, bCrashOnFailure, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 
 		return false;
 	}
@@ -2363,19 +2357,19 @@ bool ULog::AssertEqual_Transform(const FTransform Actual, const FTransform Expec
 	return false;
 }
 
-bool ULog::AssertNotEqual_Transform(const FTransform Actual, const FTransform Expected, const FString Message, const bool bNoScale, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+bool ULog::AssertNotEqual_Transform(const FTransform Actual, const FTransform Expected, const FString Message, const bool bNoScale, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	if (bNoScale && Actual.EqualsNoScale(Expected))
 	{
-		AssertFailed(Message, bCrashOnFailure, LoggingOption, TimeToDisplay, ViewportKeyName);
+		AssertFailed(Message, bCrashOnFailure, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 
 		return false;
 	}
 
 	if (Actual.Equals(Expected))
 	{
-		AssertFailed(Message, bCrashOnFailure, LoggingOption, TimeToDisplay, ViewportKeyName);
+		AssertFailed(Message, bCrashOnFailure, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 
 		return false;
 	}
@@ -2389,27 +2383,27 @@ bool ULog::AssertNotEqual_Transform(const FTransform Actual, const FTransform Ex
 	return false;
 }
 
-bool ULog::AssertEqual_Color(const FColor Actual, const FColor Expected, const FString Message, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+bool ULog::AssertEqual_Color(const FColor Actual, const FColor Expected, const FString Message, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	return AssertEqual<FColor>(Actual, Expected, "AssertEqual (Color)", Message, bCrashOnFailure, LoggingOption, TimeToDisplay, ViewportKeyName);
+	return AssertEqual<FColor>(Actual, Expected, "AssertEqual (Color)", Message, bCrashOnFailure, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-bool ULog::AssertNotEqual_Color(const FColor Actual, const FColor Expected, const FString Message, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+bool ULog::AssertNotEqual_Color(const FColor Actual, const FColor Expected, const FString Message, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	return AssertNotEqual<FColor>(Actual, Expected, "AssertNotEqual (Color)", Message, bCrashOnFailure, LoggingOption, TimeToDisplay, ViewportKeyName);
+	return AssertNotEqual<FColor>(Actual, Expected, "AssertNotEqual (Color)", Message, bCrashOnFailure, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-bool ULog::AssertEqual_DateTime(const FDateTime Actual, const FDateTime Expected, const FString Message, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+bool ULog::AssertEqual_DateTime(const FDateTime Actual, const FDateTime Expected, const FString Message, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	return AssertEqual<FDateTime>(Actual, Expected, "AssertEqual (DateTime)", Message, bCrashOnFailure, LoggingOption, TimeToDisplay, ViewportKeyName);
+	return AssertEqual<FDateTime>(Actual, Expected, "AssertEqual (DateTime)", Message, bCrashOnFailure, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-bool ULog::AssertValue_DateTime(const FDateTime Actual, const FDateTime Expected, const EDebugLogComparisonMethod ShouldBe, const FString Message, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+bool ULog::AssertValue_DateTime(const FDateTime Actual, const FDateTime Expected, const EDebugLogComparisonMethod ShouldBe, const FString Message, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	return AssertValue<FDateTime>(Actual, Expected, ShouldBe, "AssertValue (DateTime)", Message, bCrashOnFailure, LoggingOption, TimeToDisplay, ViewportKeyName);
+	return AssertValue<FDateTime>(Actual, Expected, ShouldBe, "AssertValue (DateTime)", Message, bCrashOnFailure, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
-bool ULog::Assert_True(const bool bCondition, const FString Message, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+bool ULog::Assert_True(const bool bCondition, const FString Message, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	if (!bCondition)
@@ -2417,7 +2411,7 @@ bool ULog::Assert_True(const bool bCondition, const FString Message, const bool 
 		if (bCrashOnFailure)
 			Crash("AssertTrue | Assert Failed: " + Message);
 		else
-			Error("AssertTrue | Assert Failed: " + Message, LoggingOption, false, TimeToDisplay, ViewportKeyName);
+			Error("AssertTrue | Assert Failed: " + Message, LoggingOption, false, TimeToDisplay, ViewportKeyName, ContextObject);
 
 		return false;
 	}
@@ -2431,7 +2425,7 @@ bool ULog::Assert_True(const bool bCondition, const FString Message, const bool 
 	return false;
 }
 
-bool ULog::Assert_False(const bool bCondition, const FString Message, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+bool ULog::Assert_False(const bool bCondition, const FString Message, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	if (bCondition)
@@ -2439,7 +2433,7 @@ bool ULog::Assert_False(const bool bCondition, const FString Message, const bool
 		if (bCrashOnFailure)
 			Crash("AssertFalse | Assert Failed: " + Message);
 		else
-			Error("AssertFalse | Assert Failed: " + Message, LoggingOption, false, TimeToDisplay, ViewportKeyName);
+			Error("AssertFalse | Assert Failed: " + Message, LoggingOption, false, TimeToDisplay, ViewportKeyName, ContextObject);
 
 		return false;
 	}
@@ -2453,7 +2447,7 @@ bool ULog::Assert_False(const bool bCondition, const FString Message, const bool
 	return false;
 }
 
-bool ULog::Assert_IsValid(UObject* Object, const FString Message, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+bool ULog::Assert_IsValid(UObject* Object, const FString Message, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	if (!IsValid(Object))
@@ -2461,7 +2455,7 @@ bool ULog::Assert_IsValid(UObject* Object, const FString Message, const bool bCr
 		if (bCrashOnFailure)
 			Crash("AssertIsValid | Assert Failed: " + Message);
 		else
-			Error("AssertIsValid | Assert Failed: " + Message, LoggingOption, false, TimeToDisplay, ViewportKeyName);
+			Error("AssertIsValid | Assert Failed: " + Message, LoggingOption, false, TimeToDisplay, ViewportKeyName, ContextObject);
 
 		return false;		
 	}
@@ -2475,20 +2469,20 @@ bool ULog::Assert_IsValid(UObject* Object, const FString Message, const bool bCr
 	return false;
 }
 
-void ULog::Number_Int_Blueprint(const int32 Number, const FString& Prefix, const FString& Suffix, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Number_Int_Blueprint(const int32 Number, const FString& Prefix, const FString& Suffix, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	LogInt(Number, Prefix, Suffix, NumberSystem, LoggingOption, TimeToDisplay, ViewportKeyName);
+	LogInt(Number, Prefix, Suffix, NumberSystem, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::Number_Float_Blueprint(const float Number, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Number_Float_Blueprint(const float Number, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	LogFloat(Number, Prefix, Suffix, LoggingOption, TimeToDisplay, ViewportKeyName);
+	LogFloat(Number, Prefix, Suffix, LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
@@ -2634,89 +2628,142 @@ void ULog::EnsureCondition(const bool bCondition, const bool bAlwaysEnsure, cons
 #endif
 }
 
-void ULog::LogMessage_Internal(const FString& Message, const EDebugLogType LogSeverity, const FString& Prefix, const FString& Suffix, const FColor& InLogColor, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, const FString& LogCategory, const bool bWriteToLog)
+void ULog::LogMessage_Internal(const FString& Message, const EDebugLogType LogSeverity, const FString& Prefix, const FString& Suffix, const FColor& InLogColor, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, const FString& LogCategory, const bool bWriteToLog, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	if (LoggingOption == LO_NoLog)
 		return;
 
-	const FString TagSpecifier = Settings->bEnableSpecifiers ? Settings->LogCategorySpecifiers[LogSeverity] : "";
-	const FString FinalMessage = NET_MODE_PREFIX + Prefix + Message + Suffix;
-	const FString FinalMessage_WithTagSpecifier = NET_MODE_PREFIX + TagSpecifier + Prefix + Message + Suffix;
+	FString ObjectContextName;
 	
-	FString LogVerbosity = Settings->LogCategorySpecifiers[DL_Info];
-	if (InLogColor == Settings->WarningColor)
+	if (Settings->bLogContext)
 	{
-		LogVerbosity = Settings->LogCategorySpecifiers[DL_Warning];
-	}
-	else if (InLogColor == Settings->ErrorColor)
-	{
-		LogVerbosity = Settings->LogCategorySpecifiers[DL_Error];
-	}
-	else if (InLogColor == Settings->SuccessColor)
-	{
-		LogVerbosity = Settings->LogCategorySpecifiers[DL_Success];
+		ObjectContextName = ContextObject ? "[" + ContextObject->GetName() + "] " : "";
 	}
 	
-	if (LoggingOption == LO_Viewport)
+	const FString TagSpecifier = Settings->bEnableSpecifiers && LogSeverity != EDebugLogType(5) ? Settings->LogCategorySpecifiers[LogSeverity] : "";
+	const FString FinalMessage = NET_MODE_PREFIX + ObjectContextName + Prefix + Message + Suffix;
+	const FString FinalMessage_NoContext = NET_MODE_PREFIX + Prefix + Message + Suffix;
+	const FString FinalMessage_WithTagSpecifier = NET_MODE_PREFIX + TagSpecifier + ObjectContextName + Prefix + Message + Suffix;
+	const FString FinalMessage_WithTagSpecifier_NoContext = NET_MODE_PREFIX + TagSpecifier + Prefix + Message + Suffix;
+
+	const auto LogToViewport = [&]()
 	{
 		int32* Key = nullptr;
-		
+			
 		if (!ViewportKeyName.IsNone())
 			Key = Settings->ViewportLogKeys.Find(ViewportKeyName);
 
-		if (Settings->bEnableSpecifiers && (Settings->ShowSpecifiersIn == LO_Viewport || Settings->ShowSpecifiersIn == LO_Both))
-			GEngine->AddOnScreenDebugMessage(Key ? *Key : -1, TimeToDisplay, InLogColor, FinalMessage_WithTagSpecifier);
-		else
-			GEngine->AddOnScreenDebugMessage(Key ? *Key : -1, TimeToDisplay, InLogColor, FinalMessage);
-	}
-	else if (LoggingOption == LO_Console)
-	{
-		if (InLogColor == Settings->ErrorColor)
+		if (Settings->bEnableSpecifiers && (Settings->DisplaySpecifiersIn == LO_Viewport || Settings->DisplaySpecifiersIn == LO_Both))
 		{
-			if (Settings->bEnableSpecifiers && (Settings->ShowSpecifiersIn == LO_Console || Settings->ShowSpecifiersIn == LO_Both))
-				UE_LOG(LogMessage, Error, TEXT("%s"), *FinalMessage_WithTagSpecifier)
+			if (Settings->bLogContext && (Settings->DisplayContextIn == LO_Viewport || Settings->DisplayContextIn == LO_Both))
+				GEngine->AddOnScreenDebugMessage(Key ? *Key : -1, TimeToDisplay, InLogColor, FinalMessage_WithTagSpecifier);
 			else
-				UE_LOG(LogMessage, Error, TEXT("%s"), *FinalMessage)
+				GEngine->AddOnScreenDebugMessage(Key ? *Key : -1, TimeToDisplay, InLogColor, FinalMessage_WithTagSpecifier_NoContext);
 		}
 		else
 		{
-			if (Settings->bEnableSpecifiers && (Settings->ShowSpecifiersIn == LO_Console || Settings->ShowSpecifiersIn == LO_Both))
-				UE_LOG(LogMessage, Warning, TEXT("%s"), *FinalMessage_WithTagSpecifier)
+			if (Settings->bLogContext && (Settings->DisplayContextIn == LO_Viewport || Settings->DisplayContextIn == LO_Both))
+				GEngine->AddOnScreenDebugMessage(Key ? *Key : -1, TimeToDisplay, InLogColor, FinalMessage);
 			else
-				UE_LOG(LogMessage, Warning, TEXT("%s"), *FinalMessage)
+				GEngine->AddOnScreenDebugMessage(Key ? *Key : -1, TimeToDisplay, InLogColor, FinalMessage_NoContext);
 		}
-	}
-	else if (LoggingOption == LO_Both)
+	};
+	
+	const auto LogToConsole = [&]()
 	{
-		if (InLogColor == Settings->ErrorColor)
+		if (LogSeverity == DL_Info)
 		{
-			if (Settings->bEnableSpecifiers && (Settings->ShowSpecifiersIn == LO_Console || Settings->ShowSpecifiersIn == LO_Both))
-				UE_LOG(LogMessage, Error, TEXT("%s"), *FinalMessage_WithTagSpecifier)
+			if (Settings->bEnableSpecifiers && (Settings->DisplaySpecifiersIn == LO_Console || Settings->DisplaySpecifiersIn == LO_Both))
+			{
+				if (Settings->bLogContext && (Settings->DisplayContextIn == LO_Console || Settings->DisplayContextIn == LO_Both))
+					UE_LOG(LogMessage, Log, TEXT("%s"), *FinalMessage_WithTagSpecifier)
+				else
+					UE_LOG(LogMessage, Log, TEXT("%s"), *FinalMessage_WithTagSpecifier_NoContext)
+			}
             else
-            	UE_LOG(LogMessage, Error, TEXT("%s"), *FinalMessage)
+            {
+            	if (Settings->bLogContext && (Settings->DisplayContextIn == LO_Console || Settings->DisplayContextIn == LO_Both))
+            		UE_LOG(LogMessage, Log, TEXT("%s"), *FinalMessage)
+            	else
+            		UE_LOG(LogMessage, Log, TEXT("%s"), *FinalMessage_NoContext)
+            }
+		}
+		else if (LogSeverity == DL_Warning)
+		{
+			if (Settings->bEnableSpecifiers && (Settings->DisplaySpecifiersIn == LO_Console || Settings->DisplaySpecifiersIn == LO_Both))
+			{
+				if (Settings->bLogContext && (Settings->DisplayContextIn == LO_Console || Settings->DisplayContextIn == LO_Both))
+					UE_LOG(LogMessage, Warning, TEXT("%s"), *FinalMessage_WithTagSpecifier)
+				else
+					UE_LOG(LogMessage, Warning, TEXT("%s"), *FinalMessage_WithTagSpecifier_NoContext)
+			}
+            else
+            {
+            	if (Settings->bLogContext && (Settings->DisplayContextIn == LO_Console || Settings->DisplayContextIn == LO_Both))
+	            	UE_LOG(LogMessage, Warning, TEXT("%s"), *FinalMessage)
+				else
+	            	UE_LOG(LogMessage, Warning, TEXT("%s"), *FinalMessage_NoContext)
+            }
+        }
+		else if (LogSeverity == DL_Error)
+		{
+			if (Settings->bEnableSpecifiers && (Settings->DisplaySpecifiersIn == LO_Console || Settings->DisplaySpecifiersIn == LO_Both))
+			{
+				if (Settings->bLogContext && (Settings->DisplayContextIn == LO_Console || Settings->DisplayContextIn == LO_Both))
+					UE_LOG(LogMessage, Error, TEXT("%s"), *FinalMessage_WithTagSpecifier)
+				else
+					UE_LOG(LogMessage, Error, TEXT("%s"), *FinalMessage_WithTagSpecifier_NoContext)
+			}
+            else
+            {
+            	if (Settings->bLogContext && (Settings->DisplayContextIn == LO_Console || Settings->DisplayContextIn == LO_Both))
+            		UE_LOG(LogMessage, Error, TEXT("%s"), *FinalMessage)
+            	else
+            		UE_LOG(LogMessage, Error, TEXT("%s"), *FinalMessage_NoContext)
+            }
         }
 		else
 		{
-			if (Settings->bEnableSpecifiers && (Settings->ShowSpecifiersIn == LO_Console || Settings->ShowSpecifiersIn == LO_Both))
-				UE_LOG(LogMessage, Warning, TEXT("%s"), *FinalMessage_WithTagSpecifier)
-            else
-            	UE_LOG(LogMessage, Warning, TEXT("%s"), *FinalMessage)
-        }
+            UE_LOG(LogLineBreak, Log, TEXT("%s"), *FinalMessage_NoContext)
+		}
+	};
 
-		int32* Key = nullptr;
+	switch (LoggingOption)
+	{
+		case LO_Viewport:
+		{
+			LogToViewport();
+		}
+		break;
+
+		case LO_Console:
+		{
+			LogToConsole();
+		}
+		break;
+
+		case LO_Both:
+		{
+			LogToConsole();
+
+			LogToViewport();
+		}
+		break;
+
+		case LO_NoLog:
+		return;
 		
-		if (!ViewportKeyName.IsNone())
-			Key = Settings->ViewportLogKeys.Find(ViewportKeyName);
-
-		if (Settings->bEnableSpecifiers && (Settings->ShowSpecifiersIn == LO_Viewport || Settings->ShowSpecifiersIn == LO_Both))
-			GEngine->AddOnScreenDebugMessage(Key ? *Key : -1, TimeToDisplay, InLogColor, *FinalMessage_WithTagSpecifier);
-		else
-			GEngine->AddOnScreenDebugMessage(Key ? *Key : -1, TimeToDisplay, InLogColor, *FinalMessage);
+		default:
+		break;
 	}
 
 	if (bWriteToLog)
+	{
+		const FString LogVerbosity = LogSeverity < EDebugLogType(5) ? Settings->LogCategorySpecifiers[LogSeverity] : "";
+
 		WriteToLogFile(LogFilename, LogCategory + ": " + LogVerbosity + FinalMessage);
+	}
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
@@ -2728,7 +2775,7 @@ void ULog::QuitApplication_Internal()
 	UKismetSystemLibrary::QuitGame(GWorld, UGameplayStatics::GetPlayerController(GWorld, 0), EQuitPreference::Quit, true);
 }
 
-void ULog::LogInt(const platform_int Number, const FString& Prefix, const FString& Suffix, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay, FName ViewportKeyName)
+void ULog::LogInt(const platform_int Number, const FString& Prefix, const FString& Suffix, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	FString FinalNumber;
@@ -2755,14 +2802,14 @@ void ULog::LogInt(const platform_int Number, const FString& Prefix, const FStrin
 		break;
 	}
 	
-	LogMessage_Internal(FinalNumber, DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogNumber.GetCategoryName().ToString());
+	LogMessage_Internal(FinalNumber, DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogNumber.GetCategoryName().ToString(), true, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::LogUInt(const platform_uint Number, const FString& Prefix, const FString& Suffix, EDebugLogNumberSystems const NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::LogUInt(const platform_uint Number, const FString& Prefix, const FString& Suffix, EDebugLogNumberSystems const NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	FString FinalNumber;
@@ -2789,39 +2836,24 @@ void ULog::LogUInt(const platform_uint Number, const FString& Prefix, const FStr
 		break;
 	}
 
-	LogMessage_Internal(FinalNumber, DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogNumber.GetCategoryName().ToString());
+	LogMessage_Internal(FinalNumber, DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogNumber.GetCategoryName().ToString(), true, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::LogFloat(const float Number, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::LogFloat(const float Number, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	LogMessage_Internal(FString::SanitizeFloat(Number), DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogNumber.GetCategoryName().ToString());
+	LogMessage_Internal(FString::SanitizeFloat(Number), DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogNumber.GetCategoryName().ToString(), true, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::LogUnitSystem(const float Value, const FString& UnitSymbol, const bool bConvertValueToInt, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, FName ViewportKeyName)
-{
-#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-	FString ValueInString = FString::SanitizeFloat(Value);
-
-	if (bConvertValueToInt)
-		ValueInString = FString::FromInt(Value);
-
-	LogMessage_Internal(ValueInString + UnitSymbol, DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogNumber.GetCategoryName().ToString());
-#elif (UE_BUILD_SHIPPING)
-	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
-		Crash("", FString(__FUNCTION__));
-#endif
-}
-
-void ULog::LogCurrencyUnitSystem(const float Value, const FString& UnitSymbol, const bool bConvertValueToInt, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, FName ViewportKeyName)
+void ULog::LogUnitSystem(const float Value, const FString& UnitSymbol, const bool bConvertValueToInt, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	FString ValueInString = FString::SanitizeFloat(Value);
@@ -2829,14 +2861,29 @@ void ULog::LogCurrencyUnitSystem(const float Value, const FString& UnitSymbol, c
 	if (bConvertValueToInt)
 		ValueInString = FString::FromInt(Value);
 
-	LogMessage_Internal(UnitSymbol + ValueInString, DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogNumber.GetCategoryName().ToString());
+	LogMessage_Internal(ValueInString + UnitSymbol, DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogNumber.GetCategoryName().ToString(), true, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
 #endif
 }
 
-void ULog::LogLongInt(const long Number, const FString& Prefix, const FString& Suffix, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay, FName ViewportKeyName)
+void ULog::LogCurrencyUnitSystem(const float Value, const FString& UnitSymbol, const bool bConvertValueToInt, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
+{
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
+	FString ValueInString = FString::SanitizeFloat(Value);
+
+	if (bConvertValueToInt)
+		ValueInString = FString::FromInt(Value);
+
+	LogMessage_Internal(UnitSymbol + ValueInString, DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogNumber.GetCategoryName().ToString(), true, ContextObject);
+#elif (UE_BUILD_SHIPPING)
+	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
+		Crash("", FString(__FUNCTION__));
+#endif
+}
+
+void ULog::LogLongInt(const long Number, const FString& Prefix, const FString& Suffix, const EDebugLogNumberSystems NumberSystem, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	FString FinalNumber;
@@ -2863,7 +2910,7 @@ void ULog::LogLongInt(const long Number, const FString& Prefix, const FString& S
 		break;
 	}
 
-	LogMessage_Internal(FinalNumber, DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogNumber.GetCategoryName().ToString());
+	LogMessage_Internal(FinalNumber, DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogNumber.GetCategoryName().ToString(), true, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration && LoggingOption != LO_NoLog)
 		Crash("", FString(__FUNCTION__));
@@ -3117,13 +3164,13 @@ FString ULog::DecimalToHexDigit(platform_int DecimalNumber)
 	return FString("-1");
 }
 
-void ULog::AssertFailed(const FString& Message, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::AssertFailed(const FString& Message, const bool bCrashOnFailure, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	if (bCrashOnFailure)
 		Crash("Assert Failed: " + Message);
 	else
-		Error("Assert Failed: " + Message, LoggingOption, false, TimeToDisplay, ViewportKeyName);
+		Error("Assert Failed: " + Message, LoggingOption, false, TimeToDisplay, ViewportKeyName, ContextObject);
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration)
 		Crash("", FString(__FUNCTION__));

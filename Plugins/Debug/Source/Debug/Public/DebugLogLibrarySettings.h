@@ -36,43 +36,51 @@ class DEBUG_API UDebugLogLibrarySettings final : public UObject
 public:
 	UDebugLogLibrarySettings(const FObjectInitializer& ObjectInitializer);
 
+	// Should we use Two's Compliment when converting a decimal number to a hexadecimal value on negative numbers?
+	UPROPERTY(EditAnywhere, config, Category = "General")
+    uint8 bUseTwosComplimentForDecimalToHexConversionOnNegativeNumbers : 1;
+
+	// Should the game crash if any ULog functions are called in a shipping build configuration?
+	UPROPERTY(EditAnywhere, config, Category = "General")
+    uint8 bCrashGameInShippingBuildConfiguration : 1;
+	
 	// The color to use when logging a standard message
-	UPROPERTY(EditAnywhere, config, Category = "Viewport Log Colors", DisplayName = "Default Color")
+	UPROPERTY(EditAnywhere, config, Category = "Viewport Settings", DisplayName = "Default Color")
 	FColor InfoColor = FLinearColor(0.0f, 0.66f, 1.0f).ToFColor(true);
 	
 	// The color to use when logging a error message
-	UPROPERTY(EditAnywhere, config, Category = "Viewport Log Colors")
+	UPROPERTY(EditAnywhere, config, Category = "Viewport Settings")
 	FColor ErrorColor = FColor::Red;
 	
 	// The color to use when logging a warning message
-	UPROPERTY(EditAnywhere, config, Category = "Viewport Log Colors")
+	UPROPERTY(EditAnywhere, config, Category = "Viewport Settings")
 	FColor WarningColor = FColor::Yellow;
 	
 	// The color to use when logging a success message
-	UPROPERTY(EditAnywhere, config, Category = "Viewport Log Colors")
+	UPROPERTY(EditAnywhere, config, Category = "Viewport Settings")
 	FColor SuccessColor = FColor::Green;
 
-	// If true, add a specifier text before the final output log message
-	UPROPERTY(EditAnywhere, config, Category = "Settings")
-	uint8 bEnableSpecifiers : 1;
-
-	// The place to show the category specifier text
-	UPROPERTY(EditAnywhere, config, Category = "Settings", meta = (EditCondition = "bEnableSpecifiers"))
-	TEnumAsByte<ELoggingOptions> ShowSpecifiersIn = LO_Both;
-
-	// The tag specifers to use when logging in these categories
-	UPROPERTY(EditAnywhere, config, Category = "Settings", EditFixedSize = 5, meta = (EditCondition = "bEnableSpecifiers"))
-	TMap<TEnumAsByte<EDebugLogType>, FString> LogCategorySpecifiers;
-
 	// The key to use when calling any logging functions that specify its corresponding name (case-insensitive)
-	UPROPERTY(EditAnywhere, config, Category = "Settings")
+	UPROPERTY(EditAnywhere, config, Category = "Viewport Settings")
     TMap<FName, int32> ViewportLogKeys;
 	
-	// Should we use Two's Compliment when converting a decimal number to a hexadecimal value on negative numbers?
-	UPROPERTY(EditAnywhere, config, Category = "Settings")
-	uint8 bUseTwosComplimentForDecimalToHexConversionOnNegativeNumbers : 1;
+	// If true, add a specifier text before the final output log message
+	UPROPERTY(EditAnywhere, config, Category = "Specifiers")
+	uint8 bEnableSpecifiers : 1;
 
-	// Should the game crash if any ULog functions are called in a shipping build configuration?
-	UPROPERTY(EditAnywhere, config, Category = "Settings")
-	uint8 bCrashGameInShippingBuildConfiguration : 1;
+	// The place to display the category specifier text along side the final log message
+	UPROPERTY(EditAnywhere, config, Category = "Specifiers", meta = (EditCondition = "bEnableSpecifiers"))
+	TEnumAsByte<ELoggingOptions> DisplaySpecifiersIn = LO_Console;
+
+	// The tag specifers to use when logging in these categories
+	UPROPERTY(EditAnywhere, config, Category = "Specifiers", EditFixedSize = 5, meta = (EditCondition = "bEnableSpecifiers"))
+	TMap<TEnumAsByte<EDebugLogType>, FString> LogCategorySpecifiers;
+
+	// Display the context of a log message?
+	UPROPERTY(EditAnywhere, config, Category = "Context")
+	uint8 bLogContext : 1;
+
+	// The place to display the context along side the final log message
+	UPROPERTY(EditAnywhere, config, Category = "Context", meta = (EditCondition = "bLogContext"))
+	TEnumAsByte<ELoggingOptions> DisplayContextIn = LO_Console;
 };

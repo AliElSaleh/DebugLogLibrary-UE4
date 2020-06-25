@@ -350,25 +350,25 @@ class DEBUG_API ULog : public UBlueprintFunctionLibrary
 	
 public:
 	// Log whether the object is valid or not
-	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static void ObjectValidity(UObject* InObject, bool bSilenceOnError = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static void ObjectValidity(UObject* InObject, bool bSilenceOnError = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log the given object's name, if it's valid
-	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static void ObjectName(UObject* InObject, bool bSilenceOnError = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static void ObjectName(UObject* InObject, bool bSilenceOnError = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a debug message to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static void DebugMessage(EDebugLogType LogSeverity, const FString& Message, ELoggingOptions LoggingOption = LO_Console, bool bAddPrefix = false, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
-	static void DebugMessage(EDebugLogType LogSeverity, const FName& Message, ELoggingOptions LoggingOption = LO_Console, bool bAddPrefix = false, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);	
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static void DebugMessage(EDebugLogType LogSeverity, const FString& Message, ELoggingOptions LoggingOption = LO_Console, bool bAddPrefix = false, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
+	static void DebugMessage(EDebugLogType LogSeverity, const FName& Message, ELoggingOptions LoggingOption = LO_Console, bool bAddPrefix = false, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);	
 
 	// Log a debug message to the console or viewport, only if the condition is met
-	UFUNCTION(BlueprintCallable, Category = "Debug", DisplayName = "Debug Message (Condition)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static void DebugMessage_WithCondition(EDebugLogType LogSeverity, bool bCondition, const FString& Message, ELoggingOptions LoggingOption = LO_Console, bool bAddPrefix = false, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug", DisplayName = "Debug Message (Condition)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static void DebugMessage_WithCondition(EDebugLogType LogSeverity, bool bCondition, const FString& Message, ELoggingOptions LoggingOption = LO_Console, bool bAddPrefix = false, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Crash the game, and log the message to the console and log file. FromFunction means the function (as a string) that this 'Crash' function was called from. Ultimately, this is for better debug information and is optional
 	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
-	static void Crash(const FString& Message = "", const FString& FromFunction = "");
+	static void Crash(const FString& Message = "", const FString& FromFunction = "", UObject* ContextObject = nullptr);
 		
 	// Log a fatal error message to the console and crash
 	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
@@ -379,88 +379,88 @@ public:
 	static void Fatal_WithCondition(const FString& Message, bool bCondition);
 
 	// Log an error message to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static void Error(const FString& Message, ELoggingOptions LoggingOption = LO_Console, bool bAddPrefix = false, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static void Error(const FString& Message, ELoggingOptions LoggingOption = LO_Console, bool bAddPrefix = false, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log an error message to the console or viewport, only if the condition is met
-	UFUNCTION(BlueprintCallable, Category = "Debug", DisplayName = "Error (Condition)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static void Error_WithCondition(const FString& Message, bool bCondition, ELoggingOptions LoggingOption = LO_Console, bool bAddPrefix = false, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug", DisplayName = "Error (Condition)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static void Error_WithCondition(const FString& Message, bool bCondition, ELoggingOptions LoggingOption = LO_Console, bool bAddPrefix = false, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a success message to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static void Success(const FString& Message, ELoggingOptions LoggingOption = LO_Console, bool bAddPrefix = false, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static void Success(const FString& Message, ELoggingOptions LoggingOption = LO_Console, bool bAddPrefix = false, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a success message to the console or viewport, only if the condition is met
-	UFUNCTION(BlueprintCallable, Category = "Debug", DisplayName = "Success (Condition)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static void Success_WithCondition(const FString& Message, bool bCondition, ELoggingOptions LoggingOption = LO_Console, bool bAddPrefix = false, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug", DisplayName = "Success (Condition)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static void Success_WithCondition(const FString& Message, bool bCondition, ELoggingOptions LoggingOption = LO_Console, bool bAddPrefix = false, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a warning message to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static void Warning(const FString& Message, ELoggingOptions LoggingOption = LO_Console, bool bAddPrefix = false, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static void Warning(const FString& Message, ELoggingOptions LoggingOption = LO_Console, bool bAddPrefix = false, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a warning message to the console or viewport, only if the condition is met
-	UFUNCTION(BlueprintCallable, Category = "Debug", DisplayName = "Warning (Condition)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static void Warning_WithCondition(const FString& Message, bool bCondition, ELoggingOptions LoggingOption = LO_Console, bool bAddPrefix = false, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug", DisplayName = "Warning (Condition)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static void Warning_WithCondition(const FString& Message, bool bCondition, ELoggingOptions LoggingOption = LO_Console, bool bAddPrefix = false, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log an information message to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static void Info(const FString& Message, ELoggingOptions LoggingOption = LO_Console, bool bAddPrefix = false, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static void Info(const FString& Message, ELoggingOptions LoggingOption = LO_Console, bool bAddPrefix = false, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log an information message to the console or viewport, only if the condition is met
-	UFUNCTION(BlueprintCallable, Category = "Debug", DisplayName = "Info (Condition)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static void Info_WithCondition(const FString& Message, bool bCondition, ELoggingOptions LoggingOption = LO_Console, bool bAddPrefix = false, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug", DisplayName = "Info (Condition)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static void Info_WithCondition(const FString& Message, bool bCondition, ELoggingOptions LoggingOption = LO_Console, bool bAddPrefix = false, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a hello message to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static void Hello(ELoggingOptions LoggingOption = LO_Console, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static void Hello(ELoggingOptions LoggingOption = LO_Console, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a hey message to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static void Hey(ELoggingOptions LoggingOption = LO_Console, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static void Hey(ELoggingOptions LoggingOption = LO_Console, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a bye message to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static void Bye(ELoggingOptions LoggingOption = LO_Console, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static void Bye(ELoggingOptions LoggingOption = LO_Console, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a goodbye message to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static void Goodbye(ELoggingOptions LoggingOption = LO_Console, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static void Goodbye(ELoggingOptions LoggingOption = LO_Console, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a cya message to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static void Cya(ELoggingOptions LoggingOption = LO_Console, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static void Cya(ELoggingOptions LoggingOption = LO_Console, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a wassup message to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static void Wassup(ELoggingOptions LoggingOption = LO_Console, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static void Wassup(ELoggingOptions LoggingOption = LO_Console, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a yo message to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static void Yo(ELoggingOptions LoggingOption = LO_Console, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static void Yo(ELoggingOptions LoggingOption = LO_Console, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a 'valid' message to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static void Valid(const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static void Valid(const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 	// Log a 'valid' message to the console or viewport
-	static void Valid(ELoggingOptions LoggingOption = LO_Console, FName ViewportKeyName = NAME_None);
+	static void Valid(ELoggingOptions LoggingOption = LO_Console, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log an 'invalid' message to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static void Invalid(const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static void Invalid(const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 	// Log an 'invalid' message to the console or viewport
-	static void Invalid(ELoggingOptions LoggingOption = LO_Console, FName ViewportKeyName = NAME_None);
+	static void Invalid(ELoggingOptions LoggingOption = LO_Console, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a yes message to the console or viewport (with an optional prefix and suffix string)
-	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static void Yes(const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static void Yes(const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 	// Log a yes message to the console or viewport
-	static void Yes(ELoggingOptions LoggingOption = LO_Console, FName ViewportKeyName = NAME_None);
+	static void Yes(ELoggingOptions LoggingOption = LO_Console, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a no message to the console or viewport (with an optional prefix and suffix string)
-	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static void No(const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static void No(const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 	// Log a no message to the console or viewport
-	static void No(ELoggingOptions LoggingOption = LO_Console, FName ViewportKeyName = NAME_None);
+	static void No(ELoggingOptions LoggingOption = LO_Console, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a line break to the console or viewport
 	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
@@ -475,8 +475,8 @@ public:
 	static void StartDebugTimer(const FString& Description);
 	
 	// Stops and destroys the active debug timer, outputting how long the operation took since StartDebugTimer was called
-	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static void StopDebugTimer(bool bAutoDetermineTimeUnit = false, EDebugLogTimeUnit DisplayIn = DLTU_Seconds, ELoggingOptions LoggingOption = LO_Both, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static void StopDebugTimer(bool bAutoDetermineTimeUnit = false, EDebugLogTimeUnit DisplayIn = DLTU_Seconds, ELoggingOptions LoggingOption = LO_Both, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Return the string with brackets () around it
 	static FString InBrackets(const FString& String);
@@ -488,193 +488,193 @@ public:
 	static FText InBrackets(const FText& Text);
 	
 	// Log a number to the console or viewport (int8 version)
-	static void Number(int8 Number, const FString& Prefix = "", const FString& Suffix = "", EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	static void Number(int8 Number, const FString& Prefix = "", const FString& Suffix = "", EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a number to the console or viewport (int16 version)
-	static void Number(int16 Number, const FString& Prefix = "", const FString& Suffix = "", EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	static void Number(int16 Number, const FString& Prefix = "", const FString& Suffix = "", EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a number to the console or viewport (int32 version)
-	static void Number(int32 Number, const FString& Prefix = "", const FString& Suffix = "", EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	static void Number(int32 Number, const FString& Prefix = "", const FString& Suffix = "", EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a number to the console or viewport (int64 version)
-	static void Number(int64 Number, const FString& Prefix = "", const FString& Suffix = "", EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	static void Number(int64 Number, const FString& Prefix = "", const FString& Suffix = "", EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a number to the console or viewport (uint8 version)
-	static void Number(uint8 Number, const FString& Prefix = "", const FString& Suffix = "", EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	static void Number(uint8 Number, const FString& Prefix = "", const FString& Suffix = "", EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a number to the console or viewport (uint16 version)
-	static void Number(uint16 Number, const FString& Prefix = "", const FString& Suffix = "", EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	static void Number(uint16 Number, const FString& Prefix = "", const FString& Suffix = "", EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a number to the console or viewport (uint32 version)
-	static void Number(uint32 Number, const FString& Prefix = "", const FString& Suffix = "", EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	static void Number(uint32 Number, const FString& Prefix = "", const FString& Suffix = "", EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a number to the console or viewport (uint64 version)
-	static void Number(uint64 Number, const FString& Prefix = "", const FString& Suffix = "", EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	static void Number(uint64 Number, const FString& Prefix = "", const FString& Suffix = "", EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a number to the console or viewport (float version)
-	static void Number(float Number, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	static void Number(float Number, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a number to the console or viewport (double version)
-	static void Number(double Number, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	static void Number(double Number, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a number to the console or viewport (long version)
-	static void Number(long Number, const FString& Prefix = "", const FString& Suffix = "", EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	static void Number(long Number, const FString& Prefix = "", const FString& Suffix = "", EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a number to the console or viewport (int8 version, no prefix and suffix)
-	static void Number(int8 Number, EDebugLogNumberSystems NumberSystem, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	static void Number(int8 Number, EDebugLogNumberSystems NumberSystem, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a number to the console or viewport (int16 version, no prefix and suffix)
-	static void Number(int16 Number, EDebugLogNumberSystems NumberSystem, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	static void Number(int16 Number, EDebugLogNumberSystems NumberSystem, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a number to the console or viewport (int32 version, no prefix and suffix)
-	static void Number(int32 Number, EDebugLogNumberSystems NumberSystem, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	static void Number(int32 Number, EDebugLogNumberSystems NumberSystem, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a number to the console or viewport (int64 version, no prefix and suffix)
-	static void Number(int64 Number, EDebugLogNumberSystems NumberSystem, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	static void Number(int64 Number, EDebugLogNumberSystems NumberSystem, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a number to the console or viewport (uint8 version, no prefix and suffix)
-	static void Number(uint8 Number, EDebugLogNumberSystems NumberSystem, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	static void Number(uint8 Number, EDebugLogNumberSystems NumberSystem, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a number to the console or viewport (uint16 version, no prefix and suffix)
-	static void Number(uint16 Number, EDebugLogNumberSystems NumberSystem, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	static void Number(uint16 Number, EDebugLogNumberSystems NumberSystem, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a number to the console or viewport (uint32 version, no prefix and suffix)
-	static void Number(uint32 Number, EDebugLogNumberSystems NumberSystem, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	static void Number(uint32 Number, EDebugLogNumberSystems NumberSystem, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a number to the console or viewport (uint64 version, no prefix and suffix)
-	static void Number(uint64 Number, EDebugLogNumberSystems NumberSystem, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	static void Number(uint64 Number, EDebugLogNumberSystems NumberSystem, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a number to the console or viewport (float version, no prefix and suffix)
-	static void Number(float Number, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	static void Number(float Number, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a number to the console or viewport (double version, no prefix and suffix)
-	static void Number(double Number, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	static void Number(double Number, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a number to the console or viewport (long version, no prefix and suffix)
-	static void Number(long Number, EDebugLogNumberSystems NumberSystem, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	static void Number(long Number, EDebugLogNumberSystems NumberSystem, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a enum value to the console or viewport.
 	// Enum classes must be marked with a UENUM() macro
 	template<typename EnumType>
-    static void Enum(const EnumType& EnumValue, bool bFriendlyName = false, const FString& Prefix = "", const FString& Suffix = "", const ELoggingOptions& LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+    static void Enum(const EnumType& EnumValue, bool bFriendlyName = false, const FString& Prefix = "", const FString& Suffix = "", const ELoggingOptions& LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a enum value to the console or viewport. (no prefix and suffix)
 	// Enum classes must be marked with a UENUM() macro
 	template<typename EnumType>
-    static void Enum(const EnumType& EnumValue, bool bFriendlyName = false, const ELoggingOptions& LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+    static void Enum(const EnumType& EnumValue, bool bFriendlyName = false, const ELoggingOptions& LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log an array of int32 to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly), DisplayName = "Array (int32)")
-	static void Array_Int32(TArray<int32> InArray, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, DefaultToSelf = "ContextObject", HidePin = "ContextObject"), DisplayName = "Array (int32)")
+	static void Array_Int32(TArray<int32> InArray, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, UObject* ContextObject = nullptr);
 
 	// Log an array of int64 to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly), DisplayName = "Array (int64)")
-    static void Array_Int64(TArray<int64> InArray, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, DefaultToSelf = "ContextObject", HidePin = "ContextObject"), DisplayName = "Array (int64)")
+    static void Array_Int64(TArray<int64> InArray, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, UObject* ContextObject = nullptr);
 	
 	// Log an array of floats to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly), DisplayName = "Array (float)")
-    static void Array_Float(TArray<float> InArray, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, DefaultToSelf = "ContextObject", HidePin = "ContextObject"), DisplayName = "Array (float)")
+    static void Array_Float(TArray<float> InArray, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, UObject* ContextObject = nullptr);
 
 	// Log an array of doubles to the console or viewport
-    static void Array_Double(TArray<double> InArray, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+    static void Array_Double(TArray<double> InArray, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, UObject* ContextObject = nullptr);
 	
 	// Log an array of bools to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly), DisplayName = "Array (bool)")
-    static void Array_Bool(TArray<bool> InArray, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, DefaultToSelf = "ContextObject", HidePin = "ContextObject"), DisplayName = "Array (bool)")
+    static void Array_Bool(TArray<bool> InArray, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, UObject* ContextObject = nullptr);
 
 	// Log an array of FVectors to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly), DisplayName = "Array (Vector)")
-	static void Array_Vector(TArray<FVector> InArray, bool bCompact = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, DefaultToSelf = "ContextObject", HidePin = "ContextObject"), DisplayName = "Array (Vector)")
+	static void Array_Vector(TArray<FVector> InArray, bool bCompact = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, UObject* ContextObject = nullptr);
 
 	// Log an array of FVector2D to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly), DisplayName = "Array (Vector 2D)")
-    static void Array_Vector2D(TArray<FVector2D> InArray, bool bCompact = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, DefaultToSelf = "ContextObject", HidePin = "ContextObject"), DisplayName = "Array (Vector 2D)")
+    static void Array_Vector2D(TArray<FVector2D> InArray, bool bCompact = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, UObject* ContextObject = nullptr);
 
 	// Log an array of FRotator to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly), DisplayName = "Array (Rotator)")
-    static void Array_Rotator(TArray<FRotator> InArray, bool bCompact = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, DefaultToSelf = "ContextObject", HidePin = "ContextObject"), DisplayName = "Array (Rotator)")
+    static void Array_Rotator(TArray<FRotator> InArray, bool bCompact = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, UObject* ContextObject = nullptr);
 
 	// Log an array of FTransform to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly), DisplayName = "Array (Transform)")
-    static void Array_Transform(TArray<FTransform> InArray, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, DefaultToSelf = "ContextObject", HidePin = "ContextObject"), DisplayName = "Array (Transform)")
+    static void Array_Transform(TArray<FTransform> InArray, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, UObject* ContextObject = nullptr);
 
 	// Log an array of Quaternion to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly), DisplayName = "Array (Quaternion)")
-    static void Array_Quat(TArray<FQuat> InArray, bool bCompact = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, DefaultToSelf = "ContextObject", HidePin = "ContextObject"), DisplayName = "Array (Quaternion)")
+    static void Array_Quat(TArray<FQuat> InArray, bool bCompact = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, UObject* ContextObject = nullptr);
 
 	// Log an array of Matrix to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly), DisplayName = "Array (Matrix)")
-    static void Array_Matrix(TArray<FMatrix> InArray, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, DefaultToSelf = "ContextObject", HidePin = "ContextObject"), DisplayName = "Array (Matrix)")
+    static void Array_Matrix(TArray<FMatrix> InArray, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, UObject* ContextObject = nullptr);
 
 	// Log an array of FString to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly), DisplayName = "Array (String)")
-    static void Array_String(TArray<FString> InArray, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, DefaultToSelf = "ContextObject", HidePin = "ContextObject"), DisplayName = "Array (String)")
+    static void Array_String(TArray<FString> InArray, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, UObject* ContextObject = nullptr);
 
 	// Log an array of FName to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly), DisplayName = "Array (Name)")
-    static void Array_Name(TArray<FName> InArray, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, DefaultToSelf = "ContextObject", HidePin = "ContextObject"), DisplayName = "Array (Name)")
+    static void Array_Name(TArray<FName> InArray, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, UObject* ContextObject = nullptr);
 
 	// Log an array of FText to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly), DisplayName = "Array (Text)")
-    static void Array_Text(TArray<FText> InArray, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, DefaultToSelf = "ContextObject", HidePin = "ContextObject"), DisplayName = "Array (Text)")
+    static void Array_Text(TArray<FText> InArray, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, UObject* ContextObject = nullptr);
 
 	// Log an array of FDateTime to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly), DisplayName = "Array (DateTime)")
-    static void Array_DateTime(TArray<FDateTime> InArray, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, DefaultToSelf = "ContextObject", HidePin = "ContextObject"), DisplayName = "Array (DateTime)")
+    static void Array_DateTime(TArray<FDateTime> InArray, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, UObject* ContextObject = nullptr);
 
 	// Log an array of FLinearColor to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly), DisplayName = "Array (Color)")
-    static void Array_Color(TArray<FLinearColor> InArray,  bool bCompact = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, DefaultToSelf = "ContextObject", HidePin = "ContextObject"), DisplayName = "Array (Color)")
+    static void Array_Color(TArray<FLinearColor> InArray,  bool bCompact = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, UObject* ContextObject = nullptr);
 
 	// Log the a percentage value to the console or viewport (Just appends a % symbol)
-	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
-	static void Percent(float Number, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
-	static void Percent(float Number, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static void Percent(float Number, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
+	static void Percent(float Number, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log the given bool value to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static void Bool(bool bBoolToTest, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
-	static void Bool(bool bBoolToTest, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static void Bool(bool bBoolToTest, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
+	static void Bool(bool bBoolToTest, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a FVector to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static void Vector(const FVector& InVector, bool bCompact = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
-	static void Vector(const FVector& InVector, bool bCompact = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static void Vector(const FVector& InVector, bool bCompact = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
+	static void Vector(const FVector& InVector, bool bCompact = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a FVector2D to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static void Vector2D(const FVector2D& InVector2D, bool bCompact = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
-	static void Vector2D(const FVector2D& InVector2D, bool bCompact = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static void Vector2D(const FVector2D& InVector2D, bool bCompact = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
+	static void Vector2D(const FVector2D& InVector2D, bool bCompact = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a FRotator to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static void Rotator(const FRotator& InRotator, bool bCompact = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
-	static void Rotator(const FRotator& InRotator, bool bCompact = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static void Rotator(const FRotator& InRotator, bool bCompact = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
+	static void Rotator(const FRotator& InRotator, bool bCompact = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a FTransform value to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static void Transform(const FTransform& InTransform, const FString& Prefix = "", bool bFormat = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
-	static void Transform(const FTransform& InTransform, ELoggingOptions LoggingOption = LO_Console, bool bFormat = false, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static void Transform(const FTransform& InTransform, const FString& Prefix = "", bool bFormat = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
+	static void Transform(const FTransform& InTransform, ELoggingOptions LoggingOption = LO_Console, bool bFormat = false, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a Quaternion value to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static void Quat(const FQuat& Quaternion, bool bCompact = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
-	static void Quat(const FQuat& Quaternion, bool bCompact = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static void Quat(const FQuat& Quaternion, bool bCompact = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
+	static void Quat(const FQuat& Quaternion, bool bCompact = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a matrix value to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static void Matrix(const FMatrix& InMatrix, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
-	static void Matrix(const FMatrix& InMatrix, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static void Matrix(const FMatrix& InMatrix, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
+	static void Matrix(const FMatrix& InMatrix, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a color value to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static void Color(const FLinearColor& InColor, bool bCompact = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
-	static void Color(const FLinearColor& InColor, bool bCompact = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static void Color(const FLinearColor& InColor, bool bCompact = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
+	static void Color(const FLinearColor& InColor, bool bCompact = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a DateTime value to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static void DateTime(const FDateTime& InDateTime, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
-	static void DateTime(const FDateTime& InDateTime, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static void DateTime(const FDateTime& InDateTime, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
+	static void DateTime(const FDateTime& InDateTime, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 	
 	// Log a message in the world
 	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly))
@@ -683,68 +683,68 @@ public:
 	
 	#pragma region Unit Systems
 	// Log a unit value to the console or viewport (Just adds the appropriate symbol at the end) Not supported in blueprints
-	static void Unit(float InUnitValue, EUnit InUnit, bool bConvertValueToInt = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
-	static void Unit(float InUnitValue, EUnit InUnit, bool bConvertValueToInt = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	static void Unit(float InUnitValue, EUnit InUnit, bool bConvertValueToInt = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
+	static void Unit(float InUnitValue, EUnit InUnit, bool bConvertValueToInt = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 	
 	// Log a temperature value in degrees celsius to the console or viewport (Just adds the appropriate symbol at the end)
-	UFUNCTION(BlueprintCallable, Category = "Debug | Unit Systems", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static void Temperature(float InTemperatureValue, EDebugLogTemperatureUnit TemperatureUnit, bool bConvertValueToInt = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
-	static void Temperature(float InTemperatureValue, EDebugLogTemperatureUnit TemperatureUnit, bool bConvertValueToInt = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug | Unit Systems", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static void Temperature(float InTemperatureValue, EDebugLogTemperatureUnit TemperatureUnit, bool bConvertValueToInt = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
+	static void Temperature(float InTemperatureValue, EDebugLogTemperatureUnit TemperatureUnit, bool bConvertValueToInt = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a volume unit value to the console or viewport (Just adds the appropriate symbol at the end)
-	UFUNCTION(BlueprintCallable, Category = "Debug | Unit Systems", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static void Volume(float InVolumeValue, EDebugLogVolumeUnit VolumeUnit, bool bConvertValueToInt = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
-	static void Volume(float InVolumeValue, EDebugLogVolumeUnit VolumeUnit, bool bConvertValueToInt = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug | Unit Systems", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static void Volume(float InVolumeValue, EDebugLogVolumeUnit VolumeUnit, bool bConvertValueToInt = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
+	static void Volume(float InVolumeValue, EDebugLogVolumeUnit VolumeUnit, bool bConvertValueToInt = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a data unit value to the console or viewport (Just adds the appropriate symbol at the end)
-	UFUNCTION(BlueprintCallable, Category = "Debug | Unit Systems", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static void Data(float InDataValue, EDebugLogDataUnit DataUnit, bool bConvertValueToInt = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
-	static void Data(float InDataValue, EDebugLogDataUnit DataUnit, bool bConvertValueToInt = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug | Unit Systems", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static void Data(float InDataValue, EDebugLogDataUnit DataUnit, bool bConvertValueToInt = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
+	static void Data(float InDataValue, EDebugLogDataUnit DataUnit, bool bConvertValueToInt = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a length unit value to the console or viewport (Just adds the appropriate symbol at the end)
-	UFUNCTION(BlueprintCallable, Category = "Debug | Unit Systems", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static void Length(float InLengthValue, EDebugLogLengthUnit LengthUnit, bool bConvertValueToInt = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
-	static void Length(float InLengthValue, EDebugLogLengthUnit LengthUnit, bool bConvertValueToInt = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug | Unit Systems", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static void Length(float InLengthValue, EDebugLogLengthUnit LengthUnit, bool bConvertValueToInt = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
+	static void Length(float InLengthValue, EDebugLogLengthUnit LengthUnit, bool bConvertValueToInt = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a mass unit value to the console or viewport (Just adds the appropriate symbol at the end)
-	UFUNCTION(BlueprintCallable, Category = "Debug | Unit Systems", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static void Mass(float InMassValue, EDebugLogMassUnit MassUnit, bool bConvertValueToInt = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
-	static void Mass(float InMassValue, EDebugLogMassUnit MassUnit, bool bConvertValueToInt = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug | Unit Systems", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static void Mass(float InMassValue, EDebugLogMassUnit MassUnit, bool bConvertValueToInt = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
+	static void Mass(float InMassValue, EDebugLogMassUnit MassUnit, bool bConvertValueToInt = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a speed unit value to the console or viewport (Just adds the appropriate symbol at the end)
-	UFUNCTION(BlueprintCallable, Category = "Debug | Unit Systems", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static void Speed(float InSpeedValue, EDebugLogSpeedUnit SpeedUnit, bool bConvertValueToInt = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
-	static void Speed(float InSpeedValue, EDebugLogSpeedUnit SpeedUnit, bool bConvertValueToInt = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug | Unit Systems", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static void Speed(float InSpeedValue, EDebugLogSpeedUnit SpeedUnit, bool bConvertValueToInt = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
+	static void Speed(float InSpeedValue, EDebugLogSpeedUnit SpeedUnit, bool bConvertValueToInt = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a time unit value to the console or viewport (Just adds the appropriate symbol at the end)
-	UFUNCTION(BlueprintCallable, Category = "Debug | Unit Systems", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static void Time(float InTimeValue, EDebugLogTimeUnit TimeUnit, bool bConvertValueToInt = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
-	static void Time(float InTimeValue, EDebugLogTimeUnit TimeUnit, bool bConvertValueToInt = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug | Unit Systems", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static void Time(float InTimeValue, EDebugLogTimeUnit TimeUnit, bool bConvertValueToInt = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
+	static void Time(float InTimeValue, EDebugLogTimeUnit TimeUnit, bool bConvertValueToInt = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log an angular value to the console or viewport (Just adds the appropriate symbol at the end)
-	UFUNCTION(BlueprintCallable, Category = "Debug | Unit Systems", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-    static void Angle(float InAngleValue, EDebugLogAngularUnit AngleUnit = DLAU_Degrees, bool bConvertValueToInt = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
-	static void Angle(float InAngleValue, EDebugLogAngularUnit AngleUnit = DLAU_Degrees, bool bConvertValueToInt = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug | Unit Systems", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+    static void Angle(float InAngleValue, EDebugLogAngularUnit AngleUnit = DLAU_Degrees, bool bConvertValueToInt = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
+	static void Angle(float InAngleValue, EDebugLogAngularUnit AngleUnit = DLAU_Degrees, bool bConvertValueToInt = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 	
 	// Log a force value to the console or viewport (Just adds the appropriate symbol at the end)
-	UFUNCTION(BlueprintCallable, Category = "Debug | Unit Systems", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-    static void Force(float InForceValue, EDebugLogForceUnit ForceUnit, bool bConvertValueToInt = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
-	static void Force(float InForceValue, EDebugLogForceUnit ForceUnit, bool bConvertValueToInt = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug | Unit Systems", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+    static void Force(float InForceValue, EDebugLogForceUnit ForceUnit, bool bConvertValueToInt = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
+	static void Force(float InForceValue, EDebugLogForceUnit ForceUnit, bool bConvertValueToInt = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 	
 	// Log a frequency value to the console or viewport (Just adds the appropriate symbol at the end)
-	UFUNCTION(BlueprintCallable, Category = "Debug | Unit Systems", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-    static void Frequency(float InFrequencyValue, EDebugLogFrequencyUnit FrequencyUnit, bool bConvertValueToInt = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
-	static void Frequency(float InFrequencyValue, EDebugLogFrequencyUnit FrequencyUnit, bool bConvertValueToInt = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug | Unit Systems", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+    static void Frequency(float InFrequencyValue, EDebugLogFrequencyUnit FrequencyUnit, bool bConvertValueToInt = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
+	static void Frequency(float InFrequencyValue, EDebugLogFrequencyUnit FrequencyUnit, bool bConvertValueToInt = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a light value to the console or viewport (Just adds the appropriate symbol at the end)
-	UFUNCTION(BlueprintCallable, Category = "Debug | Unit Systems", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-    static void Light(float InLightValue, EDebugLogLightUnit LightUnit, bool bConvertValueToInt = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
-	static void Light(float InLightValue, EDebugLogLightUnit LightUnit, bool bConvertValueToInt = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug | Unit Systems", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+    static void Light(float InLightValue, EDebugLogLightUnit LightUnit, bool bConvertValueToInt = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
+	static void Light(float InLightValue, EDebugLogLightUnit LightUnit, bool bConvertValueToInt = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a dollar value to the console or viewport (Just adds the $ symbol at the start)
-	UFUNCTION(BlueprintCallable, Category = "Debug | Unit Systems", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static void Dollar(float InDollarValue, bool bConvertValueToInt = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
-	static void Dollar(float InDollarValue, bool bConvertValueToInt = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug | Unit Systems", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static void Dollar(float InDollarValue, bool bConvertValueToInt = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
+	static void Dollar(float InDollarValue, bool bConvertValueToInt = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 	#pragma endregion
 
 	// Log sphere information to the console or viewport
@@ -757,128 +757,128 @@ public:
 	static void Capsule(const FCapsuleShape& Capsule, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
 
 	// Assert that two bools are equal
-	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Equal", DisplayName = "Assert Equal (Bool)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static bool AssertEqual_Bool(bool bActual, bool bExpected, FString Message, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Equal", DisplayName = "Assert Equal (Bool)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static bool AssertEqual_Bool(bool bActual, bool bExpected, FString Message, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Assert that two integers are equal
-	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Equal", DisplayName = "Assert Equal (Integer)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static bool AssertEqual_Integer(int32 Actual, int32 Expected, FString Message, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Equal", DisplayName = "Assert Equal (Integer)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static bool AssertEqual_Integer(int32 Actual, int32 Expected, FString Message, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Assert on a relationship between two integers
-	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Value", DisplayName = "Assert Value (Integer)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static bool AssertValue_Integer(int32 Actual, int32 Expected, EDebugLogComparisonMethod ShouldBe, FString Message, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Value", DisplayName = "Assert Value (Integer)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static bool AssertValue_Integer(int32 Actual, int32 Expected, EDebugLogComparisonMethod ShouldBe, FString Message, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Assert that two floats are equal
-	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Equal", DisplayName = "Assert Equal (Float)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static bool AssertEqual_Float(float Actual, float Expected, FString Message, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Equal", DisplayName = "Assert Equal (Float)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static bool AssertEqual_Float(float Actual, float Expected, FString Message, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Assert on a relationship between two floats
-	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Value", DisplayName = "Assert Value (Float)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static bool AssertValue_Float(float Actual, float Expected, EDebugLogComparisonMethod ShouldBe, FString Message, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Value", DisplayName = "Assert Value (Float)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static bool AssertValue_Float(float Actual, float Expected, EDebugLogComparisonMethod ShouldBe, FString Message, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Assert that two strings are equal
-	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Equal", DisplayName = "Assert Equal (String)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static bool AssertEqual_String(FString Actual, FString Expected, FString Message, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Equal", DisplayName = "Assert Equal (String)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static bool AssertEqual_String(FString Actual, FString Expected, FString Message, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Assert that two strings are not equal
-	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Not Equal", DisplayName = "Assert Not Equal (String)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static bool AssertNotEqual_String(FString Actual, FString Expected, FString Message, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Not Equal", DisplayName = "Assert Not Equal (String)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static bool AssertNotEqual_String(FString Actual, FString Expected, FString Message, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Assert that two names are equal
-	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Equal", DisplayName = "Assert Equal (Name)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static bool AssertEqual_Name(FName Actual, FName Expected, FString Message, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Equal", DisplayName = "Assert Equal (Name)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static bool AssertEqual_Name(FName Actual, FName Expected, FString Message, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Assert that two names are not equal
-	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Not Equal", DisplayName = "Assert Not Equal (Name)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static bool AssertNotEqual_Name(FName Actual, FName Expected, FString Message, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Not Equal", DisplayName = "Assert Not Equal (Name)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static bool AssertNotEqual_Name(FName Actual, FName Expected, FString Message, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Assert that two objects are equal
-	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Equal", DisplayName = "Assert Equal (Object)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static bool AssertEqual_Object(UObject* Actual, UObject* Expected, FString Message, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Equal", DisplayName = "Assert Equal (Object)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static bool AssertEqual_Object(UObject* Actual, UObject* Expected, FString Message, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Assert that two objects are not equal
-	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Not Equal", DisplayName = "Assert Not Equal (Object)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static bool AssertNotEqual_Object(UObject* Actual, UObject* Expected, FString Message, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Not Equal", DisplayName = "Assert Not Equal (Object)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static bool AssertNotEqual_Object(UObject* Actual, UObject* Expected, FString Message, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Assert that two vectors are equal
-	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Equal", DisplayName = "Assert Equal (Vector)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static bool AssertEqual_Vector(FVector Actual, FVector Expected, FString Message, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Equal", DisplayName = "Assert Equal (Vector)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static bool AssertEqual_Vector(FVector Actual, FVector Expected, FString Message, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Assert that two vectors are equal
-	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Equal", DisplayName = "Assert Equal (Vector2D)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static bool AssertEqual_Vector2D(FVector2D Actual, FVector2D Expected, FString Message, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Equal", DisplayName = "Assert Equal (Vector2D)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static bool AssertEqual_Vector2D(FVector2D Actual, FVector2D Expected, FString Message, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Assert that two vectors are not equal
-	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Not Equal", DisplayName = "Assert Not Equal (Vector)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static bool AssertNotEqual_Vector(FVector Actual, FVector Expected, FString Message, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Not Equal", DisplayName = "Assert Not Equal (Vector)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static bool AssertNotEqual_Vector(FVector Actual, FVector Expected, FString Message, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Assert that two vectors are not equal
-	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Not Equal", DisplayName = "Assert Not Equal (Vector2D)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static bool AssertNotEqual_Vector2D(FVector2D Actual, FVector2D Expected, FString Message, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Not Equal", DisplayName = "Assert Not Equal (Vector2D)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static bool AssertNotEqual_Vector2D(FVector2D Actual, FVector2D Expected, FString Message, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Assert that two rotators are equal
-	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Equal", DisplayName = "Assert Equal (Rotator)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static bool AssertEqual_Rotator(FRotator Actual, FRotator Expected, FString Message, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Equal", DisplayName = "Assert Equal (Rotator)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static bool AssertEqual_Rotator(FRotator Actual, FRotator Expected, FString Message, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Assert that two rotators are not equal
-	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Not Equal", DisplayName = "Assert Not Equal (Rotator)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static bool AssertNotEqual_Rotator(FRotator Actual, FRotator Expected, FString Message, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Not Equal", DisplayName = "Assert Not Equal (Rotator)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static bool AssertNotEqual_Rotator(FRotator Actual, FRotator Expected, FString Message, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Assert that two quaternions are equal
-	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Equal", DisplayName = "Assert Equal (Quaternion)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static bool AssertEqual_Quat(FQuat Actual, FQuat Expected, FString Message, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Equal", DisplayName = "Assert Equal (Quaternion)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static bool AssertEqual_Quat(FQuat Actual, FQuat Expected, FString Message, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Assert that two quaternions are not equal
-	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Not Equal", DisplayName = "Assert Not Equal (Quaternion)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static bool AssertNotEqual_Quat(FQuat Actual, FQuat Expected, FString Message, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Not Equal", DisplayName = "Assert Not Equal (Quaternion)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static bool AssertNotEqual_Quat(FQuat Actual, FQuat Expected, FString Message, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Assert that two transforms are equal
-	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Equal", DisplayName = "Assert Equal (Transform)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static bool AssertEqual_Transform(FTransform Actual, FTransform Expected, FString Message, bool bNoScale = false, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Equal", DisplayName = "Assert Equal (Transform)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static bool AssertEqual_Transform(FTransform Actual, FTransform Expected, FString Message, bool bNoScale = false, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Assert that two transforms are not equal
-	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Not Equal", DisplayName = "Assert Not Equal (Transform)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static bool AssertNotEqual_Transform(FTransform Actual, FTransform Expected, FString Message, bool bNoScale = false, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Not Equal", DisplayName = "Assert Not Equal (Transform)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static bool AssertNotEqual_Transform(FTransform Actual, FTransform Expected, FString Message, bool bNoScale = false, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Assert that two colors are equal
-	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Equal", DisplayName = "Assert Equal (Color)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static bool AssertEqual_Color(FColor Actual, FColor Expected, FString Message, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Equal", DisplayName = "Assert Equal (Color)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static bool AssertEqual_Color(FColor Actual, FColor Expected, FString Message, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Assert that two colors are not equal
-	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Not Equal", DisplayName = "Assert Not Equal (Color)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static bool AssertNotEqual_Color(FColor Actual, FColor Expected, FString Message, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Not Equal", DisplayName = "Assert Not Equal (Color)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static bool AssertNotEqual_Color(FColor Actual, FColor Expected, FString Message, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Assert that two DateTime values are equal
-	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Equal", DisplayName = "Assert Equal (DateTime)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static bool AssertEqual_DateTime(FDateTime Actual, FDateTime Expected, FString Message, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Equal", DisplayName = "Assert Equal (DateTime)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static bool AssertEqual_DateTime(FDateTime Actual, FDateTime Expected, FString Message, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Assert a relationship between two DateTime values
-	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Value", DisplayName = "Assert Value (DateTime)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static bool AssertValue_DateTime(FDateTime Actual, FDateTime Expected, EDebugLogComparisonMethod ShouldBe, FString Message, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert | Value", DisplayName = "Assert Value (DateTime)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static bool AssertValue_DateTime(FDateTime Actual, FDateTime Expected, EDebugLogComparisonMethod ShouldBe, FString Message, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Assert that a bool value is true
-	UFUNCTION(BlueprintCallable, Category = "Debug | Assert", DisplayName = "Assert True", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static bool Assert_True(bool bCondition, FString Message, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert", DisplayName = "Assert True", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static bool Assert_True(bool bCondition, FString Message, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Assert that a bool value is false
-	UFUNCTION(BlueprintCallable, Category = "Debug | Assert", DisplayName = "Assert False", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static bool Assert_False(bool bCondition, FString Message, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert", DisplayName = "Assert False", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static bool Assert_False(bool bCondition, FString Message, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 	
 	// Assert that an object is valid
-	UFUNCTION(BlueprintCallable, Category = "Debug | Assert", DisplayName = "Assert Is Valid", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static bool Assert_IsValid(UObject* Object, FString Message, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug | Assert", DisplayName = "Assert Is Valid", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static bool Assert_IsValid(UObject* Object, FString Message, bool bCrashOnFailure = false, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 protected:
 	void PostInitProperties() override;
 	void FinishDestroy() override;
 
 	// Log a number to the console or viewport
-	UFUNCTION(BlueprintCallable, Category = "Debug", DisplayName = "Number (int)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static void Number_Int_Blueprint(int32 Number, const FString& Prefix = "", const FString& Suffix = "", EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug", DisplayName = "Number (int)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static void Number_Int_Blueprint(int32 Number, const FString& Prefix = "", const FString& Suffix = "", EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a number to the console or viewport (float version)
-	UFUNCTION(BlueprintCallable, Category = "Debug", DisplayName = "Number (float)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName"))
-	static void Number_Float_Blueprint(float Number, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Debug", DisplayName = "Number (float)", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static void Number_Float_Blueprint(float Number, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Return the string with brackets () around it
 	UFUNCTION(BlueprintPure, Category = "Debug", DisplayName = "In Brackets (String)")
@@ -923,19 +923,19 @@ protected:
 	// This function is used to mark a function that should be overridden because the base function contains no implementation. Alternatively, this can be used anywhere where a function has not been implemented yet.
 	UFUNCTION(BlueprintCallable, Category = "Debug", DisplayName = "Un-Implemented", meta = (DevelopmentOnly))
 	static void UnImplemented();
-
+	
 private:
-	static void LogMessage_Internal(const FString& Message, EDebugLogType LogSeverity, const FString& Prefix = "", const FString& Suffix = "", const FColor& InLogColor = FColor::Cyan, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, const FString& LogCategory = "", bool bWriteToLog = true);
+	static void LogMessage_Internal(const FString& Message, EDebugLogType LogSeverity, const FString& Prefix = "", const FString& Suffix = "", const FColor& InLogColor = FColor::Cyan, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, const FString& LogCategory = "", bool bWriteToLog = true, UObject* ContextObject = nullptr);
 
-	static void LogFloat(float Number, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
-	static void LogInt(platform_int Number, const FString& Prefix = "", const FString& Suffix = "", EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
-	static void LogUInt(platform_uint Number, const FString& Prefix = "", const FString& Suffix = "", EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
-	static void LogLongInt(long Number, const FString& Prefix = "", const FString& Suffix = "", EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	static void LogFloat(float Number, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
+	static void LogInt(platform_int Number, const FString& Prefix = "", const FString& Suffix = "", EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
+	static void LogUInt(platform_uint Number, const FString& Prefix = "", const FString& Suffix = "", EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
+	static void LogLongInt(long Number, const FString& Prefix = "", const FString& Suffix = "", EDebugLogNumberSystems NumberSystem = DLNS_Decimal, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
-	static void LogUnitSystem(float Value, const FString& UnitSymbol, bool bConvertValueToInt = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
-	static void LogCurrencyUnitSystem(float Value, const FString& UnitSymbol, bool bConvertValueToInt = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	static void LogUnitSystem(float Value, const FString& UnitSymbol, bool bConvertValueToInt = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
+	static void LogCurrencyUnitSystem(float Value, const FString& UnitSymbol, bool bConvertValueToInt = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
-	static void LogArray_Internal(const TArray<FString>& InArray, const FString& Prefix = "", const FString& Suffix = "", const ELoggingOptions& LoggingOption = LO_Console, float TimeToDisplay = 5.0f);
+	static void LogArray_Internal(const TArray<FString>& InArray, const FString& Prefix = "", const FString& Suffix = "", const ELoggingOptions& LoggingOption = LO_Console, float TimeToDisplay = 5.0f, UObject* ContextObject = nullptr);
 
 	static void QuitApplication_Internal();
 
@@ -951,22 +951,22 @@ private:
 	static platform_int HexDigitToDecimal(FString HexDigit);
 	static FString DecimalToHexDigit(platform_int DecimalNumber);
 
-	static void AssertFailed(const FString& Message, bool bCrashOnFailure, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	static void AssertFailed(const FString& Message, bool bCrashOnFailure, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	template<typename T>
-	static bool AssertEqual(T Actual, T Expected, FString AssertType, FString Message, bool bCrashOnFailure, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	static bool AssertEqual(T Actual, T Expected, FString AssertType, FString Message, bool bCrashOnFailure, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	template<typename T>
-	static bool AssertNotEqual(T Actual, T Expected, FString AssertType, FString Message, bool bCrashOnFailure, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	static bool AssertNotEqual(T Actual, T Expected, FString AssertType, FString Message, bool bCrashOnFailure, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	template<typename T>
-	static bool AssertEqual(T* Actual, T* Expected, FString AssertType, FString Message, bool bCrashOnFailure, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	static bool AssertEqual(T* Actual, T* Expected, FString AssertType, FString Message, bool bCrashOnFailure, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	template<typename T>
-	static bool AssertNotEqual(T* Actual, T* Expected, FString AssertType, FString Message, bool bCrashOnFailure, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	static bool AssertNotEqual(T* Actual, T* Expected, FString AssertType, FString Message, bool bCrashOnFailure, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	template<typename T>
-	static bool AssertValue(T Actual, T Expected, EDebugLogComparisonMethod ComparisonMethod, FString AssertType, FString Message, bool bCrashOnFailure, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None);
+	static bool AssertValue(T Actual, T Expected, EDebugLogComparisonMethod ComparisonMethod, FString AssertType, FString Message, bool bCrashOnFailure, ELoggingOptions LoggingOption = LO_Both, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	template<typename T>
 	static bool PerformComparison(T LHS, T RHS, EDebugLogComparisonMethod ComparisonMethod);
@@ -983,7 +983,7 @@ private:
 };
 
 template <typename T>
-bool ULog::AssertEqual(T Actual, T Expected, FString AssertType, FString Message, bool bCrashOnFailure, ELoggingOptions LoggingOption, float TimeToDisplay, FName ViewportKeyName)
+bool ULog::AssertEqual(T Actual, T Expected, FString AssertType, FString Message, bool bCrashOnFailure, ELoggingOptions LoggingOption, float TimeToDisplay, FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	if (Actual != Expected)
@@ -991,7 +991,7 @@ bool ULog::AssertEqual(T Actual, T Expected, FString AssertType, FString Message
 		if (bCrashOnFailure)
 			Crash(AssertType + " | Assert Failed: " + Message);
 		else
-			Error(AssertType + " | Assert Failed: " + Message, LoggingOption, false, TimeToDisplay, ViewportKeyName);
+			Error(AssertType + " | Assert Failed: " + Message, LoggingOption, false, TimeToDisplay, ViewportKeyName, ContextObject);
 	
 		return false;
 	}
@@ -1006,7 +1006,7 @@ bool ULog::AssertEqual(T Actual, T Expected, FString AssertType, FString Message
 }
 
 template <typename T>
-bool ULog::AssertNotEqual(T Actual, T Expected, FString AssertType, FString Message, bool bCrashOnFailure, ELoggingOptions LoggingOption, float TimeToDisplay, FName ViewportKeyName)
+bool ULog::AssertNotEqual(T Actual, T Expected, FString AssertType, FString Message, bool bCrashOnFailure, ELoggingOptions LoggingOption, float TimeToDisplay, FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	if (Actual == Expected)
@@ -1014,7 +1014,7 @@ bool ULog::AssertNotEqual(T Actual, T Expected, FString AssertType, FString Mess
 		if (bCrashOnFailure)
 			Crash(AssertType + " | Assert Failed: " + Message);
 		else
-			Error(AssertType + " | Assert Failed: " + Message, LoggingOption, false, TimeToDisplay, ViewportKeyName);
+			Error(AssertType + " | Assert Failed: " + Message, LoggingOption, false, TimeToDisplay, ViewportKeyName, ContextObject);
 	
 		return false;
 	}
@@ -1029,7 +1029,7 @@ bool ULog::AssertNotEqual(T Actual, T Expected, FString AssertType, FString Mess
 }
 
 template <typename T>
-bool ULog::AssertEqual(T* Actual, T* Expected, FString AssertType, const FString Message, const bool bCrashOnFailure, ELoggingOptions LoggingOption, float TimeToDisplay, FName ViewportKeyName)
+bool ULog::AssertEqual(T* Actual, T* Expected, FString AssertType, const FString Message, const bool bCrashOnFailure, ELoggingOptions LoggingOption, float TimeToDisplay, FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	if (Actual != Expected)
@@ -1037,7 +1037,7 @@ bool ULog::AssertEqual(T* Actual, T* Expected, FString AssertType, const FString
 		if (bCrashOnFailure)
 			Crash(AssertType + " | Assert Failed: " + Message);
 		else
-			Error(AssertType + " | Assert Failed: " + Message, LoggingOption, false, TimeToDisplay, ViewportKeyName);
+			Error(AssertType + " | Assert Failed: " + Message, LoggingOption, false, TimeToDisplay, ViewportKeyName, ContextObject);
 
 		return false;
 	}
@@ -1052,7 +1052,7 @@ bool ULog::AssertEqual(T* Actual, T* Expected, FString AssertType, const FString
 }
 
 template <typename T>
-bool ULog::AssertNotEqual(T* Actual, T* Expected, FString AssertType, const FString Message, const bool bCrashOnFailure, ELoggingOptions LoggingOption, float TimeToDisplay, FName ViewportKeyName)
+bool ULog::AssertNotEqual(T* Actual, T* Expected, FString AssertType, const FString Message, const bool bCrashOnFailure, ELoggingOptions LoggingOption, float TimeToDisplay, FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	if (Actual == Expected)
@@ -1060,7 +1060,7 @@ bool ULog::AssertNotEqual(T* Actual, T* Expected, FString AssertType, const FStr
 		if (bCrashOnFailure)
 			Crash(AssertType + " | Assert Failed: " + Message);
 		else
-			Error(AssertType + " | Assert Failed: " + Message, LoggingOption, false, TimeToDisplay, ViewportKeyName);
+			Error(AssertType + " | Assert Failed: " + Message, LoggingOption, false, TimeToDisplay, ViewportKeyName, ContextObject);
 
 		return false;
 	}
@@ -1075,7 +1075,7 @@ bool ULog::AssertNotEqual(T* Actual, T* Expected, FString AssertType, const FStr
 }
 
 template <typename T>
-bool ULog::AssertValue(T Actual, T Expected, const EDebugLogComparisonMethod ComparisonMethod, FString AssertType, const FString Message, const bool bCrashOnFailure, ELoggingOptions LoggingOption, float TimeToDisplay, FName ViewportKeyName)
+bool ULog::AssertValue(T Actual, T Expected, const EDebugLogComparisonMethod ComparisonMethod, FString AssertType, const FString Message, const bool bCrashOnFailure, ELoggingOptions LoggingOption, float TimeToDisplay, FName ViewportKeyName, UObject* ContextObject)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	if (!PerformComparison<T>(Actual, Expected, ComparisonMethod))
@@ -1083,7 +1083,7 @@ bool ULog::AssertValue(T Actual, T Expected, const EDebugLogComparisonMethod Com
 		if (bCrashOnFailure)
 			Crash(AssertType + " | Assert Failed: " + Message);
 		else
-			Error(AssertType + " | Assert Failed: " + Message, LoggingOption, false, TimeToDisplay, ViewportKeyName);
+			Error(AssertType + " | Assert Failed: " + Message, LoggingOption, false, TimeToDisplay, ViewportKeyName, ContextObject);
 
 		return false;	
 	}
@@ -1133,7 +1133,7 @@ bool ULog::PerformComparison(T LHS, T RHS, const EDebugLogComparisonMethod Compa
 }
 
 template <typename EnumType>
-void ULog::Enum(const EnumType& EnumValue, const bool bFriendlyName, const FString& Prefix, const FString& Suffix, const ELoggingOptions& LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Enum(const EnumType& EnumValue, const bool bFriendlyName, const FString& Prefix, const FString& Suffix, const ELoggingOptions& LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
 	FString EnumTypeString = typeid(EnumType).name();
 
@@ -1151,21 +1151,21 @@ void ULog::Enum(const EnumType& EnumValue, const bool bFriendlyName, const FStri
 	{
 		if (bFriendlyName)
 		{
-			LogMessage_Internal(EnumObject->GetDisplayNameTextByIndex(uint8(EnumValue)).ToString(), DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, "LogEnum");
+			LogMessage_Internal(EnumObject->GetDisplayNameTextByIndex(uint8(EnumValue)).ToString(), DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, "LogEnum", true, ContextObject);
 		}
 		else
 		{
-			LogMessage_Internal(EnumObject->GetNameStringByIndex(uint8(EnumValue)), DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, "LogEnum");
+			LogMessage_Internal(EnumObject->GetNameStringByIndex(uint8(EnumValue)), DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, "LogEnum", true, ContextObject);
 		}
 	}
 	else
 	{
-		Error(CUR_CLASS_FUNC + " | The given enum type '" + EnumTypeString + "' does not exist! Is '" + EnumTypeString + "' marked with a UENUM() macro?", LoggingOption, true, TimeToDisplay, ViewportKeyName);
+		Error(CUR_CLASS_FUNC + " | The given enum type '" + EnumTypeString + "' does not exist! Is '" + EnumTypeString + "' marked with a UENUM() macro?", LoggingOption, true, TimeToDisplay, ViewportKeyName, ContextObject);
 	}
 }
 
 template <typename EnumType>
-void ULog::Enum(const EnumType& EnumValue, const bool bFriendlyName, const ELoggingOptions& LoggingOption, const float TimeToDisplay, const FName ViewportKeyName)
+void ULog::Enum(const EnumType& EnumValue, const bool bFriendlyName, const ELoggingOptions& LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	Enum<EnumType>(EnumValue, bFriendlyName, "", "", LoggingOption, TimeToDisplay, ViewportKeyName);
+	Enum<EnumType>(EnumValue, bFriendlyName, "", "", LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
