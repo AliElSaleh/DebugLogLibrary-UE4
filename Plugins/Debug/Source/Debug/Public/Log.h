@@ -5,10 +5,16 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "UObject/TextProperty.h" // <-- Fixes compile error when using FText as a parameter for blueprint functions
 #include "DebugLogLibrarySettings.h"
+#include "UObject/Package.h"
 #include <chrono>
 #include "Log.generated.h"
 
 #define SPACER (FString(" | "))
+
+#define GET_ENUM_OBJECT(EnumType) FindObject<UEnum>(ANY_PACKAGE, TEXT(#EnumType), true)
+#define GET_ENUM_TYPE_AS_STRING(EnumType) #EnumType
+#define GET_ENUM_VALUE_AS_STRING(EnumValue) #EnumValue
+#define ENUM_TO_STRING(EnumType, EnumValue, bFriendlyName) FindObject<UEnum>(ANY_PACKAGE, TEXT(#EnumType), true) ? bFriendlyName ? FindObject<UEnum>(ANY_PACKAGE, TEXT(#EnumType), true)->GetDisplayNameTextByIndex(uint8(EnumValue)).ToString() : FindObject<UEnum>(ANY_PACKAGE, TEXT(#EnumType), true)->GetNameStringByIndex(uint8(EnumValue)) : ""\
 
 // Get the current class name and function name where this is called
 #define CUR_CLASS_FUNC (FString(__FUNCTION__))
@@ -66,7 +72,7 @@
 #define ASSERT(expr, message) FDebug::AssertFailed(#expr, UE_LOG_SOURCE_FILE(__FILE__), __LINE__, TEXT("%s"), *message);
 
 // Quick debug logging macros
-#if !UE_BUILD_SHIPPING
+#if defined UE_BUILD_DEVELOPMENT || UE_BUILD_DEBUG
 #define LOG_VECTOR(Variable, ...) ULog::Vector(Variable, false, __VA_ARGS__, LO_Both, 5.0f)
 #define LOG_VECTOR_CONSOLE(Variable, ...) ULog::Vector(Variable, false, __VA_ARGS__, LO_Console, 5.0f)
 #define LOG_VECTOR_VIEWPORT(Variable, ...) ULog::Vector(Variable, false, __VA_ARGS__, LO_Viewport, 5.0f)
@@ -131,9 +137,13 @@
 #define LOG_BOOL_CONSOLE(Variable, ...) ULog::Bool(Variable, __VA_ARGS__, LO_Console, 5.0f)
 #define LOG_BOOL_VIEWPORT(Variable, ...) ULog::Bool(Variable, __VA_ARGS__, LO_Viewport, 5.0f)
 
-#define LOG_ENUM(EnumType, Variable, bFriendlyName, ...) ULog::Enum<EnumType>(Variable, bFriendlyName, __VA_ARGS__, LO_Both, 5.0f)
-#define LOG_ENUM_CONSOLE(EnumType, Variable, bFriendlyName, ...) ULog::Enum<EnumType>(Variable, bFriendlyName, __VA_ARGS__, LO_Console, 5.0f)
-#define LOG_ENUM_VIEWPORT(EnumType, Variable, bFriendlyName, ...) ULog::Enum<EnumType>(Variable, bFriendlyName, __VA_ARGS__, LO_Viewport, 5.0f)
+//#define LOG_ENUM(EnumType, Variable, bFriendlyName, ...) ULog::Enum<EnumType>(Variable, bFriendlyName, __VA_ARGS__, LO_Both, 5.0f)
+//#define LOG_ENUM_CONSOLE(EnumType, Variable, bFriendlyName, ...) ULog::Enum<EnumType>(Variable, bFriendlyName, __VA_ARGS__, LO_Console, 5.0f)
+//#define LOG_ENUM_VIEWPORT(EnumType, Variable, bFriendlyName, ...) ULog::Enum<EnumType>(Variable, bFriendlyName, __VA_ARGS__, LO_Viewport, 5.0f)
+
+#define LOG_ENUM(EnumType, Variable, bFriendlyName, ...) ULog::Enum<EnumType>(#EnumType, Variable, bFriendlyName, __VA_ARGS__, LO_Both, 5.0f)
+#define LOG_ENUM_CONSOLE(EnumType, Variable, bFriendlyName, ...) ULog::Enum<EnumType>(#EnumType, Variable, bFriendlyName, __VA_ARGS__, LO_Console, 5.0f)
+#define LOG_ENUM_VIEWPORT(EnumType, Variable, bFriendlyName, ...) ULog::Enum<EnumType>(#EnumType, Variable, bFriendlyName, __VA_ARGS__, LO_Viewport, 5.0f)
 
 #define LOG_LINEBREAK() ULog::LineBreak(LO_Both)
 #define LOG_LINEBREAK_CONSOLE() ULog::LineBreak("", "", LO_Console)
@@ -576,12 +586,12 @@ public:
 	// Log a enum value to the console or viewport.
 	// Enum classes must be marked with a UENUM() macro
 	template<typename EnumType>
-    static void Enum(const EnumType& EnumValue, bool bFriendlyName = false, const FString& Prefix = "", const FString& Suffix = "", const ELoggingOptions& LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
+    static void Enum(const FString& EnumTypeString, const EnumType& EnumValue, bool bFriendlyName = false, const FString& Prefix = "", const FString& Suffix = "", const ELoggingOptions& LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log a enum value to the console or viewport. (no prefix and suffix)
 	// Enum classes must be marked with a UENUM() macro
 	template<typename EnumType>
-    static void Enum(const EnumType& EnumValue, bool bFriendlyName = false, const ELoggingOptions& LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
+    static void Enum(const FString& EnumTypeString, const EnumType& EnumValue, bool bFriendlyName = false, const ELoggingOptions& LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log an array of int32 to the console or viewport
 	UFUNCTION(BlueprintCallable, Category = "Debug", meta = (DevelopmentOnly, DefaultToSelf = "ContextObject", HidePin = "ContextObject"), DisplayName = "Array (int32)")
@@ -1153,19 +1163,8 @@ bool ULog::PerformComparison(T LHS, T RHS, const EDebugLogComparisonMethod Compa
 }
 
 template <typename EnumType>
-void ULog::Enum(const EnumType& EnumValue, const bool bFriendlyName, const FString& Prefix, const FString& Suffix, const ELoggingOptions& LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
+void ULog::Enum(const FString& EnumTypeString, const EnumType& EnumValue, const bool bFriendlyName, const FString& Prefix, const FString& Suffix, const ELoggingOptions& LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	FString EnumTypeString = typeid(EnumType).name();
-
-	// Remove the "enum " prefix
-	EnumTypeString.RemoveAt(0, 5);
-
-	// Remove "::Type" suffix, if it exists
-	if (EnumTypeString.Contains("::Type"))
-	{
-		EnumTypeString.RemoveAt(EnumTypeString.Find("::Type"), 6);
-	}
-
 	UEnum* EnumObject = FindObject<UEnum>(ANY_PACKAGE, *EnumTypeString, true);
 	if (EnumObject)
 	{
@@ -1185,7 +1184,7 @@ void ULog::Enum(const EnumType& EnumValue, const bool bFriendlyName, const FStri
 }
 
 template <typename EnumType>
-void ULog::Enum(const EnumType& EnumValue, const bool bFriendlyName, const ELoggingOptions& LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
+void ULog::Enum(const FString& EnumTypeString, const EnumType& EnumValue, const bool bFriendlyName, const ELoggingOptions& LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
 {
-	Enum<EnumType>(EnumValue, bFriendlyName, "", "", LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
+	Enum<EnumType>(EnumTypeString, EnumValue, bFriendlyName, "", "", LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }

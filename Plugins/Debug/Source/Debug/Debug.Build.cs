@@ -10,7 +10,7 @@ public class Debug : ModuleRules
 		bUseUnity = true;
 		MinFilesUsingPrecompiledHeaderOverride = 1;
 		PrivatePCHHeaderFile = "Public/Debug.h";
-		
+
 		PublicIncludePaths.AddRange(
 			new string[] {
 				// ... add public include paths required here ...
