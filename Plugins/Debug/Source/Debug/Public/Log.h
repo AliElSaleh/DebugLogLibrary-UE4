@@ -6,6 +6,7 @@
 #include "UObject/TextProperty.h" // <-- Fixes compile error when using FText as a parameter for blueprint functions
 #include "DebugLogLibrarySettings.h"
 #include "UObject/Package.h"
+#include "Engine/EngineTypes.h"
 #include <chrono>
 #include "Log.generated.h"
 
@@ -776,6 +777,11 @@ public:
 	static void Dollar(float InDollarValue, bool bConvertValueToInt = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 	static void Dollar(float InDollarValue, bool bConvertValueToInt = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 	#pragma endregion
+
+	// Log an actor's net role value to the console or viewport
+	UFUNCTION(BlueprintCallable, Category = "Debug | Networking", meta = (DevelopmentOnly, AdvancedDisplay = "ViewportKeyName", DefaultToSelf = "ContextObject", HidePin = "ContextObject"))
+	static void NetRole(AActor* InActor, bool bLocal = false, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
+	static void NetRole(AActor* InActor, bool bLocal = false, ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f, FName ViewportKeyName = NAME_None, UObject* ContextObject = nullptr);
 
 	// Log sphere information to the console or viewport
 	static void Sphere(const FSphere& Sphere, const FString& Prefix = "", const FString& Suffix = "", ELoggingOptions LoggingOption = LO_Console, float TimeToDisplay = 5.0f);

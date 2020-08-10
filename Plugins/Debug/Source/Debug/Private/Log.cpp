@@ -2123,6 +2123,74 @@ void ULog::Dollar(const float InDollarValue, const bool bConvertValueToInt, cons
 	Dollar(InDollarValue, bConvertValueToInt, "", "", LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
 }
 
+void ULog::NetRole(AActor* InActor, const bool bLocal, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, float TimeToDisplay, FName ViewportKeyName, UObject* ContextObject)
+{
+	if (!InActor)
+		return;
+
+	if (bLocal)
+	{
+		switch (InActor->GetLocalRole())
+		{
+			case ROLE_None:
+				LogMessage_Internal(InActor->GetName() + " [Local] None", DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogNumber.GetCategoryName().ToString(), true, ContextObject);
+			break;
+			
+			case ROLE_SimulatedProxy:
+				LogMessage_Internal(InActor->GetName() + " [Local] Simulated Proxy", DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogNumber.GetCategoryName().ToString(), true, ContextObject);
+			break;
+
+			case ROLE_AutonomousProxy:
+				LogMessage_Internal(InActor->GetName() + " [Local] Autonomous Proxy", DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogNumber.GetCategoryName().ToString(), true, ContextObject);
+			break;
+			
+			case ROLE_Authority:
+				LogMessage_Internal(InActor->GetName() + " [Local] Authority", DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogNumber.GetCategoryName().ToString(), true, ContextObject);
+			break;
+			
+			case ROLE_MAX:
+				LogMessage_Internal(InActor->GetName() + " [Local] Max", DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogNumber.GetCategoryName().ToString(), true, ContextObject);
+			break;
+			
+			default:
+			break;
+		}
+	}
+	else
+	{
+		switch (InActor->GetRemoteRole())
+		{
+			case ROLE_None:
+				LogMessage_Internal(InActor->GetName() + " [Remote] None", DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogNumber.GetCategoryName().ToString(), true, ContextObject);
+			break;
+			
+			case ROLE_SimulatedProxy:
+				LogMessage_Internal(InActor->GetName() + " [Remote] Simulated Proxy", DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogNumber.GetCategoryName().ToString(), true, ContextObject);
+			break;
+
+			case ROLE_AutonomousProxy:
+				LogMessage_Internal(InActor->GetName() + " [Remote] Autonomous Proxy", DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogNumber.GetCategoryName().ToString(), true, ContextObject);
+			break;
+			
+			case ROLE_Authority:
+				LogMessage_Internal(InActor->GetName() + " [Remote] Authority", DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogNumber.GetCategoryName().ToString(), true, ContextObject);
+			break;
+			
+			case ROLE_MAX:
+				LogMessage_Internal(InActor->GetName() + " [Remote] Max", DL_Info, Prefix, Suffix, Settings->InfoColor, LoggingOption, TimeToDisplay, ViewportKeyName, LogNumber.GetCategoryName().ToString(), true, ContextObject);
+			break;
+			
+			default:
+			break;
+		}
+	}
+}
+
+void ULog::NetRole(AActor* InActor, const bool bLocal, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
+{
+	NetRole(InActor, bLocal, "", "", LoggingOption, TimeToDisplay, ViewportKeyName, ContextObject);
+}
+
 void ULog::Sphere(const FSphere& Sphere, const FString& Prefix, const FString& Suffix, const ELoggingOptions LoggingOption, const float TimeToDisplay)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
