@@ -1,7 +1,7 @@
 {
 	"FileVersion": 3,
 	"Version": 1,
-	"VersionName": "1.3",
+	"VersionName": "1.3.1",
 	"FriendlyName": "Debug Logging Library",
 	"Description": "The debug log plugin contains a library of debug logging functions that are aimed at improving workflow and speeding up the development process for both C++ and Blueprint users.",
 	"Category": "Developer",
@@ -24,7 +24,12 @@
 				"Win64",
 				"Win32",
 				"Mac",
-				"Linux"
+				"Linux",
+				"Android",
+				"IOS",
+				"PS4",
+				"XboxOne",
+				"Switch"
 			]
 		}
 	]
