@@ -2125,6 +2125,7 @@ void ULog::Dollar(const float InDollarValue, const bool bConvertValueToInt, cons
 
 void ULog::NetRole(AActor* InActor, const bool bLocal, const FString& Prefix, const FString& Suffix, ELoggingOptions LoggingOption, float TimeToDisplay, FName ViewportKeyName, UObject* ContextObject)
 {
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	if (!InActor)
 		return;
 
@@ -2184,6 +2185,7 @@ void ULog::NetRole(AActor* InActor, const bool bLocal, const FString& Prefix, co
 			break;
 		}
 	}
+#endif
 }
 
 void ULog::NetRole(AActor* InActor, const bool bLocal, const ELoggingOptions LoggingOption, const float TimeToDisplay, const FName ViewportKeyName, UObject* ContextObject)
