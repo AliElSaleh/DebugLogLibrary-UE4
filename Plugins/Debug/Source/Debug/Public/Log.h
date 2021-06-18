@@ -28,7 +28,7 @@
 #define CUR_CLASS_FUNC_WITH_LINE_2 (CUR_CLASS_FUNC + ": " + CUR_LINE + " | ")
 
 // Get the current class where this is called
-#define CUR_CLASS (FString(__FUNCTION__).Left(FString(__FUNCTION__).Find(TEXT(":"))) + " | ")
+#define CUR_CLASS (FString(__FUNCTION__).Left(FString(__FUNCTION__).Find(TEXT(":"))))
 
 #define CUR_CLASS_2 (FString(__FUNCTION__).Left(FString(__FUNCTION__).Find(TEXT(":"))) + " | ")
 
@@ -74,6 +74,18 @@
 
 // Quick debug logging macros
 #if defined UE_BUILD_DEVELOPMENT || UE_BUILD_DEBUG
+#define LOG_INFO(FormatString, ...) ULog::Info(FString::Printf(TEXT(FormatString), ##__VA_ARGS__ ), LO_Both)
+#define LOG_INFO_CONSOLE(FormatString, ...) ULog::Info(FString::Printf(TEXT(FormatString), ##__VA_ARGS__ ), LO_Console)
+#define LOG_INFO_VIEWPORT(FormatString, ...) ULog::Info(FString::Printf(TEXT(FormatString), ##__VA_ARGS__ ), LO_Viewport)
+
+#define LOG_WARNING(FormatString, ...) ULog::Warning(FString::Printf(TEXT(FormatString), ##__VA_ARGS__ ), LO_Both)
+#define LOG_WARNING_CONSOLE(FormatString, ...) ULog::Warning(FString::Printf(TEXT(FormatString), ##__VA_ARGS__ ), LO_Console)
+#define LOG_WARNING_VIEWPORT(FormatString, ...) ULog::Warning(FString::Printf(TEXT(FormatString), ##__VA_ARGS__ ), LO_Viewport)
+
+#define LOG_ERROR(FormatString, ...) ULog::Error(FString::Printf(TEXT(FormatString), ##__VA_ARGS__ ), LO_Both)
+#define LOG_ERROR_CONSOLE(FormatString, ...) ULog::Error(FString::Printf(TEXT(FormatString), ##__VA_ARGS__ ), LO_Console)
+#define LOG_ERROR_VIEWPORT(FormatString, ...) ULog::Error(FString::Printf(TEXT(FormatString), ##__VA_ARGS__ ), LO_Viewport)
+
 #define LOG_VECTOR(Variable, ...) ULog::Vector(Variable, false, __VA_ARGS__, LO_Both, 5.0f)
 #define LOG_VECTOR_CONSOLE(Variable, ...) ULog::Vector(Variable, false, __VA_ARGS__, LO_Console, 5.0f)
 #define LOG_VECTOR_VIEWPORT(Variable, ...) ULog::Vector(Variable, false, __VA_ARGS__, LO_Viewport, 5.0f)
@@ -1010,6 +1022,8 @@ private:
 	static class UDebugLogLibrarySettings* Settings;
 
 	static class FDebugLogTimer* Timer;
+
+	static FArchive* CustomLogFileWriter;
 
 	static FDateTime SavedDateTime;
 	

@@ -23,6 +23,7 @@
 
 UDebugLogLibrarySettings* ULog::Settings;
 FDebugLogTimer* ULog::Timer;
+FArchive* ULog::CustomLogFileWriter;
 FDateTime ULog::SavedDateTime;
 FString ULog::LogFilename;
 bool ULog::bIsShippingBuild;
@@ -36,6 +37,19 @@ void ULog::PostInitProperties()
 
 	SavedDateTime = FDateTime::Now();
 	LogFilename = "DebugLog-" + SavedDateTime.ToString() + ".log";
+
+	if (Settings->bSaveLogMessagesToCustomLogFile)
+	{
+		const FString Directory = GetSavedLogsDirectory() + LogFilename;
+		if (!FPlatformFileManager::Get().GetPlatformFile().FileExists(*Directory))
+		{
+			FString InitialText = "[" + FDateTime::Now().ToString() + "] Log file open" + LINE_TERMINATOR;
+			
+			FFileHelper::SaveStringToFile(InitialText, *Directory);
+		}
+		
+		CustomLogFileWriter = IFileManager::Get().CreateFileWriter(*Directory, FILEWRITE_Append | IO_APPEND);
+	}
 	
 #if (!UE_BUILD_SHIPPING || UE_BUILD_TEST)
 	bIsShippingBuild = false;
@@ -53,7 +67,16 @@ void ULog::FinishDestroy()
 #if !UE_BUILD_SHIPPING
 	WriteToLogFile(LogFilename, "Engine shutdown");
 	WriteToLogFile(LogFilename, "Log file closed");
-#endif	
+#endif
+
+	if (CustomLogFileWriter)
+	{
+		CustomLogFileWriter->Flush();
+		CustomLogFileWriter->Close();
+		
+		delete CustomLogFileWriter;
+		CustomLogFileWriter = nullptr;
+	}
 
 	Super::FinishDestroy();
 }
@@ -169,17 +192,20 @@ void ULog::Crash(const FString& Message, const FString& FromFunction, UObject* C
 	const FString ContextObjectName = ContextObject ? ContextObject->GetName() : "";
 	UE_LOG(LogCrash, Fatal, TEXT("%s%s %s | %s"), NET_MODE_PREFIX, *FromFunction, *ContextObjectName, *Message)
 #elif (UE_BUILD_SHIPPING)
+	const FString ContextObjectName = ContextObject ? ContextObject->GetName() : "";
+
 	FString ErrorMessage = "";
 	FString Line1 = "A function from the DebugLogLibrary plugin was called from C++ or Blueprint!\n";
-	FString Line2 = FromFunction.IsEmpty() ? "" : FString("Function name:\n") + FromFunction + "\n";
-	FString Line3 = FString("\nDebugLogLibrary plugin does not work in a Shipping build.");
-	FString Line4 = FString(" \n\nFor C++ users: \nRemove all ULog:: calls or wrap them with a #if guard!");
-	FString Line5 = FString(" \n\nFor Blueprint users: \nRemove or use the Disabled option for all nodes that use the DebugLogLibrary plugin from all blueprint graphs.");
-	FString Line6 = FString("\n\nAlternatively, you can disable this feature by going to Project Settings -> Debug Log Library and uncheck 'CrashGameInShippingBuildConfiguration'");
+	FString Line2 = ContextObjectName.IsEmpty() ? "" : FString("Context Object:\n") + ContextObjectName + "\n";
+	FString Line3 = FromFunction.IsEmpty() ? "" : FString("Function name:\n") + FromFunction + "\n";
+	FString Line4 = FString("\nDebugLogLibrary plugin does not work in a Shipping build.");
+	FString Line5 = FString(" \n\nFor C++ users: \nRemove all ULog:: calls or wrap them with a #if guard!");
+	FString Line6 = FString(" \n\nFor Blueprint users: \nRemove or use the Disabled option for all nodes that use the DebugLogLibrary plugin from all blueprint graphs.");
+	FString Line7 = FString("\n\nAlternatively, you can disable this feature by going to Project Settings -> Debug Log Library and uncheck 'CrashGameInShippingBuildConfiguration'");
 
 	if (Settings->bCrashGameInShippingBuildConfiguration && Message.IsEmpty())
 	{
-		ErrorMessage = Line1 + Line2 + Line3 + Line4 + Line5 + Line6;
+		ErrorMessage = Line1 + Line2 + Line3 + Line4 + Line5 + Line6 + Line7;
 	}
 	else
 	{
@@ -3250,33 +3276,21 @@ void ULog::AssertFailed(const FString& Message, const bool bCrashOnFailure, cons
 bool ULog::WriteToLogFile(const FString& FileName, const FString& Text, const bool bAllowOverwriting)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
+	if (!CustomLogFileWriter)
+		return false;
+	
 	const FString Directory = GetSavedLogsDirectory() + FileName;
 
-	const FString FinalText = "[" + FDateTime::Now().ToString() + "] " + Text + LINE_TERMINATOR;
+	const FString FinalText_NoTerminator = "[" + FDateTime::Now().ToString() + "] " + Text;
+	const FString FinalText = FinalText_NoTerminator + LINE_TERMINATOR;
 	if (bAllowOverwriting)
 	{
 		return FFileHelper::SaveStringToFile(FinalText, *Directory);
 	}
 
-	if (!FPlatformFileManager::Get().GetPlatformFile().FileExists(*Directory))
-	{
-		FString InitialText = "[" + FDateTime::Now().ToString() + "] Log file open" + LINE_TERMINATOR;
-		InitialText += FinalText;
-		
-		FFileHelper::SaveStringToFile(InitialText, *Directory);
-		return false;
-	}
+	CustomLogFileWriter->Logf(TEXT("%s"), *FinalText_NoTerminator);
 
-	IFileHandle* FileHandle = FPlatformFileManager::Get().GetPlatformFile().OpenWrite(*Directory, true);
-	if (FileHandle)
-	{
-		FileHandle->Write(reinterpret_cast<const uint8*>(TCHAR_TO_ANSI(*FinalText)), FinalText.Len());
-		delete FileHandle;
-		
-		return true;
-	}
-	
-	return false;
+	return true;
 #elif (UE_BUILD_SHIPPING)
 	if (Settings->bCrashGameInShippingBuildConfiguration)
 		Crash("", FString(__FUNCTION__));

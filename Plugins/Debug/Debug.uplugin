@@ -10,10 +10,8 @@
 	"DocsURL": "alielsaleh.com/tools/UE4-Plugins/DebugLogLibrary",
 	"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/content/739ccab666f245e08397bcbf668063ed",
 	"SupportURL": "alielsaleh.com/tools/UE4-Plugins/DebugLogLibrary",
-	"EngineVersion": "4.25.0",
+	"EngineVersion": "4.26.0",
 	"CanContainContent": false,
-	"IsBetaVersion": false,
-	"IsExperimentalVersion": false,
 	"Installed": true,
 	"Modules": [
 		{

@@ -55,6 +55,10 @@ void ADummy::BeginPlay()
 
 	LOG_ENUM(EAxis::Type, EAxis::X, true, "Axis: ", "");
 	LOG_ENUM(ELoggingOptions, LO_Both, true);
+
+	ULog::Number(5.0f);
+
+	ULog::Number(5);
 }
 
 void ADummy::Tick(const float DeltaTime)
