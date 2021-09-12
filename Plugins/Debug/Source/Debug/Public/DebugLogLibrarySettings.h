@@ -43,6 +43,10 @@ public:
 	// Should the game crash if any ULog functions are called in a shipping build configuration?
 	UPROPERTY(EditAnywhere, config, Category = "General")
     uint8 bCrashGameInShippingBuildConfiguration : 1;
+
+	// Writes all log messages called from this plugin to a custom log file
+	UPROPERTY(EditAnywhere, config, Category = "General")
+    uint8 bSaveLogMessagesToCustomLogFile : 1;
 	
 	// The color to use when logging a standard message
 	UPROPERTY(EditAnywhere, config, Category = "Viewport Settings", DisplayName = "Default Color")
